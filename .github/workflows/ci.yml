@@ -162,7 +162,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/bake-action@v5
+      - uses: docker/bake-action@v7
         with:
           push: true
           files: |

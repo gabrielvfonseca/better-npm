@@ -66,7 +66,7 @@ jobs:
         run: |
           VERSION=$(bunx changeset status --output=json | bun -e "const d=require('fs').readFileSync('/dev/stdin','utf8');const j=JSON.parse(d);console.log(j.changesets?.[0]?.version||'latest')" 2>/dev/null || echo "latest")
           echo "tag=$VERSION" >> $GITHUB_OUTPUT
-      - uses: docker/bake-action@v5
+      - uses: docker/bake-action@v7
         with:
           push: true
           files: |
