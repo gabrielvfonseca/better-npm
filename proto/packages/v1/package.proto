@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package dash.packages.v1;
+
+option go_package = "github.com/dash-io/dash/proto/packages/v1;packagesv1";
+
+import "common/v1/common.proto";
+
+message Package {
+  string id = 1;
+  string name = 2;
+  string scope = 3;
+  string version = 4;
+  string description = 5;
+  repeated string keywords = 6;
+  string homepage = 7;
+  string repository = 8;
+  string license = 9;
+  string readme = 10;
+  map<string, string> dist_tags = 11;
+  int64 download_count = 12;
+  bool is_deprecated = 13;
+  string deprecation_message = 14;
+  string owner_id = 15;
+  dash.common.v1.Metadata metadata = 16;
+}
+
+message PackageVersion {
+  string id = 1;
+  string package_id = 2;
+  string package_name = 3;
+  string version = 4;
+  string description = 5;
+  string main = 6;
+  string types = 7;
+  map<string, string> exports = 8;
+  repeated string files = 9;
+  map<string, string> scripts = 10;
+  map<string, string> dependencies = 11;
+  map<string, string> dev_dependencies = 12;
+  map<string, string> peer_dependencies = 13;
+  map<string, string> optional_dependencies = 14;
+  repeated Dependency dependency_list = 15;
+  Dist dist = 16;
+  bool has_install_script = 17;
+  bool deprecated = 18;
+  string deprecation_reason = 19;
+  dash.common.v1.Metadata metadata = 20;
+}
+
+message Dependency {
+  string name = 1;
+  string version_range = 2;
+  bool optional = 3;
+  bool dev = 4;
+  string kind = 5;
+}
+
+message Dist {
+  string tarball = 1;
+  string shasum = 2;
+  string integrity = 3;
+  int64 file_count = 4;
+  int64 unpacked_size = 5;
+}
+
+message PackageList {
+  repeated Package packages = 1;
+  dash.common.v1.Pagination pagination = 2;
+}
+
+message PackageManifest {
+  string name = 1;
+  string version = 2;
+  string description = 3;
+  string main = 4;
+  repeated string files = 5;
+  map<string, string> scripts = 6;
+  map<string, string> bin = 7;
+  map<string, string> dependencies = 8;
+  map<string, string> dev_dependencies = 9;
+  map<string, string> peer_dependencies = 10;
+  map<string, string> optional_dependencies = 11;
+  string engines_required = 12;
+  string os_required = 13;
+  string cpu_required = 14;
+}

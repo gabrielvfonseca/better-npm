@@ -1,0 +1,156 @@
+syntax = "proto3";
+
+package dash.auth.v1;
+
+option go_package = "github.com/dash-io/dash/proto/auth/v1;authv1";
+
+import "common/v1/common.proto";
+
+service AuthService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc VerifyToken(VerifyTokenRequest) returns (VerifyTokenResponse);
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+  rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse);
+  rpc Validate(ValidateRequest) returns (ValidateResponse);
+  rpc Refresh(RefreshRequest) returns (RefreshResponse);
+  rpc Revoke(RevokeRequest) returns (RevokeResponse);
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+  string otp_code = 3;
+}
+
+message LoginResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expires_at = 3;
+  User user = 4;
+}
+
+message RegisterRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+  string display_name = 4;
+}
+
+message RegisterResponse {
+  User user = 1;
+  string access_token = 2;
+  string refresh_token = 3;
+}
+
+message VerifyTokenRequest {
+  string token = 1;
+}
+
+message VerifyTokenResponse {
+  bool valid = 1;
+  User user = 2;
+  repeated string permissions = 3;
+  int64 expires_at = 4;
+}
+
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+message RefreshTokenResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expires_at = 3;
+}
+
+message LogoutRequest {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+message LogoutResponse {
+  dash.common.v1.Empty empty = 1;
+}
+
+message AuthenticateRequest {
+  oneof method {
+    string token = 1;
+    Credentials credentials = 2;
+    string oauth_code = 3;
+  }
+}
+
+message Credentials {
+  string username = 1;
+  string password = 2;
+}
+
+message AuthenticateResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expires_at = 3;
+  User user = 4;
+}
+
+message ValidateRequest {
+  string access_token = 1;
+}
+
+message ValidateResponse {
+  bool valid = 1;
+  User user = 2;
+  repeated string permissions = 3;
+}
+
+message RefreshRequest {
+  string refresh_token = 1;
+}
+
+message RefreshResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expires_at = 3;
+}
+
+message RevokeRequest {
+  string token = 1;
+  enum TokenKind {
+    ACCESS = 0;
+    REFRESH = 1;
+    ALL = 2;
+  }
+  TokenKind kind = 2;
+}
+
+message RevokeResponse {
+  dash.common.v1.Empty empty = 1;
+}
+
+message User {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string display_name = 4;
+  string avatar_url = 5;
+  repeated string roles = 6;
+  bool email_verified = 7;
+  dash.common.v1.Metadata metadata = 8;
+}
+
+message Token {
+  string id = 1;
+  string user_id = 2;
+  string token_hash = 3;
+  string description = 4;
+  repeated string scopes = 5;
+  int64 expires_at = 6;
+  int64 created_at = 7;
+  int64 last_used_at = 8;
+}
+
+message Permission {
+  string resource = 1;
+  string action = 2;
+}

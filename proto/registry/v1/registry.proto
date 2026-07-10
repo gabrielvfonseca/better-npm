@@ -1,0 +1,171 @@
+syntax = "proto3";
+
+package dash.registry.v1;
+
+option go_package = "github.com/dash-io/dash/proto/registry/v1;registryv1";
+
+import "common/v1/common.proto";
+import "packages/v1/package.proto";
+
+service RegistryService {
+  rpc GetPackage(GetPackageRequest) returns (GetPackageResponse);
+  rpc ListPackages(ListPackagesRequest) returns (ListPackagesResponse);
+  rpc PublishPackage(PublishPackageRequest) returns (PublishPackageResponse);
+  rpc UnpublishPackage(UnpublishPackageRequest) returns (UnpublishPackageResponse);
+  rpc DeprecatePackage(DeprecatePackageRequest) returns (DeprecatePackageResponse);
+  rpc SearchPackages(SearchPackagesRequest) returns (SearchPackagesResponse);
+  rpc GetPackageVersion(GetPackageVersionRequest) returns (GetPackageVersionResponse);
+  rpc ListPackageVersions(ListPackageVersionsRequest) returns (ListPackageVersionsResponse);
+  rpc DeprecateVersion(DeprecateVersionRequest) returns (DeprecateVersionResponse);
+  rpc AddDistTag(AddDistTagRequest) returns (AddDistTagResponse);
+  rpc RemoveDistTag(RemoveDistTagRequest) returns (RemoveDistTagResponse);
+}
+
+message GetPackageRequest {
+  string name = 1;
+  string scope = 2;
+}
+
+message GetPackageResponse {
+  dash.packages.v1.Package package = 1;
+  dash.packages.v1.PackageVersion latest_version = 2;
+}
+
+message ListPackagesRequest {
+  dash.common.v1.Pagination pagination = 1;
+  string query = 2;
+  repeated string keywords = 3;
+  string scope = 4;
+  string sort_by = 5;
+  enum SortOrder {
+    NAME = 0;
+    UPDATED = 1;
+    DOWNLOADS = 2;
+    CREATED = 3;
+  }
+  SortOrder sort_order = 6;
+}
+
+message ListPackagesResponse {
+  repeated dash.packages.v1.Package packages = 1;
+  dash.common.v1.Pagination pagination = 2;
+}
+
+message PublishPackageRequest {
+  string name = 1;
+  string version = 2;
+  string description = 3;
+  string readme = 4;
+  string license = 5;
+  string homepage = 6;
+  string repository = 7;
+  repeated string keywords = 8;
+  bytes tarball = 9;
+  dash.packages.v1.PackageManifest manifest = 10;
+  string scope = 11;
+  string access_token = 12;
+}
+
+message PublishPackageResponse {
+  dash.packages.v1.Package package = 1;
+  dash.packages.v1.PackageVersion version = 2;
+}
+
+message UnpublishPackageRequest {
+  string name = 1;
+  string reason = 2;
+  string scope = 3;
+}
+
+message UnpublishPackageResponse {
+  dash.common.v1.Empty empty = 1;
+}
+
+message DeprecatePackageRequest {
+  string name = 1;
+  string message = 2;
+  string scope = 3;
+  string version = 4;
+}
+
+message DeprecatePackageResponse {
+  dash.packages.v1.Package package = 1;
+}
+
+message SearchPackagesRequest {
+  string query = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  repeated string scopes = 4;
+  enum SortOrder {
+    RELEVANCE = 0;
+    DOWNLOADS = 1;
+    UPDATED = 2;
+    NAME = 3;
+  }
+  SortOrder sort_order = 5;
+}
+
+message SearchPackagesResponse {
+  repeated SearchPackageResult results = 1;
+  int32 total = 2;
+  double took_ms = 3;
+  dash.common.v1.Pagination pagination = 4;
+}
+
+message SearchPackageResult {
+  dash.packages.v1.Package package = 1;
+  dash.packages.v1.PackageVersion latest_version = 2;
+  int64 download_count = 3;
+  double score = 4;
+  repeated string highlights = 5;
+}
+
+message GetPackageVersionRequest {
+  string package_name = 1;
+  string version = 2;
+  string scope = 3;
+}
+
+message GetPackageVersionResponse {
+  dash.packages.v1.PackageVersion version = 1;
+}
+
+message ListPackageVersionsRequest {
+  string package_name = 1;
+  dash.common.v1.Pagination pagination = 2;
+}
+
+message ListPackageVersionsResponse {
+  repeated dash.packages.v1.PackageVersion versions = 1;
+  dash.common.v1.Pagination pagination = 2;
+}
+
+message DeprecateVersionRequest {
+  string package_name = 1;
+  string version = 2;
+  string message = 3;
+}
+
+message DeprecateVersionResponse {
+  dash.packages.v1.PackageVersion version = 1;
+}
+
+message AddDistTagRequest {
+  string package_name = 1;
+  string version = 2;
+  string tag = 3;
+}
+
+message AddDistTagResponse {
+  dash.packages.v1.PackageVersion version = 1;
+}
+
+message RemoveDistTagRequest {
+  string package_name = 1;
+  string tag = 2;
+}
+
+message RemoveDistTagResponse {
+  dash.packages.v1.PackageVersion version = 1;
+}

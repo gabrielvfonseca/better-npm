@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package dash.search.v1;
+
+option go_package = "github.com/dash-io/dash/proto/search/v1;searchv1";
+
+import "common/v1/common.proto";
+import "packages/v1/package.proto";
+
+service SearchService {
+  rpc Search(SearchRequest) returns (SearchResponse);
+  rpc Suggest(SuggestRequest) returns (SuggestResponse);
+  rpc IndexDocument(IndexDocumentRequest) returns (IndexDocumentResponse);
+  rpc RemoveDocument(RemoveDocumentRequest) returns (RemoveDocumentResponse);
+}
+
+message SearchRequest {
+  string query = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  repeated string scopes = 4;
+  string sort = 5;
+  enum SortOrder {
+    RELEVANCE = 0;
+    DOWNLOADS = 1;
+    UPDATED = 2;
+    NAME = 3;
+  }
+  SortOrder sort_order = 6;
+  map<string, string> filters = 7;
+}
+
+message SearchResponse {
+  repeated SearchResult results = 1;
+  int32 total = 2;
+  double took_ms = 3;
+  dash.common.v1.Pagination pagination = 4;
+}
+
+message SearchResult {
+  dash.packages.v1.Package package = 1;
+  dash.packages.v1.PackageVersion latest_version = 2;
+  int64 download_count = 3;
+  double score = 4;
+  repeated string highlights = 5;
+}
+
+message SuggestRequest {
+  string prefix = 1;
+  int32 max_suggestions = 2;
+  repeated string scopes = 3;
+}
+
+message SuggestResponse {
+  repeated Suggestion suggestions = 1;
+}
+
+message Suggestion {
+  string name = 1;
+  string description = 2;
+  int64 download_count = 3;
+  double score = 4;
+}
+
+message IndexDocumentRequest {
+  string document_id = 1;
+  string type = 2;
+  string title = 3;
+  string body = 4;
+  map<string, string> metadata = 5;
+  repeated string keywords = 6;
+  int64 timestamp = 7;
+}
+
+message IndexDocumentResponse {
+  bool success = 1;
+  string document_id = 2;
+  int64 indexed_at = 3;
+}
+
+message RemoveDocumentRequest {
+  string document_id = 1;
+  string type = 2;
+}
+
+message RemoveDocumentResponse {
+  bool success = 1;
+}
