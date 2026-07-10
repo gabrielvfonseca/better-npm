@@ -1,0 +1,14 @@
+{
+  "name": "@dash/tailwind-config",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "main": "tailwind.config.ts",
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.7.0"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}
