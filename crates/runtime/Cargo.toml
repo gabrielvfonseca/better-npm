@@ -1,0 +1,19 @@
+[package]
+name = "dash-runtime"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Application runtime initialization and lifecycle management"
+
+[dependencies]
+serde = { workspace = true }
+tokio = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+dash-config = { path = "../config" }
+dash-telemetry = { path = "../telemetry" }
+dash-logger = { path = "../logger" }
+dash-concurrency = { path = "../concurrency" }
+dash-filesystem = { path = "../filesystem" }

@@ -1,0 +1,23 @@
+[package]
+name = "dash-plugin"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Dynamic plugin system for extending Dash via shared libraries"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+dash-config = { path = "../config" }
+dash-filesystem = { path = "../filesystem" }
+dash-package = { path = "../package" }
+dash-manifest = { path = "../manifest" }
+dash-logger = { path = "../logger" }
+dash-concurrency = { path = "../concurrency" }
+tokio = { workspace = true }
+libloading = "0.8"
+dirs = "6"

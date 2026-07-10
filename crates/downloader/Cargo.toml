@@ -1,0 +1,26 @@
+[package]
+name = "dash-downloader"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Concurrent HTTP/registry download with streaming integrity verification"
+
+[dependencies]
+tokio = { workspace = true }
+reqwest = { workspace = true }
+tracing = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+futures = { workspace = true }
+futures-util = { workspace = true }
+dash-package = { path = "../package" }
+dash-network = { path = "../network" }
+dash-cache = { path = "../cache" }
+dash-progress = { path = "../progress" }
+dash-concurrency = { path = "../concurrency" }
+dash-integrity = { path = "../integrity" }
+dash-hashing = { path = "../hashing" }
+dash-filesystem = { path = "../filesystem" }
+dash-config = { path = "../config" }
+dash-telemetry = { path = "../telemetry" }

@@ -1,0 +1,18 @@
+[package]
+name = "dash-concurrency"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Async and parallel concurrency primitives for Dash workflows"
+
+[dependencies]
+tokio = { workspace = true }
+futures = { workspace = true }
+futures-util = { workspace = true }
+rayon = { workspace = true }
+dashmap = { workspace = true }
+parking_lot = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }

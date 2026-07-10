@@ -1,0 +1,32 @@
+[package]
+name = "dash-publisher"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Package publishing workflow: build, sign, upload to registry"
+
+[dependencies]
+tokio = { workspace = true }
+reqwest = { workspace = true }
+tracing = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+tempfile = { workspace = true }
+dash-package = { path = "../package" }
+dash-registry-client = { path = "../registry-client" }
+dash-config = { path = "../config" }
+dash-auth = { path = "../auth" }
+dash-integrity = { path = "../integrity" }
+dash-signatures = { path = "../signatures" }
+dash-hashing = { path = "../hashing" }
+dash-manifest = { path = "../manifest" }
+dash-compression = { path = "../compression" }
+dash-archive = { path = "../archive" }
+dash-filesystem = { path = "../filesystem" }
+dash-telemetry = { path = "../telemetry" }
+dash-progress = { path = "../progress" }
+futures = { workspace = true }

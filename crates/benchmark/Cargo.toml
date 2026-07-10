@@ -1,0 +1,22 @@
+[package]
+name = "dash-benchmark"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Benchmarking harness using Criterion for Dash subsystems"
+
+[dependencies]
+criterion = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+dash-config = { path = "../config" }
+dash-logger = { path = "../logger" }
+dash-concurrency = { path = "../concurrency" }
+dash-hashing = { path = "../hashing" }
+dash-filesystem = { path = "../filesystem" }
+tokio = { workspace = true }
+rand = { workspace = true }

@@ -1,0 +1,22 @@
+[package]
+name = "dash-compression"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Compression and decompression support (gzip, zstd, deflate)"
+
+[dependencies]
+serde = { workspace = true }
+flate2 = { workspace = true }
+tar = { workspace = true }
+zip = { workspace = true }
+zstd = { workspace = true }
+bytes = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+dash-filesystem = { path = "../filesystem" }
+dash-hashing = { path = "../hashing" }
+tracing = { workspace = true }
+futures = { workspace = true }

@@ -1,0 +1,27 @@
+[package]
+name = "dash-package"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Core package model: name, version, metadata, and identifier types"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+semver = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+schemars = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+bytes = { workspace = true }
+hex = { workspace = true }
+sha2 = { workspace = true }
+sha3 = { workspace = true }
+blake3 = { workspace = true }
+dash-hashing = { path = "../hashing" }
+dash-integrity = { path = "../integrity" }
+url = { workspace = true }
+dash-filesystem = { path = "../filesystem" }
+regex = { workspace = true }

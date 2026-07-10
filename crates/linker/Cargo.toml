@@ -1,0 +1,20 @@
+[package]
+name = "dash-linker"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Symbolic and hard linking of installed packages into target directories"
+
+[dependencies]
+serde = { workspace = true }
+async-trait = "0.1"
+serde_json = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+dash-filesystem = { path = "../filesystem" }
+dash-package = { path = "../package" }
+dash-store = { path = "../store" }
+dash-hashing = { path = "../hashing" }

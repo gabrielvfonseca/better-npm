@@ -1,0 +1,23 @@
+[package]
+name = "dash-protocol"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Wire protocol types and serialization for registry communication"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+bytes = { workspace = true }
+prost = { workspace = true }
+tonic = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+schemars = { workspace = true }
+dash-package = { path = "../package" }
+url = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+hmac = "0.12"
+sha2 = { workspace = true }

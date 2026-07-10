@@ -1,0 +1,23 @@
+[package]
+name = "dash-utils"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Shared utility functions: formatting, encoding, slug generation, IO helpers"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+hex = { workspace = true }
+base64 = { workspace = true }
+regex = { workspace = true }
+walkdir = { workspace = true }
+rand = { workspace = true }
+bytes = { workspace = true }
+dash-hashing = { path = "../hashing" }
+dash-concurrency = { path = "../concurrency" }

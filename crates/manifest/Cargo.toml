@@ -1,0 +1,21 @@
+[package]
+name = "dash-manifest"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Package manifest (dash.json) schema, parsing, and validation"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+toml = { workspace = true }
+semver = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+schemars = { workspace = true }
+tracing = { workspace = true }
+dash-package = { path = "../package" }
+dash-config = { path = "../config" }
+regex = { workspace = true }
+url = { workspace = true }

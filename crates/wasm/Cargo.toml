@@ -1,0 +1,18 @@
+[package]
+name = "dash-wasm"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "WebAssembly runtime integration for running WASM-based packages"
+
+[dependencies]
+serde = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+dash-runtime = { path = "../runtime" }
+dash-filesystem = { path = "../filesystem" }
+dash-cache = { path = "../cache" }
+bytes = { workspace = true }
+dash-hashing = { path = "../hashing" }

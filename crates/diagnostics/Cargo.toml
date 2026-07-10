@@ -1,0 +1,20 @@
+[package]
+name = "dash-diagnostics"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Error diagnostics, reporting, and structured diagnostic data"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+dash-config = { path = "../config" }
+dash-logger = { path = "../logger" }
+chrono = { workspace = true }
+uuid = { workspace = true }
+dash-filesystem = { path = "../filesystem" }
+dirs = "6"

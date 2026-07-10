@@ -1,0 +1,22 @@
+[package]
+name = "dash-network"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "HTTP networking layer: retry, backoff, rate limiting, middleware"
+
+[dependencies]
+reqwest = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+dash-config = { path = "../config" }
+dash-telemetry = { path = "../telemetry" }
+url = { workspace = true }
+bytes = { workspace = true }
+futures = { workspace = true }
+tower = { workspace = true }
+tower-http = { workspace = true }
+http = { workspace = true }

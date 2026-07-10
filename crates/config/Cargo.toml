@@ -1,0 +1,22 @@
+[package]
+name = "dash-config"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Configuration management: layered profiles, env overrides, CLI args"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+toml = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+schemars = { workspace = true }
+tracing = { workspace = true }
+dash-filesystem = { path = "../filesystem" }
+once_cell = { workspace = true }
+arc-swap = { workspace = true }
+regex = { workspace = true }
+dirs = "6"

@@ -1,0 +1,22 @@
+[package]
+name = "dash-graph"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Dependency graph data structures and traversal algorithms"
+
+[dependencies]
+petgraph = "0.6"
+dashmap = { workspace = true }
+serde = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+dash-package = { path = "../package" }
+dash-manifest = { path = "../manifest" }
+dash-lockfile = { path = "../lockfile" }
+semver = { workspace = true }
+rayon = { workspace = true }
+futures = { workspace = true }
+regex = { workspace = true }

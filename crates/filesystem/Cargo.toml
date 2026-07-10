@@ -1,0 +1,22 @@
+[package]
+name = "dash-filesystem"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Filesystem abstractions: path resolution, locking, atomic writes, directory walks"
+
+[dependencies]
+tokio = { workspace = true }
+bytes = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+dashmap = { workspace = true }
+tempfile = { workspace = true }
+walkdir = { workspace = true }
+regex = { workspace = true }
+glob = { workspace = true }
+uuid = { workspace = true }
+rayon = { workspace = true }
+dash-concurrency = { path = "../concurrency" }

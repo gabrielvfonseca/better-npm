@@ -1,0 +1,19 @@
+[package]
+name = "dash-sandbox"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Sandboxed execution environments for package build scripts"
+
+[dependencies]
+serde = { workspace = true }
+tokio = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+dash-filesystem = { path = "../filesystem" }
+dash-config = { path = "../config" }
+tempfile = { workspace = true }
+rand = { workspace = true }
+dash-concurrency = { path = "../concurrency" }

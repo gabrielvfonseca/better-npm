@@ -1,0 +1,28 @@
+[package]
+name = "dash-registry-client"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "HTTP client for communicating with Dash package registries"
+
+[dependencies]
+reqwest = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+dash-package = { path = "../package" }
+dash-protocol = { path = "../protocol" }
+dash-config = { path = "../config" }
+dash-auth = { path = "../auth" }
+dash-telemetry = { path = "../telemetry" }
+dash-network = { path = "../network" }
+dash-cache = { path = "../cache" }
+url = { workspace = true }
+bytes = { workspace = true }
+futures = { workspace = true }
+base64 = { workspace = true }
+chrono = { workspace = true }

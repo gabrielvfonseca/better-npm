@@ -1,0 +1,30 @@
+[package]
+name = "dash-store"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Persistent and object storage abstraction with SQL and cloud backends"
+
+[dependencies]
+async-trait = "0.1"
+futures = { workspace = true }
+object_store = { workspace = true }
+sqlx = { workspace = true }
+deadpool = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true }
+bytes = { workspace = true }
+dashmap = { workspace = true }
+hex = { workspace = true }
+dash-hashing = { path = "../hashing" }
+dash-filesystem = { path = "../filesystem" }
+dash-cache = { path = "../cache" }
+dash-config = { path = "../config" }
+moka = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }

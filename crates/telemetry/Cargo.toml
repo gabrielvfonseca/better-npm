@@ -1,0 +1,23 @@
+[package]
+name = "dash-telemetry"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Telemetry and observability: tracing, metrics, OpenTelemetry export"
+
+[dependencies]
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing-appender = { workspace = true }
+tracing-opentelemetry = "0.29"
+opentelemetry = "0.28"
+opentelemetry-otlp = "0.28"
+opentelemetry_sdk = { version = "0.28", features = ["rt-tokio-current-thread"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+dash-config = { path = "../config" }
+tokio = { workspace = true }
+chrono = { workspace = true }

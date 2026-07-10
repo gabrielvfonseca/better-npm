@@ -1,0 +1,37 @@
+[package]
+name = "dash-installer"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Package installation orchestration with parallel extraction and verification"
+
+[dependencies]
+serde = { workspace = true }
+futures = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+dash-resolver = { path = "../resolver" }
+dash-downloader = { path = "../downloader" }
+dash-linker = { path = "../linker" }
+dash-config = { path = "../config" }
+dash-cache = { path = "../cache" }
+dash-store = { path = "../store" }
+dash-package = { path = "../package" }
+dash-manifest = { path = "../manifest" }
+dash-lockfile = { path = "../lockfile" }
+dash-progress = { path = "../progress" }
+dash-concurrency = { path = "../concurrency" }
+dash-integrity = { path = "../integrity" }
+dash-signatures = { path = "../signatures" }
+dash-filesystem = { path = "../filesystem" }
+dash-hashing = { path = "../hashing" }
+dash-compression = { path = "../compression" }
+dash-archive = { path = "../archive" }
+dash-sandbox = { path = "../sandbox" }
+
+[features]
+parallel = []
+verify-signatures = []

@@ -1,0 +1,47 @@
+[package]
+name = "dash-cli"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Dash package manager CLI - main binary entrypoint"
+
+[[bin]]
+name = "dash"
+path = "src/main.rs"
+
+[dependencies]
+thiserror = { workspace = true }
+serde_json = { workspace = true }
+clap = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+anyhow = { workspace = true }
+dash-resolver = { path = "../resolver" }
+dash-installer = { path = "../installer" }
+dash-downloader = { path = "../downloader" }
+dash-lockfile = { path = "../lockfile" }
+dash-config = { path = "../config" }
+dash-telemetry = { path = "../telemetry" }
+dash-logger = { path = "../logger" }
+dash-diagnostics = { path = "../diagnostics" }
+dash-progress = { path = "../progress" }
+dash-network = { path = "../network" }
+dash-package = { path = "../package" }
+dash-manifest = { path = "../manifest" }
+dash-store = { path = "../store" }
+dash-cache = { path = "../cache" }
+dash-concurrency = { path = "../concurrency" }
+dash-sandbox = { path = "../sandbox" }
+dash-plugin = { path = "../plugin" }
+dash-registry-client = { path = "../registry-client" }
+dash-runtime = { path = "../runtime" }
+dash-publisher = { path = "../publisher" }
+dash-workspace = { path = "../workspace" }
+semver = { workspace = true }
+dirs = "6"
+
+[dev-dependencies]
+assert_cmd = "2"
+predicates = "3"
+tempfile = { workspace = true }

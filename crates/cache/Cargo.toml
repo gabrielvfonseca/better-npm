@@ -1,0 +1,25 @@
+[package]
+name = "dash-cache"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Multi-tier caching layer with in-memory (Moka) and optional Redis backends"
+
+[dependencies]
+async-trait = "0.1"
+moka = { workspace = true }
+dashmap = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+bytes = { workspace = true }
+dash-filesystem = { path = "../filesystem" }
+dash-hashing = { path = "../hashing" }
+dash-config = { path = "../config" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+redis = { workspace = true }
