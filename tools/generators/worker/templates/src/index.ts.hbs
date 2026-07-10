@@ -1,0 +1,47 @@
+{{> auto-generated}}
+
+import { createClient } from "@dash/shared"
+
+{{#ifEquals queue_type 'pubsub'}}
+export interface PubSubMessage {
+  topic: string
+  payload: Record<string, unknown>
+  publishedAt: string
+}
+
+export async function handlePubSub(message: PubSubMessage): Promise<void> {
+  console.log(`[workers-{{dashCase name}}] PubSub message on "${message.topic}":`, message.payload)
+}
+{{/ifEquals}}
+
+{{#ifEquals queue_type 'queue'}}
+export interface QueueJob<T = Record<string, unknown>> {
+  id: string
+  type: string
+  data: T
+  attempts: number
+  createdAt: string
+}
+
+export async function handleQueue(job: QueueJob): Promise<void> {
+  console.log(`[workers-{{dashCase name}}] Processing job "${job.id}" of type "${job.type}"`)
+}
+{{/ifEquals}}
+
+{{#ifEquals queue_type 'cron'}}
+export interface CronEvent {
+  schedule: string
+  triggeredAt: string
+  previousRun?: string
+}
+
+export async function handleCron(event: CronEvent): Promise<void> {
+  console.log(`[workers-{{dashCase name}}] Cron triggered at ${event.triggeredAt}`)
+}
+{{/ifEquals}}
+
+export const workerMeta = {
+  name: "@dash/workers-{{dashCase name}}",
+  version: "0.1.0",
+  queueType: "{{queue_type}}",
+}

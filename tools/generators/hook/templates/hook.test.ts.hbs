@@ -1,0 +1,14 @@
+{{> auto-generated}}
+
+import { describe, it, expect } from "vitest"
+import { renderHook } from "@testing-library/react"
+import { {{camelCase name}} } from "./{{camelCase name}}"
+
+describe("{{camelCase name}}", () => {
+  it("should return the expected shape", () => {
+    const { result } = renderHook(() => {{camelCase name}}())
+    expect(result.current).toHaveProperty("value")
+    expect(result.current).toHaveProperty("loading")
+    expect(result.current).toHaveProperty("error")
+  })
+})

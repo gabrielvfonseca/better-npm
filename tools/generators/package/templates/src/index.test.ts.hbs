@@ -1,0 +1,16 @@
+{{> auto-generated}}
+
+import { describe, it, expect } from "vitest"
+import { {{camelCase name}} } from "./index"
+
+describe("{{pascalCase name}}", () => {
+  it("should return the correct name", () => {
+    const result = {{camelCase name}}()
+    expect(result.name).toBe("{{dashCase name}}")
+  })
+
+  it("should have a version defined", () => {
+    const result = {{camelCase name}}()
+    expect(result.version).toBeDefined()
+  })
+})

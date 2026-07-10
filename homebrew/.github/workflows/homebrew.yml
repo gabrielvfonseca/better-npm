@@ -1,0 +1,180 @@
+name: Homebrew
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g., 0.1.0)"
+        required: true
+        type: string
+
+jobs:
+  bottle:
+    name: Build Bottles
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-15
+          - macos-14
+          - macos-13
+          - ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.os == 'ubuntu-24.04' && 'x86_64-unknown-linux-gnu' || '' }}
+
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install pkg-config openssl@3 zstd
+
+      - name: Build binary
+        run: |
+          cargo build --release --package dash-cli --bin dash
+          echo "BINARY_PATH=$(pwd)/target/release/dash" >> $GITHUB_ENV
+
+      - name: Generate metadata
+        id: meta
+        run: |
+          VERSION="${{ github.event.release.tag_name || inputs.version }}"
+          VERSION="${VERSION#v}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+          # Determine bottle tag based on runner OS
+          if [ "${{ runner.os }}" = "macOS" ]; then
+            ARCH=$(uname -m)
+            if [ "${{ matrix.os }}" = "macos-15" ]; then
+              TAG="arm64_sequoia"
+            elif [ "${{ matrix.os }}" = "macos-14" ]; then
+              TAG="arm64_sonoma"
+            elif [ "${{ matrix.os }}" = "macos-13" ]; then
+              if [ "$ARCH" = "arm64" ]; then
+                TAG="arm64_ventura"
+              else
+                TAG="x86_64_ventura"
+              fi
+            fi
+          else
+            TAG="x86_64_linux"
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Create bottle tarball
+        run: |
+          VERSION="${{ steps.meta.outputs.version }}"
+          TAG="${{ steps.meta.outputs.tag }}"
+          BOTTLE_DIR="dash-${VERSION}.${TAG}.bottle"
+          mkdir -p "${BOTTLE_DIR}/bin"
+          cp "$BINARY_PATH" "${BOTTLE_DIR}/bin/dash"
+          tar czf "${BOTTLE_DIR}.tar.gz" "${BOTTLE_DIR}"
+          echo "BOTTLE_PATH=${BOTTLE_DIR}.tar.gz" >> $GITHUB_ENV
+          echo "BOTTLE_SHA=$(sha256sum ${BOTTLE_DIR}.tar.gz | cut -d' ' -f1)" >> $GITHUB_OUTPUT
+
+      - name: Upload bottle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bottle-${{ steps.meta.outputs.tag }}
+          path: ${{ env.BOTTLE_PATH }}
+          retention-days: 7
+
+      - name: Upload bottle to release
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ env.BOTTLE_PATH }}
+          asset_name: dash-${{ steps.meta.outputs.version }}.${{ steps.meta.outputs.tag }}.bottle.tar.gz
+          asset_content_type: application/gzip
+
+  update-formula:
+    name: Update Formula
+    if: github.event_name == 'release'
+    needs: [bottle]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: org/homebrew-dash
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+
+      - name: Download all bottles
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bottle-*
+          merge-multiple: true
+
+      - name: Compute hashes
+        id: hashes
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"
+
+          # Compute source tarball hash
+          echo "SOURCE_SHA=$(curl -sL "https://github.com/org/dash/archive/refs/tags/v${VERSION}.tar.gz" | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUT
+
+          # Compute bottle hashes
+          for bottle in *.bottle.tar.gz; do
+            tag=$(echo "$bottle" | sed 's/.*\.\(.*\)\.bottle\.tar\.gz/\1/')
+            sha=$(sha256sum "$bottle" | cut -d' ' -f1)
+            echo "BOTTLE_${tag^^}_SHA=$sha" >> $GITHUB_ENV
+          done
+
+      - name: Update formula
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"
+          FORMULA="Formula/dash.rb"
+
+          # Update version
+          sed -i "s/version \"[0-9.]*\"/version \"$VERSION\"/" "$FORMULA"
+
+          # Update source tarball hash
+          sed -i "s/sha256 \"[a-f0-9]*\"/sha256 \"${{ steps.hashes.outputs.SOURCE_SHA }}\"/" "$FORMULA"
+
+          # Update bottle hashes
+          for var in $(env | grep '^BOTTLE_' | cut -d= -f1); do
+            tag=$(echo "$var" | sed 's/BOTTLE_//;s/_SHA$//' | tr '[:upper:]' '[:lower:]')
+            sha="${!var}"
+            # Replace placeholder hash for this tag
+            awk -v tag="$tag" -v sha="$sha" '
+              /sha256 cellar: :any_skip_relocation, '"$tag"':/ {
+                sub(/"[a-f0-9]+"/, "\"" sha "\"")
+              }
+              { print }
+            ' "$FORMULA" > "${FORMULA}.tmp" && mv "${FORMULA}.tmp" "$FORMULA"
+          done
+
+      - name: Commit and push
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          git config user.name "Dash Bot"
+          git config user.email "bot@dash.dev"
+          git add Formula/dash.rb
+          git commit -m "dash ${VERSION}"
+          git push
+
+  deploy-tap:
+    name: Deploy to Homebrew Core
+    if: false
+    runs-on: ubuntu-24.04
+    needs: [bottle, update-formula]
+    steps:
+      - name: Create PR to homebrew-core
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            const version = process.env.GITHUB_REF_NAME.replace('v', '');
+            execSync(`brew bump-formula-pr --version=${version} dash`, { stdio: 'inherit' });

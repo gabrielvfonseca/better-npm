@@ -1,0 +1,16 @@
+//! `dash-{{dashCase name}}` — {{description}}
+
+/// Returns a greeting message for this crate.
+pub fn hello() -> &'static str {
+    "hello from dash-{{dashCase name}}"
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_hello() {
+        assert_eq!(hello(), "hello from dash-{{dashCase name}}");
+    }
+}

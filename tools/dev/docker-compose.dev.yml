@@ -1,0 +1,329 @@
+networks:
+  dash-net:
+  dash-public:
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+  minio_dev_data:
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    profiles: ["infra", "all"]
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ../../database/migrations:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_DB: dash_dev
+      POSTGRES_USER: dash
+      POSTGRES_PASSWORD: dash_dev_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dash"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dash-net
+
+  redis:
+    image: redis:7-alpine
+    profiles: ["infra", "all"]
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    command: redis-server --appendonly yes --requirepass dash_dev_redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "dash_dev_redis", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - dash-net
+
+  minio:
+    image: minio/minio:latest
+    profiles: ["infra", "all"]
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_dev_data:/data
+    environment:
+      MINIO_ROOT_USER: dash
+      MINIO_ROOT_PASSWORD: dash_dev_minio
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dash-net
+
+  api:
+    profiles: ["apps", "all"]
+    build:
+      context: ../..
+      dockerfile: tools/docker/Dockerfile.api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://dash:dash_dev_password@postgres:5432/dash_dev
+      REDIS_URL: redis://:dash_dev_redis@redis:6379
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: dash
+      MINIO_SECRET_KEY: dash_dev_minio
+    volumes:
+      - ../../apps/api/src:/app/apps/api/src
+      - ../../packages:/app/packages
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - dash-net
+      - dash-public
+
+  registry:
+    profiles: ["apps", "all"]
+    build:
+      context: ../..
+      dockerfile: tools/docker/Dockerfile.registry
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://dash:dash_dev_password@postgres:5432/dash_dev
+      REDIS_URL: redis://:dash_dev_redis@redis:6379
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: dash
+      MINIO_SECRET_KEY: dash_dev_minio
+    volumes:
+      - ../../apps/registry/src:/app/apps/registry/src
+      - ../../packages:/app/packages
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - dash-net
+      - dash-public
+
+  worker-downloads:
+    profiles: ["workers", "all"]
+    build:
+      context: ../..
+      dockerfile: tools/docker/Dockerfile.worker
+      args:
+        WORKER_NAME: downloads
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://dash:dash_dev_password@postgres:5432/dash_dev
+      REDIS_URL: redis://:dash_dev_redis@redis:6379
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: dash
+      MINIO_SECRET_KEY: dash_dev_minio
+      WORKER_TYPE: downloads
+    volumes:
+      - ../../apps/workers/downloads/src:/app/apps/workers/downloads/src
+      - ../../packages:/app/packages
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - dash-net
+
+  worker-indexing:
+    profiles: ["workers", "all"]
+    build:
+      context: ../..
+      dockerfile: tools/docker/Dockerfile.worker
+      args:
+        WORKER_NAME: indexing
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://dash:dash_dev_password@postgres:5432/dash_dev
+      REDIS_URL: redis://:dash_dev_redis@redis:6379
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: dash
+      MINIO_SECRET_KEY: dash_dev_minio
+      WORKER_TYPE: indexing
+    volumes:
+      - ../../apps/workers/indexing/src:/app/apps/workers/indexing/src
+      - ../../packages:/app/packages
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - dash-net
+
+  worker-metadata:
+    profiles: ["workers", "all"]
+    build:
+      context: ../..
+      dockerfile: tools/docker/Dockerfile.worker
+      args:
+        WORKER_NAME: metadata
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://dash:dash_dev_password@postgres:5432/dash_dev
+      REDIS_URL: redis://:dash_dev_redis@redis:6379
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: dash
+      MINIO_SECRET_KEY: dash_dev_minio
+      WORKER_TYPE: metadata
+    volumes:
+      - ../../apps/workers/metadata/src:/app/apps/workers/metadata/src
+      - ../../packages:/app/packages
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - dash-net
+
+  worker-scanning:
+    profiles: ["workers", "all"]
+    build:
+      context: ../..
+      dockerfile: tools/docker/Dockerfile.worker
+      args:
+        WORKER_NAME: scanning
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://dash:dash_dev_password@postgres:5432/dash_dev
+      REDIS_URL: redis://:dash_dev_redis@redis:6379
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: dash
+      MINIO_SECRET_KEY: dash_dev_minio
+      WORKER_TYPE: scanning
+    volumes:
+      - ../../apps/workers/scanning/src:/app/apps/workers/scanning/src
+      - ../../packages:/app/packages
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - dash-net
+
+  worker-signatures:
+    profiles: ["workers", "all"]
+    build:
+      context: ../..
+      dockerfile: tools/docker/Dockerfile.worker
+      args:
+        WORKER_NAME: signatures
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://dash:dash_dev_password@postgres:5432/dash_dev
+      REDIS_URL: redis://:dash_dev_redis@redis:6379
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: dash
+      MINIO_SECRET_KEY: dash_dev_minio
+      WORKER_TYPE: signatures
+    volumes:
+      - ../../apps/workers/signatures/src:/app/apps/workers/signatures/src
+      - ../../packages:/app/packages
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - dash-net
+
+  worker-analytics:
+    profiles: ["workers", "all"]
+    build:
+      context: ../..
+      dockerfile: tools/docker/Dockerfile.worker
+      args:
+        WORKER_NAME: analytics
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://dash:dash_dev_password@postgres:5432/dash_dev
+      REDIS_URL: redis://:dash_dev_redis@redis:6379
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: dash
+      MINIO_SECRET_KEY: dash_dev_minio
+      WORKER_TYPE: analytics
+    volumes:
+      - ../../apps/workers/analytics/src:/app/apps/workers/analytics/src
+      - ../../packages:/app/packages
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - dash-net
+
+  worker-cleanup:
+    profiles: ["workers", "all"]
+    build:
+      context: ../..
+      dockerfile: tools/docker/Dockerfile.worker
+      args:
+        WORKER_NAME: cleanup
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://dash:dash_dev_password@postgres:5432/dash_dev
+      REDIS_URL: redis://:dash_dev_redis@redis:6379
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: dash
+      MINIO_SECRET_KEY: dash_dev_minio
+      WORKER_TYPE: cleanup
+    volumes:
+      - ../../apps/workers/cleanup/src:/app/apps/workers/cleanup/src
+      - ../../packages:/app/packages
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - dash-net

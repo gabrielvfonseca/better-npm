@@ -1,0 +1,17 @@
+{{> auto-generated}}
+
+import { describe, it, expect } from "vitest"
+import { render, screen } from "@testing-library/react"
+import { {{pascalCase name}} } from "./{{pascalCase name}}"
+
+describe("{{pascalCase name}}", () => {
+  it("should render without crashing", () => {
+    const { container } = render(<{{pascalCase name}} />)
+    expect(container).toBeDefined()
+  })
+
+  it("should render children when provided", () => {
+    render(<{{pascalCase name}}>Hello World</{{pascalCase name}}>)
+    expect(screen.getByText("Hello World")).toBeDefined()
+  })
+})

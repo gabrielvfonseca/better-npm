@@ -1,0 +1,97 @@
+{
+  "name": "@dash/{{dashCase name}}",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "{{description}}",
+  "scripts": {
+    {{#ifEquals framework 'nextjs'}}
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    {{else ifEquals framework 'worker'}}
+    "dev": "tsx watch src/index.ts",
+    "build": "tsup src/index.ts --format esm",
+    "start": "node dist/index.js",
+    "lint": "biome lint src/",
+    {{else}}
+    "dev": "tsx watch src/index.ts",
+    "build": "tsup src/index.ts --format esm",
+    "start": "node dist/index.js",
+    "lint": "biome lint src/",
+    {{/ifEquals}}
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "clean": "rm -rf dist"
+  },
+  {{#ifEquals framework 'nextjs'}}
+  "dependencies": {
+    "next": "^15.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@dash/ui": "workspace:*",
+    "@dash/hooks": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "@biomejs/biome": "^1.9.0"
+  }
+  {{else ifEquals framework 'hono'}}
+  "dependencies": {
+    "hono": "^4.7.0",
+    "@dash/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.3.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "@biomejs/biome": "^1.9.0"
+  }
+  {{else ifEquals framework 'fastify'}}
+  "dependencies": {
+    "fastify": "^5.2.0",
+    "@dash/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.3.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "@biomejs/biome": "^1.9.0"
+  }
+  {{else ifEquals framework 'express'}}
+  "dependencies": {
+    "express": "^5.1.0",
+    "@dash/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "tsup": "^8.3.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "@biomejs/biome": "^1.9.0"
+  }
+  {{else ifEquals framework 'worker'}}
+  "dependencies": {
+    "@dash/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.3.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "@biomejs/biome": "^1.9.0"
+  }
+  {{/ifEquals}}
+}

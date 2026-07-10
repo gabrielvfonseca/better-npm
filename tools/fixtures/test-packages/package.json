@@ -1,0 +1,13 @@
+{
+  "name": "@dash/test-package",
+  "version": "1.0.0",
+  "description": "Fixture package for testing",
+  "main": "index.js",
+  "files": ["index.js", "README.md"],
+  "scripts": {
+    "test": "echo 'test ok'"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}

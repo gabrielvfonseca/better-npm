@@ -1,0 +1,28 @@
+-- Migration: {{timestamp}}_{{snakeCase name}}
+-- Description: {{description}}
+-- Up
+-- +goose Up
+-- +migrate Up
+
+BEGIN;
+
+-- TODO: Write your migration here
+-- Example:
+-- CREATE TABLE IF NOT EXISTS {{snakeCase name}} (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+-- );
+
+COMMIT;
+
+-- Down
+-- +goose Down
+-- +migrate Down
+
+BEGIN;
+
+-- TODO: Write your rollback here
+-- Example:
+-- DROP TABLE IF EXISTS {{snakeCase name}};
+
+COMMIT;

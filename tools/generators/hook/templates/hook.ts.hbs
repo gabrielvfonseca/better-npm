@@ -1,0 +1,42 @@
+{{> auto-generated}}
+
+import { useState, useEffect } from "react"
+
+interface {{pascalCase name}}Options {
+  enabled?: boolean
+}
+
+export function {{camelCase name}}(options: {{pascalCase name}}Options = {}) {
+  const { enabled = true } = options
+  const [value, setValue] = useState<unknown>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
+
+  useEffect(() => {
+    if (!enabled) return
+
+    setLoading(true)
+
+    const controller = new AbortController()
+
+    async function run() {
+      try {
+        const result = await Promise.resolve("{{camelCase name}}")
+        setValue(result)
+        setError(null)
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error(String(err)))
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    run()
+
+    return () => {
+      controller.abort()
+    }
+  }, [enabled])
+
+  return { value, loading, error }
+}

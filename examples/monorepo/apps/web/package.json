@@ -1,0 +1,16 @@
+{
+  "name": "@dash/example-web",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@dash/example-shared": "workspace:*",
+    "@dash/sdk": "workspace:*"
+  },
+  "scripts": {
+    "dev": "tsx src/index.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.5.0"
+  }
+}

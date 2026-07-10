@@ -1,0 +1,21 @@
+{{> auto-generated}}
+
+{{#if hasProps}}
+interface {{pascalCase name}}Props {
+  children?: React.ReactNode
+  className?: string
+}
+{{/if}}
+
+function {{pascalCase name}}({{#if hasProps}}{ children, className }: {{pascalCase name}}Props{{/if}}) {
+  return (
+    <div{{#if hasProps}} className={className}{{/if}}>
+      {children}
+    </div>
+  )
+}
+
+{{pascalCase name}}.displayName = "{{pascalCase name}}"
+
+export { {{pascalCase name}} }
+export default {{pascalCase name}}

@@ -1,0 +1,27 @@
+[package]
+name = "dash-{{dashCase name}}"
+description = "{{description}}"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+
+{{#ifEquals type 'binary'}}
+[[bin]]
+name = "dash-{{dashCase name}}"
+path = "src/main.rs"
+{{/ifEquals}}
+
+[dependencies]
+{{#if dependencies}}
+{{#each (split dependencies ",")}}
+{{this}} = { workspace = true }
+{{/each}}
+{{/if}}
+
+[dev-dependencies]
+criterion = { workspace = true }
+tempfile = { workspace = true }
+
+[features]
+default = []

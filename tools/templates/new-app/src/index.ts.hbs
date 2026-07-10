@@ -1,0 +1,134 @@
+{{#ifEquals framework 'nextjs'}}
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "{{titleCase name}}",
+  description: "{{description}}",
+}
+
+export default function Page() {
+  return (
+    <main>
+      <h1>{{titleCase name}}</h1>
+      <p>{{description}}</p>
+    </main>
+  )
+}
+{{/ifEquals}}
+
+{{#ifEquals framework 'hono'}}
+import { Hono } from "hono"
+import { cors } from "hono/cors"
+import { logger } from "hono/logger"
+
+const app = new Hono()
+
+app.use("*", cors())
+app.use("*", logger())
+
+app.get("/", (c) => {
+  return c.json({
+    name: "@dash/{{dashCase name}}",
+    version: "0.0.1",
+    status: "ok",
+  })
+})
+
+app.get("/health", (c) => {
+  return c.json({ status: "healthy" }, 200)
+})
+
+export default app
+{{/ifEquals}}
+
+{{#ifEquals framework 'fastify'}}
+import Fastify from "fastify"
+
+const app = Fastify({ logger: true })
+
+app.get("/", async (_request, _reply) => {
+  return {
+    name: "@dash/{{dashCase name}}",
+    version: "0.0.1",
+    status: "ok",
+  }
+})
+
+app.get("/health", async (_request, _reply) => {
+  return { status: "healthy" }
+})
+
+const start = async () => {
+  try {
+    await app.listen({ port: Number(process.env.PORT) || 3000 })
+  } catch (err) {
+    app.log.error(err)
+    process.exit(1)
+  }
+}
+
+start()
+{{/ifEquals}}
+
+{{#ifEquals framework 'express'}}
+import express from "express"
+
+const app = express()
+const port = Number(process.env.PORT) || 3000
+
+app.use(express.json())
+
+app.get("/", (_req, res) => {
+  res.json({
+    name: "@dash/{{dashCase name}}",
+    version: "0.0.1",
+    status: "ok",
+  })
+})
+
+app.get("/health", (_req, res) => {
+  res.json({ status: "healthy" })
+})
+
+app.listen(port, () => {
+  console.log(`@dash/{{dashCase name}} running on http://localhost:${port}`)
+})
+{{/ifEquals}}
+
+{{#ifEquals framework 'worker'}}
+export interface WorkerPayload {
+  type: string
+  data: Record<string, unknown>
+}
+
+export interface WorkerResult {
+  status: "ok" | "error"
+  worker: string
+  result?: unknown
+  error?: string
+}
+
+export async function handle(payload: WorkerPayload): Promise<WorkerResult> {
+  try {
+    const result = await processPayload(payload)
+    return {
+      status: "ok",
+      worker: "@dash/{{dashCase name}}",
+      result,
+    }
+  } catch (error) {
+    return {
+      status: "error",
+      worker: "@dash/{{dashCase name}}",
+      error: error instanceof Error ? error.message : "Unknown error",
+    }
+  }
+}
+
+async function processPayload(payload: WorkerPayload): Promise<unknown> {
+  return {
+    received: payload,
+    timestamp: new Date().toISOString(),
+  }
+}
+{{/ifEquals}}
