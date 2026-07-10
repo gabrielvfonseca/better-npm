@@ -1,0 +1,3 @@
+{
+  "customInstructions": "This is the Dash monorepo containing TypeScript and Rust code. Follow the existing patterns:\n- TypeScript: use shared configs from packages/typescript-config, lint with biome\n- Rust: use workspace Cargo.toml, respect edition 2024\n- Use Turborepo for build orchestration\n- Changesets for versioning\n- Buf for protobuf generation"
+}

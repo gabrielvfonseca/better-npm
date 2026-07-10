@@ -1,0 +1,24 @@
+[install]
+registry = "https://registry.npmjs.org"
+optional = true
+frozenLockfile = false
+saveTextLockfile = true
+production = false
+auto-install = true
+
+[install.scopes]
+"@dash" = { registry = "https://npm.pkg.github.com" }
+
+[test]
+preload = "./packages/testing/src/setup.ts"
+coverage = true
+coverageThreshold = 80
+coverageReporter = ["text", "lcov", "html"]
+
+[env]
+NODE_ENV = "development"
+LOG_LEVEL = "debug"
+
+[debug]
+frontend = true
+errorStackFrames = 50

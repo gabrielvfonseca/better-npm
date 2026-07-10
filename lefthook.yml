@@ -1,0 +1,47 @@
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      priority: 1
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,css,md,mdx}"
+      run: |
+        bunx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files} && git add {staged_files}
+    cargo-clippy:
+      priority: 2
+      glob: "*.rs"
+      run: cargo clippy --all-targets -- -D warnings
+    cargo-fmt:
+      priority: 3
+      glob: "*.rs"
+      run: cargo fmt --all --check
+    toml-lint:
+      priority: 4
+      glob: "*.toml"
+      run: taplo check {staged_files}
+    typos:
+      priority: 5
+      glob: "*.{md,txt,rs,ts,js,tsx,jsx,json}"
+      run: typos {staged_files}
+    secrets:
+      priority: 6
+      glob: "*"
+      run: |
+        grep -Pl '(?i)(password|secret|token|api.?key|private.?key).{0,10}=.{0,10}[''"]([a-z0-9]{20,}|[A-Za-z0-9+/]{40,})' {staged_files} && echo "⚠️  Secrets detected" && exit 1 || exit 0
+
+commit-msg:
+  commands:
+    lint-commit:
+      run: |
+        echo "$1" | bunx commitlint --edit
+
+pre-push:
+  commands:
+    check:
+      run: cargo check --workspace && bun run lint && bun run typecheck
+    test:
+      run: cargo test --workspace --no-fail-fast && bun run test
+
+post-checkout:
+  commands:
+    reindex:
+      run: echo "Switched branch — reindexing" && bun install 2>/dev/null || true

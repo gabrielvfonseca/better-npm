@@ -1,0 +1,36 @@
+name: Setup
+description: Setup Node, Bun, Rust, and install dependencies
+
+inputs:
+  bun-version:
+    description: "Bun version"
+    default: "1.2.0"
+  rust-version:
+    description: "Rust version"
+    default: "1.84.0"
+  install-node:
+    description: "Install Node.js"
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: ${{ inputs.bun-version }}
+
+    - if: inputs.install-node == 'true'
+      uses: actions/setup-node@v4
+      with:
+        node-version: "22"
+
+    - uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: ${{ inputs.rust-version }}
+
+    - uses: Swatinem/rust-cache@v2
+      with:
+        cache-on-failure: true
+
+    - run: bun install --frozen-lockfile
+      shell: bash

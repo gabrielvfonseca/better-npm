@@ -1,0 +1,122 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [
+    "**/.env.*local",
+    "tsconfig.json",
+    "biome.json"
+  ],
+  "globalEnv": [
+    "NODE_ENV",
+    "LOG_LEVEL",
+    "CI",
+    "VERCEL",
+    "VERCEL_ENV",
+    "VERCEL_URL",
+    "VERCEL_GIT_COMMIT_SHA",
+    "DATABASE_URL",
+    "REDIS_URL",
+    "S3_ENDPOINT",
+    "S3_REGION",
+    "S3_BUCKET",
+    "S3_ACCESS_KEY",
+    "S3_SECRET_KEY",
+    "AUTH_SECRET",
+    "AUTH_URL",
+    "AUTH_ISSUER",
+    "API_URL",
+    "API_PORT",
+    "API_HOST",
+    "API_CORS_ORIGIN",
+    "REGISTRY_URL",
+    "REGISTRY_PORT",
+    "REGISTRY_STORAGE_PATH",
+    "TELEMETRY_ENABLED",
+    "SENTRY_DSN",
+    "SENTRY_ENVIRONMENT",
+    "OTEL_EXPORTER_OTLP_ENDPOINT",
+    "OTEL_SERVICE_NAME",
+    "OTEL_SAMPLER_RATIO",
+    "WORKER_CONCURRENCY",
+    "WORKER_QUEUE_URL",
+    "WORKER_TIMEOUT_MS",
+    "SEARCH_INDEX_PATH",
+    "MEILI_HTTP_ADDR",
+    "MEILI_MASTER_KEY"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "build/**", "!.next/cache/**"],
+      "inputs": ["src/**", "tsconfig.json", "package.json"],
+      "env": ["NODE_ENV"]
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true,
+      "interactive": true
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "biome.json", "package.json"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "tsconfig.json"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "tests/**", "tsconfig.json", "vitest.config.ts"],
+      "outputs": ["coverage/**"]
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "e2e/**", "tsconfig.json"]
+    },
+    "clean": {
+      "cache": false
+    },
+    "db:migrate": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "interactive": true
+    },
+    "db:seed": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "interactive": true
+    },
+    "db:studio": {
+      "cache": false,
+      "persistent": true,
+      "interactive": true
+    },
+    "cargo:build": {
+      "outputs": ["target/release/**", "target/debug/**"],
+      "inputs": ["**/Cargo.toml", "**/Cargo.lock", "**/*.rs"],
+      "cache": false
+    },
+    "cargo:test": {
+      "dependsOn": ["cargo:build"],
+      "cache": false
+    },
+    "cargo:clippy": {
+      "dependsOn": ["cargo:build"],
+      "inputs": ["**/*.rs", "**/Cargo.toml", "**/Cargo.lock"]
+    },
+    "cargo:fmt": {
+      "inputs": ["**/*.rs"]
+    },
+    "format": {
+      "cache": false
+    },
+    "//#format": {},
+    "//#lint:fix": {},
+    "//#outdated": {
+      "cache": false
+    },
+    "//#update": {
+      "cache": false
+    }
+  }
+}
