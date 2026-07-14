@@ -1,29 +1,8 @@
-# Clippy configuration for Dash.
-# See https://doc.rust-lang.org/clippy/ for all available lints.
-
 msrv = "1.84"
-
-# Restriction lints we want to enforce
-disallowed_names = ["foo", "bar", "baz", "qux", "quux"]
-enforce-iter-loop = true
-future-not-send = false
-large-digit-grouping = true
-map-unwrap-or = "warn"
-max-fn-params = 10
-max-struct-builder-fields = 15
-min-ident-chars = 2
-single-char-binding-names-threshold = 2
-too-many-arguments-threshold = 10
-type-complexity-threshold = 250
-
-# Allow certain lints for test code
 allow-dbg-in-tests = true
 allow-print-in-tests = true
 allow-unwrap-in-tests = true
-
-# Modules we should avoid using
-standard-macro-braces = "deny"
-semicolon-outside-block = "deny"
-
-# Cognitive complexity limits
 cognitive-complexity-threshold = 25
+single-char-binding-names-threshold = 2
+too-many-arguments-threshold = 10
+type-complexity-threshold = 250
