@@ -1,6 +1,7 @@
 pre-commit:
   commands:
     lint:
+      stash: false
       glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,css,md,mdx}"
       run: |
         bunx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files} && git add {staged_files}

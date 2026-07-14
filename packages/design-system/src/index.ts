@@ -103,7 +103,13 @@ export interface AvatarProps {
 
 export interface DropdownProps {
   trigger: React.ReactNode
-  items: Array<{ label: string; value: string; icon?: React.ReactNode; disabled?: boolean; divider?: boolean }>
+  items: Array<{
+    label: string
+    value: string
+    icon?: React.ReactNode
+    disabled?: boolean
+    divider?: boolean
+  }>
   onSelect: (value: string) => void
   align?: "start" | "end"
   className?: string

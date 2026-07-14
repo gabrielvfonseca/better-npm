@@ -1,0 +1,28 @@
+export { DashAgentClient } from "./client.js"
+export { createAgentClient } from "./factory.js"
+export type {
+  AgentClient,
+  AgentClientConfig,
+  SideEffect,
+  Stability,
+  SelectConstraint,
+  SelectRequest,
+  SelectResultPackage,
+  SelectResponse,
+  ExplainRequest,
+  ExplainProvenance,
+  ExplainCapability,
+  ExplainResponse,
+  UpgradeGoal,
+  PlanUpgradeRequest,
+  UpgradeItem,
+  PlanUpgradeResponse,
+  AuditRequest,
+  Vulnerability,
+  AuditResponse,
+  ToolNeed,
+  ComposeRequest,
+  ComposePackageProposal,
+  ComposeResponse,
+  ApplyResponse,
+} from "./types.js"

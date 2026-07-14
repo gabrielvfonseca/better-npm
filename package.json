@@ -3,12 +3,7 @@
   "private": true,
   "type": "module",
   "packageManager": "bun@1.2.0",
-  "workspaces": [
-    "apps/*",
-    "packages/*",
-    "tools/*",
-    "examples/*"
-  ],
+  "workspaces": ["apps/*", "packages/*", "tools/*", "examples/*"],
   "scripts": {
     "dev": "bun run turbo dev",
     "build": "bun run turbo build",
@@ -16,7 +11,7 @@
     "lint": "bun run turbo lint",
     "typecheck": "bun run turbo typecheck",
     "format": "bunx @biomejs/biome format --write .",
-    "lint:fix": "bun run turbo lint:fix && bunx @biomejs/biome check --apply .",
+    "lint:fix": "bunx @biomejs/biome check --write .",
     "cargo:build": "cargo build --workspace",
     "cargo:test": "cargo test --workspace",
     "cargo:clippy": "cargo clippy --workspace -- -D warnings",
