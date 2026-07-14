@@ -1,0 +1,192 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dash.dev/schemas/dash.lock.json",
+  "title": "Dash Lockfile",
+  "description": "Schema for dash.lock — the generated, deterministic lockfile that pins every resolved dependency to its content ID (CID), making a build a pure function of the lockfile contents. This file is machine-generated; do not edit by hand.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Lockfile format version. Currently 1. Incremented only on backward-incompatible format changes.",
+      "examples": [1]
+    },
+    "root": {
+      "type": "string",
+      "description": "Root package reference in the format name@version. Identifies the root of the dependency graph.",
+      "pattern": "^(@[a-z0-9-~][a-z0-9-._~]*/)?[a-z0-9-~][a-z0-9-._~]*@\\d+\\.\\d+\\.\\d+",
+      "examples": ["@acme/app@0.0.0"]
+    },
+    "lockDigest": {
+      "type": "string",
+      "description": "BLAKE3 digest (self-verifying) over the canonical TOML content of this lockfile. Enables offline verification that the lockfile hasn't been tampered with. Format: 'b3:' prefix followed by base32-encoded 256-bit hash.",
+      "pattern": "^b3:[a-z2-7]{55}$",
+      "examples": ["b3:qm7f2x3a4b5c6d7e8f9g0h1i2j3k4l5m6n7o8p9q0r1s2t3u4v5w6x7y8z"]
+    },
+    "package": {
+      "type": "array",
+      "title": "Resolved Packages",
+      "description": "List of every resolved package in the dependency graph. Ordered deterministically (sorted by name then version) for merge-friendly diffs.",
+      "items": {
+        "type": "object",
+        "title": "Lockfile Package Entry",
+        "description": "A single resolved package in the lockfile. Records the exact version, content ID, provenance, and granted capabilities.",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^(@[a-z0-9-~][a-z0-9-._~]*/)?[a-z0-9-~][a-z0-9-._~]*$",
+            "description": "Package name. Matches the name in dash.toml.",
+            "examples": ["zod", "@acme/http-client"]
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.]+(?:\\+[a-zA-Z0-9.]+)?)?$",
+            "description": "The exact resolved semver version. This is documentation; the CID is the true identity.",
+            "examples": ["3.23.8"]
+          },
+          "cid": {
+            "type": "string",
+            "pattern": "^b3:[a-z2-7]{55}$",
+            "description": "Content ID (BLAKE3 CID) of the capsule — the immutable artifact identity. Two packages with the same CID are byte-identical capsules.",
+            "examples": ["b3:qm7f2x3a4b5c6d7e8f9g0h1i2j3k4l5m6n7o8p9q0r1s2t3u4v5w6x7y8z"]
+          },
+          "resolved-from": {
+            "type": "string",
+            "description": "The version range in the manifest that selected this version via MVS. Documents why this version was chosen.",
+            "examples": ["^3.23", ">=5.4", "1.4.2"]
+          },
+          "registry": {
+            "type": "string",
+            "format": "uri",
+            "description": "Registry URL from which this package was resolved and fetched.",
+            "examples": ["https://reg.dash.dev"]
+          },
+          "provenance": {
+            "type": "object",
+            "title": "Provenance Record",
+            "description": "Transparency log provenance linking this pinned version to a logged publish event. Enables offline verification of legitimate publication.",
+            "additionalProperties": false,
+            "properties": {
+              "logIndex": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Index position in the global transparency log for this publish event.",
+                "examples": [88123441]
+              },
+              "slsaLevel": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 4,
+                "description": "SLSA attestation level (1–4). Higher levels indicate stronger supply-chain security guarantees.",
+                "examples": [3]
+              },
+              "publisher": {
+                "type": "string",
+                "pattern": "^did:dash:",
+                "description": "Decentralized identifier (DID) of the publisher identity.",
+                "examples": ["did:dash:zod-org"]
+              }
+            },
+            "required": ["logIndex", "slsaLevel", "publisher"]
+          },
+          "capabilities": {
+            "type": "object",
+            "title": "Granted Capabilities",
+            "description": "Capability grants this package actually received at resolution time. The intersection of what the package requested and what the consumer's policy allowed.",
+            "additionalProperties": false,
+            "properties": {
+              "net": {
+                "oneOf": [
+                  { "type": "boolean", "const": false },
+                  { "type": "array", "items": { "type": "string" } }
+                ],
+                "description": "Granted network egress capability with allowlist."
+              },
+              "fs-read": {
+                "oneOf": [
+                  { "type": "boolean", "const": false },
+                  { "type": "array", "items": { "type": "string" } }
+                ],
+                "description": "Granted filesystem read capability with path allowlist."
+              },
+              "fs-write": {
+                "oneOf": [
+                  { "type": "boolean", "const": false },
+                  { "type": "array", "items": { "type": "string" } }
+                ],
+                "description": "Granted filesystem write capability with path allowlist."
+              },
+              "env": {
+                "oneOf": [
+                  { "type": "boolean", "const": false },
+                  { "type": "array", "items": { "type": "string" } }
+                ],
+                "description": "Granted environment variable access with named variable allowlist."
+              },
+              "subprocess": {
+                "type": "boolean",
+                "description": "Granted subprocess spawn capability."
+              }
+            }
+          },
+          "build": {
+            "type": "object",
+            "title": "Build Entry",
+            "description": "Build metadata present only for packages with a declarative build step. Records the tool used and the output content ID.",
+            "additionalProperties": false,
+            "properties": {
+              "tool": {
+                "type": "string",
+                "description": "Pinned builder tool reference used to produce the build outputs.",
+                "examples": ["dash:node-gyp@2.1.0"]
+              },
+              "outputCid": {
+                "type": "string",
+                "pattern": "^b3:[a-z2-7]{55}$",
+                "description": "Content ID of the build output capsule.",
+                "examples": ["b3:aa11bb22cc33dd44ee55ff66gg77hh88ii99jj00kk11ll22mm33nn44oo55pp"]
+              },
+              "hermetic": {
+                "type": "boolean",
+                "description": "Whether the build was hermetic (no network access, no ambient filesystem).",
+                "examples": [true]
+              }
+            },
+            "required": ["tool", "outputCid", "hermetic"]
+          }
+        },
+        "required": ["name", "version", "cid", "resolved-from", "registry", "provenance"]
+      },
+      "minItems": 1
+    },
+
+    "graph": {
+      "type": "object",
+      "title": "Dependency Graph Adjacency",
+      "description": "Adjacency list mapping each package reference (name@version) to its array of direct dependency references. Sorted for deterministic, merge-friendly output. Enables fast, reproducible install without re-resolving.",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "description": "Dependency reference in name@version format.",
+          "pattern": "^(@[a-z0-9-~][a-z0-9-._~]*/)?[a-z0-9-~][a-z0-9-._~]*@\\d+\\.\\d+\\.\\d+"
+        },
+        "description": "List of direct dependencies for this package."
+      },
+      "propertyNames": {
+        "pattern": "^(@[a-z0-9-~][a-z0-9-._~]*/)?[a-z0-9-~][a-z0-9-._~]*@\\d+\\.\\d+\\.\\d+"
+      },
+      "minProperties": 1,
+      "examples": [
+        {
+          "@acme/app@0.0.0": ["zod@3.23.8", "native-tls@0.4.2"],
+          "zod@3.23.8": [],
+          "native-tls@0.4.2": ["openssl-sys@0.9.102"]
+        }
+      ]
+    }
+  },
+  "required": ["version", "root", "lockDigest", "package", "graph"]
+}

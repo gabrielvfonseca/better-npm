@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dash.dev/schemas/ai.block.json",
+  "title": "Dash AI Block",
+  "description": "Schema for the [ai] section in dash.toml — structured, machine-readable metadata that enables AI agents and semantic search to reason about packages without executing or scraping. Validated on publish and indexed by the registry's semantic index.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "summary": {
+      "type": "string",
+      "description": "Human-readable, one-paragraph summary of the package's purpose and key characteristics. Unlike the [package].description field (which is a short tagline), the summary can be multiple sentences. Indexed for semantic search.",
+      "minLength": 1,
+      "maxLength": 1024,
+      "examples": [
+        "HTTP client with automatic retries, typed responses, and a mock transport for tests. Supports pluggable transports and request/response interceptors."
+      ]
+    },
+    "intent": {
+      "type": "string",
+      "description": "A term from the curated Dash capability taxonomy. Follows a hierarchical slash-separated naming convention. Enables exact-filter search: 'find me an X' becomes a filter, not a fuzzy search.",
+      "pattern": "^[a-z]+(/[a-z][a-z0-9-]*)*$",
+      "examples": [
+        "networking/http-client",
+        "data/orm/postgres",
+        "crypto/hashing",
+        "app/web-frontend",
+        "data/validation/schema"
+      ]
+    },
+    "capabilities-declared": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "A functional capability identifier, typically dot-separated. Describes what the package does, not what it needs (which is in [capabilities]).",
+        "pattern": "^[a-z][a-z0-9.-]*$",
+        "examples": ["http.request", "http.retry", "http.mock"]
+      },
+      "description": "The functional capabilities the package offers (distinct from the security capabilities it requests in [capabilities]). These are indexed for capability-space search.",
+      "minItems": 1,
+      "examples": [["http.request", "http.retry", "http.mock"]]
+    },
+    "stability": {
+      "type": "string",
+      "enum": ["experimental", "stable", "maintenance", "deprecated"],
+      "description": "Package lifecycle stage. 'experimental' = breaking changes possible; 'stable' = semver-guaranteed; 'maintenance' = critical fixes only; 'deprecated' = no active development. Maps to how MVS treats the package.",
+      "examples": ["stable", "experimental", "deprecated"]
+    },
+    "side-effects": {
+      "type": "string",
+      "enum": ["none", "filesystem", "network", "global"],
+      "description": "Side-effect classification. 'none' = pure function (idempotent, no I/O); 'filesystem' = reads/writes local files; 'network' = makes network calls; 'global' = modifies global state. Agents use this to prefer pure libraries and reason about test isolation.",
+      "examples": ["none", "network", "filesystem"]
+    },
+    "docs": {
+      "type": "string",
+      "description": "Relative path to a machine-oriented documentation file (markdown with structured frontmatter). The registry indexes this for semantic search alongside the summary.",
+      "examples": ["./docs/agent.md"]
+    },
+    "tool-interfaces": {
+      "type": "string",
+      "description": "Relative path to a JSON file describing typed callable tool interfaces (JSON Schema / MCP-compatible tool definitions). Enables agent discovery of callable operations.",
+      "examples": ["./ai/tools.json"]
+    },
+    "examples": {
+      "type": "string",
+      "description": "Relative path to a directory containing runnable, version-verified examples. The registry executes each example against the actual package version and records pass/fail, so examples are known to work with the pinned version.",
+      "examples": ["./ai/examples/"]
+    },
+    "supersedes": {
+      "type": "string",
+      "description": "A package reference (name@range) that this package supersedes. Provides an explicit migration edge so upgrade agents can plan a path off an abandoned library.",
+      "pattern": "^(@[a-z0-9-~][a-z0-9-._~]*/)?[a-z0-9-~][a-z0-9-._~]*@",
+      "examples": ["@acme/legacy-http@^1"]
+    },
+    "deprecated-in-favor-of": {
+      "type": "string",
+      "description": "Package reference that this package is deprecated in favor of. The migration target for deprecation, for agents to plan a migration path.",
+      "pattern": "^(@[a-z0-9-~][a-z0-9-._~]*/)?[a-z0-9-~][a-z0-9-._~]*@",
+      "examples": ["@acme/new-http-client@^2"]
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "Arbitrary classification tag for filtering and discovery."
+      },
+      "description": "Arbitrary classification tags for the registry's search and filter indexes.",
+      "examples": [["http", "networking", "typescript"]]
+    }
+  },
+  "required": ["summary", "intent"],
+  "examples": [
+    {
+      "summary": "HTTP client with automatic retries, typed responses, and a mock transport for tests.",
+      "intent": "networking/http-client",
+      "capabilities-declared": ["http.request", "http.retry", "http.mock"],
+      "stability": "stable",
+      "side-effects": "none",
+      "docs": "./docs/agent.md",
+      "tool-interfaces": "./ai/tools.json",
+      "examples": "./ai/examples/",
+      "supersedes": "@acme/legacy-http@^1"
+    },
+    {
+      "summary": "Acme customer-facing web app.",
+      "intent": "app/web-frontend",
+      "side-effects": "network"
+    }
+  ]
+}

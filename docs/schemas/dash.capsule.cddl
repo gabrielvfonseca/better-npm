@@ -1,0 +1,121 @@
+; DASHCAP1 Capsule Container — CBOR Data Definition Language (CDDL) Schema
+; RFC 8610 · DESIGN §7, §5 · Implements ARCH-M003
+;
+; This schema defines the binary framing and CBOR-encoded sections of the
+; DASHCAP1 capsule, the atomic content-addressed distribution unit for Dash.
+;
+; A capsule is a framed binary container:
+;   1. Header (magic + version + flags)
+;   2. Manifest (canonical CBOR — see manifest.cddl)
+;   3. File table (CBOR array, sorted by path)
+;   4. File objects (zstd-compressed, concatenated in table order)
+;   5. Attestations (CBOR-encoded, detached)
+;
+; Canonical & deterministic: normalized metadata (fixed mtime 0, fixed permissions
+; by class, no uid/gid), sorted entries, zstd at fixed compression level.
+; Same source tree → same capsule → same CID on any machine.
+
+; =============================================================================
+; Top-level capsule: a CDDL group representing the five-section binary frame.
+; In practice the capsule is read as: [header] [manifest_cbor] [file_table_cbor]
+; [zstd_objects] [attestations_cbor].
+; =============================================================================
+DASHCAP1-Capsule = [
+    header:        CapsuleHeader,
+    manifest:      Manifest,              ; canonical CBOR — see manifest.cddl
+    file-table:    FileTable,             ; CBOR array, sorted by path
+    file-objects:  FileObjects,           ; raw zstd-compressed concatenated bytes
+    attestations:  Attestations,          ; CBOR array of attestation entries
+]
+
+; =============================================================================
+; Capsule Header
+; Fixed-size binary header that identifies the container format.
+; =============================================================================
+CapsuleHeader = [
+    magic:    DASHCAP1-Magic,             ; 8 bytes: "DASHCAP1"
+    version:  uint .size 1,              ; format version (currently 1)
+    flags:    CapsuleFlags .size 4,      ; bitmask of capability/feature flags
+]
+
+DASHCAP1-Magic = h'4441534843415031'    ; "DASHCAP1" in US-ASCII hex
+
+CapsuleFlags = uint .bits CapsuleFlagBits
+CapsuleFlagBits = &(
+    none:               0,               ; no special flags
+    compressed-objects: 1,               ; file objects are zstd-compressed (always set for DASHCAP1)
+    has-attestations:   2,               ; attestations section is present
+    signed:             3,               ; capsule has an embedded signature attestation
+    range-index:        4,               ; includes range index for byte-level fetch
+)
+
+; =============================================================================
+; File Table
+; A deterministic, sorted array of file entries. Every entry corresponds to one
+; file in the package. Sorted lexicographically by path (UTF-8 byte order).
+; The sort order, normalized metadata, and fixed compression level ensure that
+; two publishers packing the same file tree produce identical file tables.
+; =============================================================================
+FileTable = [ + FileEntry ]
+
+FileEntry = [
+    path:         tstr,                  ; relative file path (UTF-8, forward-slash,
+                                         ; e.g. "src/index.ts", "dist/index.js")
+    mode-class:   ModeClass,             ; normalized permission class
+    size:         uint,                  ; uncompressed file size in bytes
+    blake3-hash:  Blake3Hash,            ; BLAKE3-256 digest of the uncompressed file
+]
+
+ModeClass = &(
+    regular:          0,                 ; regular file (0644 equivalent)
+    executable:       1,                 ; executable file (0755 equivalent)
+    directory:        2,                 ; directory entry
+    symlink:          3,                 ; symbolic link (target stored as path content)
+)
+
+Blake3Hash = bstr .size 32              ; BLAKE3-256 raw binary digest (32 bytes)
+
+; =============================================================================
+; File Objects
+; The concatenated, zstd-compressed content of each file, in the same order
+; as the file table. Clients may decompress, hash (BLAKE3), and verify each
+; file against its file-table entry.
+; =============================================================================
+FileObjects = bstr                       ; raw zstd-compressed concatenated blob
+
+; =============================================================================
+; Attestations
+; Detached metadata section for cryptographic provenance, integrity evidence,
+; and policy artifacts. "Detached" means these can be added, rotated, or
+; fetched separately without changing the capsule's CID (§13, DESIGN §7.1).
+; Each entry carries a type discriminator so that parsers can skip unknown
+; attestation types forward-compatibly.
+; =============================================================================
+Attestations = [ * AttestationEntry ]
+
+AttestationEntry = {
+    type:         AttestationType,       ; discriminator tag
+    payload:      bstr,                  ; attestation payload (format depends on type)
+    signature:    bstr,                  ; cryptographic signature over the capsule CID + payload
+    ? media-type: tstr,                  ; optional MIME type for the payload (e.g.
+                                         ; "application/vnd.in-toto+json")
+    ? signer:     tstr,                  ; optional signer identity (DID, OIDC issuer, etc.)
+}
+
+AttestationType = &(
+    in-toto-statement:  0,              ; in-toto attestation (SLSA provenance)
+    sbom-spdx:          1,              ; SPDX SBOM
+    sbom-cyclonedx:     2,              ; CycloneDX SBOM
+    signature-ed25519:  3,              ; Ed25519 signature over capsule CID
+    signature-x509:     4,              ; X.509 certificate signature
+    transparency-proof: 5,              ; transparency log inclusion proof
+    policy-evaluation:  6,              ; policy check result (for audit trail)
+    publisher-identity: 7,              ; publisher DID / OIDC identity attestation
+)
+
+; =============================================================================
+; CID (Content ID) — informative reference
+; CID construction defined in CONTENT-ADDRESSING.md (§5.1 of DESIGN).
+; cid = "b3:" || base32( BLAKE3-256( canonical_capsule_bytes ) )
+; =============================================================================
+CID = tstr .regexp "b3:[a-z2-7]{55}"   ; "b3:" + base32-encoded BLAKE3-256 hash (34-byte multihash → 55 base32 chars)

@@ -1,0 +1,159 @@
+; Canonical Manifest (TOML → CBOR) — CBOR Data Definition Language Schema
+; RFC 8610 · DESIGN §6, §9, App. C · Implements ARCH-M003
+;
+; This schema defines the canonical CBOR encoding of the Dash manifest
+; (dash.toml) as it appears inside the DASHCAP1 capsule. The manifest is
+; authored in TOML by humans and agents, then canonically encoded as CBOR
+; (RFC 8949) with deterministic encoding rules (RFC 8949 §4.2.1):
+;
+;   1. Integer encoding: shortest form (e.g., 0–23 → one byte)
+;   2. Map keys: sorted lexicographically by UTF-8 byte sequence
+;   3. Strings: no unnecessary indefinite-length encoding
+;   4. Floats: use the smallest encoding (no float64 if float32 suffices)
+;   5. Deterministic by construction — same manifest TOML → same CBOR bytes
+;
+; All fields are OPTIONAL in CDDL terms — an absent TOML section simply
+; produces an absent CBOR key. The resolver and verifier handle missing
+; fields by applying defaults defined in the DPR protocol spec.
+
+Manifest = {
+    ? package:         PackageIdentity,     ; §6 — [package] identity block
+    ? exports:         Exports,             ; §6 — [exports] entry points
+    ? dependencies:    DependencyMap,       ; §6 — [dependencies]
+    ? dev-dependencies: DependencyMap,      ; §6 — [dev-dependencies]
+    ? peer-dependencies: DependencyMap,     ; §6 — [peer-dependencies]
+    ? capabilities:    Capabilities,        ; §6 — [capabilities] security contract
+    ? build:           BuildDeclaration,    ; §6 — [build] hermetic build step
+    ? ai:              AIBlock,             ; §6 — [ai] machine-readable metadata
+    ? workspace:       Workspace,           ; §6 — [workspace] monorepo config
+}
+
+; =============================================================================
+; Package Identity
+; Human-readable identity fields. The true identity of a version is its CID,
+; but these fields are what humans and agents see in listings and diffs.
+; =============================================================================
+PackageIdentity = {
+    name:             tstr,                ; "@scope/name" — npm-compatible scoped name
+    version:          Semver,              ; semver version string (e.g. "2.3.0")
+    ? description:    tstr,                ; human-readable one-line description
+    ? license:        tstr,                ; SPDX license expression (e.g. "Apache-2.0" or "MIT OR GPL-3.0-only")
+    ? authors:        [ * tstr ],          ; author strings (e.g. ["Acme Eng <eng@acme.dev>"])
+    ? repository:     tstr,                ; URL or "owner/repo" shorthand
+    ? runtime:        [ * SemverRange ],   ; declared runtime compatibility (e.g. "node>=20", "deno>=2")
+    ? type:           ModuleType,          ; module system type
+    ? private:        bool,                ; whether the package is private/unpublished
+}
+
+ModuleType = &( module: 0, commonjs: 1 )
+
+Semver = tstr .regexp "(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[\\da-z-]+(?:\\.[\\da-z-]+)*)?(?:\\+[\\da-z-]+(?:\\.[\\da-z-]+)*)?"
+SemverRange = tstr                        ; semver range expression (e.g. "^2.3", ">=5.4")
+
+; =============================================================================
+; Exports
+; Typed, condition-based entry points. Maps a subpath condition (e.g. ".",
+; "./mock") to a set of runtime condition → file-path mappings.
+; Keys are sorted lexicographically in canonical CBOR.
+; =============================================================================
+Exports = { * tstr => ExportConditions }
+
+ExportConditions = {
+    ? types:   tstr,                      ; path to .d.ts entry (e.g. "./dist/index.d.ts")
+    ? import:  tstr,                      ; path to ESM entry (e.g. "./dist/index.js")
+    ? require: tstr,                      ; path to CJS entry (for compat)
+    ? default: tstr,                      ; fallback entry path
+    ? worker:  tstr,                      ; worker runtime entry
+    ? browser: tstr,                      ; browser-condition entry
+}
+
+; =============================================================================
+; Dependencies
+; Map of package name → version constraint + optional grants/attributes.
+; =============================================================================
+DependencyMap = { * tstr => DependencySpec }
+
+DependencySpec = SemverRange / {
+    version:   SemverRange,
+    ? grants:  [ * CapabilityGrant ],     ; capabilities the dependency requires
+    ? optional: bool,                     ; true = peer dep, optional
+    ? singleton: bool,                    ; true = must unify to a single version
+    ? registry: tstr,                     ; alternative registry URL/name
+}
+
+CapabilityGrant = tstr                    ; e.g. "net:tls", "fs-read:./config"
+
+; =============================================================================
+; Capabilities (Security Contract)
+; What the package may access at runtime and build time.
+; Default = nothing allowed. DESIGN §13.
+; =============================================================================
+Capabilities = {
+    ? net:          CapabilityList / false,    ; network egress allowlist
+    ? fs-read:      CapabilityList / false,    ; filesystem read allowlist
+    ? fs-write:     CapabilityList / false,    ; filesystem write allowlist
+    ? env:          CapabilityList / false,    ; named environment variables
+    ? subprocess:   bool,                      ; subprocess execution allowed?
+    ? build:        BuildCapabilities,         ; build-time sandbox limits
+}
+
+CapabilityList = [ + tstr ]               ; allowlist entries (URLs, paths, env var names)
+
+BuildCapabilities = {
+    ? network:    bool,                   ; build may reach network (default false)
+    ? scripts:    bool,                   ; build may run arbitrary scripts (default false)
+}
+
+; =============================================================================
+; Build Declaration
+; Declarative, sandboxed build step replacing npm lifecycle scripts.
+; A build is a pure function: source + toolchain → deterministic outputs.
+; =============================================================================
+BuildDeclaration = {
+    tool:         tstr,                   ; pinned builder identifier (e.g. "dash:tsc@2.1.0")
+    ? inputs:     [ * tstr ],             ; glob patterns for build inputs
+    ? outputs:    [ * tstr ],             ; glob patterns for build outputs
+    ? target:     tstr,                   ; build target (e.g. "node", "deno", "browser")
+}
+
+; =============================================================================
+; AI-Native Block
+; Structured, machine-readable metadata for agent-based package selection.
+; DESIGN §18.1.
+; =============================================================================
+AIBlock = {
+    ? summary:               tstr,        ; one-line purpose summary
+    ? intent:                tstr,        ; taxonomy term (e.g. "networking/http-client")
+    ? capabilities-declared: [ * tstr ],  ; functional capabilities (e.g. "http.request")
+    ? stability:             StabilityLevel,
+    ? side-effects:          SideEffect,
+    ? docs:                  tstr,        ; path to agent-oriented doc file
+    ? tool-interfaces:       tstr,        ; path to tool interfaces schema (MCP-style)
+    ? examples:              tstr,        ; path to verified examples directory
+    ? supersedes:            tstr,        ; package this replaces (e.g. "@acme/legacy-http@^1")
+    ? deprecated-in-favor-of: tstr,       ; migration target for deprecation
+    ? tags:                  [ * tstr ],  ; arbitrary classification tags
+}
+
+StabilityLevel = &(
+    experimental:   0,
+    stable:         1,
+    maintenance:    2,
+    deprecated:     3,
+)
+
+SideEffect = &(
+    none:           0,
+    filesystem:     1,
+    network:        2,
+    global:         3,
+)
+
+; =============================================================================
+; Workspace Configuration
+; Present only in workspace root manifests. Lists member packages.
+; =============================================================================
+Workspace = {
+    members:      [ + tstr ],             ; glob patterns or directory paths
+    ? shared:     { * tstr => any },      ; shared config applied to all members
+}

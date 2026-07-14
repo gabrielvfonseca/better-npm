@@ -1,0 +1,429 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dash.dev/schemas/dash.toml.json",
+  "title": "Dash Manifest",
+  "description": "Schema for dash.toml — the Dash package manifest file. Defines package identity, typed conditional exports, dependency declarations with capability grants, runtime capabilities, declarative build steps, AI-native metadata, and workspace configuration.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "package": {
+      "type": "object",
+      "title": "Package Identity",
+      "description": "Core package metadata block. Every dash.toml must have this section.",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^(@[a-z0-9-~][a-z0-9-._~]*/)?[a-z0-9-~][a-z0-9-._~]*$",
+          "description": "Package name, optionally scoped (@scope/name). Lowercase, hyphenated, no leading dots.",
+          "examples": ["@acme/http-client", "zod", "react"]
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.]+(?:\\+[a-zA-Z0-9.]+)?)?$",
+          "description": "Semantic version string (semver). Must be valid semver per semver.org.",
+          "examples": ["2.3.0", "1.0.0-beta.1", "0.0.0"]
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable one-line description of the package.",
+          "examples": ["Typed, retrying HTTP client with pluggable transports"]
+        },
+        "license": {
+          "type": "string",
+          "description": "SPDX license expression. A single identifier or compound expression (MIT OR Apache-2.0). Validated against the SPDX license list at publish time.",
+          "examples": ["Apache-2.0", "MIT", "MIT OR Apache-2.0"]
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Author identifier in Name <email> format."
+          },
+          "description": "List of package authors.",
+          "examples": [["Acme Eng <eng@acme.dev>"]]
+        },
+        "repository": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the canonical source repository.",
+          "examples": ["https://github.com/acme/http-client"]
+        },
+        "runtime": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Runtime constraint expression, e.g. node>=20, deno>=2, bun>=1.2, workerd."
+          },
+          "description": "Declared runtime support matrix. The resolver uses this to filter incompatible packages.",
+          "examples": [["node>=20", "deno>=2", "bun>=1.2", "workerd"]]
+        },
+        "type": {
+          "type": "string",
+          "enum": ["module"],
+          "description": "Module system type. Dash is exclusively ESM; 'module' is the only valid value. CJS is supported only through the npm compat bridge.",
+          "default": "module"
+        },
+        "private": {
+          "type": "boolean",
+          "description": "If true, the package is private (not published to the registry). Used for workspace root packages.",
+          "default": false,
+          "examples": [true]
+        }
+      },
+      "required": ["name", "version"]
+    },
+
+    "exports": {
+      "type": "object",
+      "title": "Conditional Exports",
+      "description": "Typed conditional entry points. Keys are export subpaths ('.' for the main entry, './foo' for deep exports). Nested subpath exports are the only way to expose package entry points — deep imports into package internals are forbidden.",
+      "additionalProperties": {
+        "type": "object",
+        "title": "Export Conditions",
+        "description": "Condition map for an export subpath. The 'types' condition is always resolved first; the runtime chooses the first matching condition from left to right.",
+        "properties": {
+          "types": {
+            "type": "string",
+            "description": "Path to TypeScript type declaration file (.d.ts).",
+            "examples": ["./dist/index.d.ts"]
+          },
+          "import": {
+            "type": "string",
+            "description": "Path to ESM entry point (.js, .mjs).",
+            "examples": ["./dist/index.js"]
+          },
+          "require": {
+            "type": "string",
+            "description": "Path to CJS entry point for npm compat bridge (.cjs, .js).",
+            "examples": ["./dist/index.cjs"]
+          },
+          "default": {
+            "type": "string",
+            "description": "Default fallback entry point when no other condition matches.",
+            "examples": ["./dist/index.js"]
+          },
+          "bun": {
+            "type": "string",
+            "description": "Bun-specific entry point.",
+            "examples": ["./dist/bun/index.js"]
+          },
+          "deno": {
+            "type": "string",
+            "description": "Deno-specific entry point.",
+            "examples": ["./dist/deno/index.js"]
+          },
+          "worker": {
+            "type": "string",
+            "description": "Web Worker entry point.",
+            "examples": ["./dist/worker/index.js"]
+          },
+          "workerd": {
+            "type": "string",
+            "description": "Cloudflare Workers entry point.",
+            "examples": ["./dist/workerd/index.js"]
+          },
+          "development": {
+            "type": "string",
+            "description": "Development-only entry point (with dev warnings, hot reload).",
+            "examples": ["./dist/index.dev.js"]
+          },
+          "production": {
+            "type": "string",
+            "description": "Production-only entry point (optimized, no dev code).",
+            "examples": ["./dist/index.prod.js"]
+          }
+        },
+        "minProperties": 1
+      },
+      "examples": [
+        {
+          ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+          "./mock": { "types": "./dist/mock.d.ts", "import": "./dist/mock.js" }
+        }
+      ]
+    },
+
+    "dependencies": {
+      "type": "object",
+      "title": "Dependencies",
+      "description": "Production dependencies. Keys are un-scoped or scoped package names. Values are either a version range string or a dependency object with optional singleton, grants, and optional flags.",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string",
+            "description": "Simple version range. Supports npm-style ranges: ^1.0, >=2.0 <3.0, ~1.2, 1.4.2, *.",
+            "examples": ["^1.0", ">=5.4", "3.23.8"]
+          },
+          {
+            "type": "object",
+            "title": "Dependency Object",
+            "description": "Extended dependency declaration with metadata.",
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "type": "string",
+                "description": "Version range (npm-style).",
+                "examples": ["^0.4"]
+              },
+              "singleton": {
+                "type": "boolean",
+                "description": "If true, the resolver enforces that only one version of this package exists in the graph. Used for packages with global state (React, etc.). Default: false (graph-local versioning, multiple majors coexist).",
+                "default": false,
+                "examples": [true]
+              },
+              "grants": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z-]+(:[a-z-]+)?$",
+                  "description": "Capability grant string, e.g. 'net:tls', 'fs-read:/etc/config'.",
+                  "examples": ["net:tls"]
+                },
+                "description": "Explicit capability grants this dependency receives. Install fails if the consumer's policy forbids these grants.",
+                "examples": [["net:tls"]]
+              },
+              "registry": {
+                "type": "string",
+                "description": "Alternative registry URL or name for resolving this dependency. Defaults to the project's configured registry.",
+                "examples": ["https://internal.registry.dev"]
+              },
+              "optional": {
+                "type": "boolean",
+                "description": "If true, the dependency is optional — resolution succeeds even if this dependency is not available.",
+                "default": false,
+                "examples": [true]
+              }
+            },
+            "required": ["version"]
+          }
+        ]
+      },
+      "examples": [
+        {
+          "@std/encoding": "^1.0",
+          "zod": "^3.23",
+          "native-tls": { "version": "^0.4", "grants": ["net:tls"] }
+        }
+      ]
+    },
+
+    "dev-dependencies": {
+      "type": "object",
+      "title": "Dev Dependencies",
+      "description": "Development-only dependencies. Same format as [dependencies]. Not included in the production dependency graph.",
+      "additionalProperties": {
+        "oneOf": [
+          { "type": "string", "description": "Simple version range." },
+          {
+            "type": "object",
+            "properties": {
+              "version": { "type": "string", "description": "Version range." },
+              "singleton": { "type": "boolean" },
+              "registry": {
+                "type": "string",
+                "description": "Alternative registry URL or name."
+              },
+              "optional": { "type": "boolean" }
+            },
+            "required": ["version"]
+          }
+        ]
+      },
+      "examples": [{ "vitest": "^2", "typescript": "^5.6" }]
+    },
+
+    "peer-dependencies": {
+      "type": "object",
+      "title": "Peer Dependencies",
+      "description": "Peer dependencies that the consumer must provide. Same format as [dependencies] but defaults to optional=true. Enforced by the resolver (must unify to a single version).",
+      "additionalProperties": {
+        "oneOf": [
+          { "type": "string", "description": "Simple version range." },
+          {
+            "type": "object",
+            "properties": {
+              "version": { "type": "string", "description": "Version range." },
+              "singleton": {
+                "type": "boolean",
+                "description": "If true, must unify to a single version across the graph."
+              },
+              "registry": { "type": "string", "description": "Alternative registry URL or name." },
+              "optional": {
+                "type": "boolean",
+                "description": "If true, absence is not an error.",
+                "default": true,
+                "examples": [true]
+              }
+            },
+            "required": ["version"]
+          }
+        ]
+      },
+      "examples": [{ "typescript": { "version": ">=5.4", "optional": true } }]
+    },
+
+    "capabilities": {
+      "type": "object",
+      "title": "Runtime Capabilities",
+      "description": "Capabilities this package requires at runtime. Default: no capabilities (nothing granted). Each capability has an allowlist or is set to false. The package declares what it needs; the consumer's policy decides whether to grant it.",
+      "additionalProperties": false,
+      "properties": {
+        "net": {
+          "oneOf": [
+            { "type": "boolean", "const": false, "description": "No network access." },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri",
+                "description": "Allowed URL pattern or host."
+              },
+              "description": "List of allowed network endpoints (URL prefixes or hosts).",
+              "examples": [["https://api.acme.dev", "https://cdn.acme.dev"]]
+            }
+          ],
+          "description": "Network egress capability. URL allowlist, or false to deny all.",
+          "examples": [["https://api.acme.dev"], false]
+        },
+        "fs-read": {
+          "oneOf": [
+            { "type": "boolean", "const": false, "description": "No filesystem read access." },
+            {
+              "type": "array",
+              "items": { "type": "string", "description": "Allowed filesystem read path." },
+              "description": "Filesystem read path allowlist. Paths are relative to the project root.",
+              "examples": [["./config"]]
+            }
+          ],
+          "description": "Filesystem read access. Path allowlist or false.",
+          "examples": [["./config"], false]
+        },
+        "fs-write": {
+          "oneOf": [
+            { "type": "boolean", "const": false, "description": "No filesystem write access." },
+            {
+              "type": "array",
+              "items": { "type": "string", "description": "Allowed filesystem write path." },
+              "description": "Filesystem write path allowlist.",
+              "examples": [["./.cache"]]
+            }
+          ],
+          "description": "Filesystem write access. Path allowlist or false.",
+          "examples": [["./.cache"], false]
+        },
+        "env": {
+          "oneOf": [
+            { "type": "boolean", "const": false, "description": "No environment variable access." },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Name of an allowed environment variable."
+              },
+              "description": "Environment variable allowlist. Named variables only.",
+              "examples": [["NODE_ENV", "ACME_API_KEY"]]
+            }
+          ],
+          "description": "Environment variable access. Named variable allowlist or false.",
+          "examples": [["NODE_ENV", "ACME_API_KEY"], false]
+        },
+        "subprocess": {
+          "type": "boolean",
+          "description": "Subprocess spawn capability. True if the package may spawn child processes. Default: false.",
+          "default": false,
+          "examples": [false]
+        },
+        "build": {
+          "type": "object",
+          "title": "Build-time Capabilities",
+          "description": "Capabilities during the build phase. Separately scoped from runtime capabilities. Builds are hermetic by default (no network, no arbitrary scripts).",
+          "additionalProperties": false,
+          "properties": {
+            "network": {
+              "type": "boolean",
+              "description": "Network access during build. Default: false (hermetic build).",
+              "default": false,
+              "examples": [false]
+            },
+            "scripts": {
+              "type": "boolean",
+              "const": false,
+              "description": "Arbitrary lifecycle scripts at build time. Always false in Dash. Replaced by declarative [build] steps.",
+              "default": false
+            }
+          }
+        }
+      }
+    },
+
+    "build": {
+      "type": "object",
+      "title": "Build Declaration",
+      "description": "Declarative build step that replaces npm lifecycle scripts. A build is a pure function: inputs (source + toolchain) produce outputs (dist). Runs in a hermetic sandbox.",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "type": "string",
+          "description": "Pinned builder tool reference. Can be a built-in (dash:tsc, dash:wasm, dash:node-gyp) or a third-party builder capsule CID. The builder itself is content-addressed and capability-gated.",
+          "examples": ["dash:tsc", "dash:wasm", "dash:node-gyp@2.1.0"]
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Glob pattern matching build input files."
+          },
+          "description": "File patterns that constitute build inputs. Used for content-hash caching: if inputs haven't changed, the build is skipped.",
+          "examples": [["src/**", "tsconfig.json"]]
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Glob pattern matching build output files."
+          },
+          "description": "File patterns for build outputs. Outputs are content-addressed and globally shareable.",
+          "examples": [["dist/**"]]
+        },
+        "target": {
+          "type": "string",
+          "description": "Build target environment. Controls output dialect and optimizations.",
+          "examples": ["node", "deno", "browser", "worker"]
+        }
+      },
+      "required": ["tool", "inputs", "outputs"]
+    },
+
+    "ai": {
+      "$ref": "ai.block.json",
+      "description": "AI-native metadata block. Validated on publish and indexed by the registry's semantic search. Provides structured surface for agents and semantic queries."
+    },
+
+    "workspace": {
+      "type": "object",
+      "title": "Workspace Configuration",
+      "description": "Workspace root configuration for monorepos. Present only in a workspace root dash.toml. The resolver treats the whole repo as one graph with one lockfile and one store view.",
+      "additionalProperties": false,
+      "properties": {
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Glob pattern or relative path to a workspace member directory.",
+            "examples": ["packages/*", "apps/*"]
+          },
+          "description": "List of workspace member paths (globs). Members are resolved as local packages within the same graph.",
+          "minItems": 1,
+          "examples": [["packages/*", "apps/*"]]
+        }
+      },
+      "required": ["members"]
+    },
+
+    "policy": {
+      "$ref": "dash.policy.toml.json",
+      "description": "Inline policy configuration. Equivalent to a separate dash.policy.toml. Overrides any external policy file for this project."
+    }
+  }
+}

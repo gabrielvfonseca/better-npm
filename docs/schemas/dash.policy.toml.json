@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dash.dev/schemas/dash.policy.toml.json",
+  "title": "Dash Policy File",
+  "description": "Schema for dash.policy.toml — organization-level security and governance policy. Enforced by the registry and client to gate dependency resolution, installation, and publishing. Policies can be inlined in dash.toml ([policy]) or live in a separate file.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "min-slsa-level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4,
+      "default": 1,
+      "description": "Minimum SLSA attestation level required for all dependencies. Level 3+ indicates a tamper-resistant build platform. Dependencies below this level are blocked.",
+      "examples": [3]
+    },
+    "allow-licenses": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "SPDX license identifier allowed by policy.",
+        "examples": ["MIT", "Apache-2.0", "BSD-3-Clause"]
+      },
+      "description": "List of allowed SPDX license identifiers. Dependencies with licenses outside this list are blocked. If absent, all licenses are allowed.",
+      "minItems": 1,
+      "examples": [["MIT", "Apache-2.0", "BSD-3-Clause", "ISC"]]
+    },
+    "require-provenance": {
+      "type": "boolean",
+      "default": true,
+      "description": "If true, every dependency must have a valid provenance record (logIndex + SLSA + publisher DID). Dependencies without provenance are blocked.",
+      "examples": [true]
+    },
+    "max-cve-severity": {
+      "type": "string",
+      "enum": ["none", "low", "medium", "high", "critical"],
+      "default": "critical",
+      "description": "Maximum acceptable CVE severity level. Dependencies with known CVEs above this level are blocked. 'none' means zero tolerance.",
+      "examples": ["medium", "critical"]
+    },
+    "version-cooldown": {
+      "type": "string",
+      "pattern": "^\\d+[hdw]$",
+      "description": "Minimum age before a newly published version can be adopted in resolution. Format: <number><unit> where unit is h (hours), d (days), w (weeks). Blunts fast-moving supply-chain worms that publish malicious versions.",
+      "examples": ["24h", "7d"]
+    },
+    "review-capability-diffs": {
+      "type": "boolean",
+      "default": true,
+      "description": "If true, version upgrades that change a dependency's capability requests (adds net, subprocess, new egress host) require explicit approval before the version is adopted. This is the single highest-leverage supply-chain control.",
+      "examples": [true]
+    },
+    "banned-packages": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "Exact package name or glob pattern to ban.",
+        "examples": ["@malicious/pkg", "typosquat-*"]
+      },
+      "description": "List of banned package names (exact or wildcard patterns). Any dependency matching an entry is blocked.",
+      "examples": [["@malicious/pkg", "abandoned-lib"]]
+    },
+    "banned-publishers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^did:dash:",
+        "description": "DID of a banned publisher identity.",
+        "examples": ["did:dash:known-attacker"]
+      },
+      "description": "List of banned publisher DIDs. Any package published by a banned identity is blocked.",
+      "examples": [["did:dash:known-attacker"]]
+    },
+    "required-provenance-identities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "A required identity DID or OIDC issuer URL that must appear in every package's provenance chain.",
+        "examples": ["did:dash:my-org-verifier", "https://github.com/my-org"]
+      },
+      "description": "Required identities that must appear in the provenance chain of every dependency. Packages whose provenance doesn't include at least one of these identities are blocked.",
+      "examples": [["did:dash:acme-trusted-publisher"]]
+    }
+  },
+  "examples": [
+    {
+      "min-slsa-level": 3,
+      "allow-licenses": ["MIT", "Apache-2.0", "BSD-3-Clause", "ISC"],
+      "require-provenance": true,
+      "max-cve-severity": "medium",
+      "version-cooldown": "24h",
+      "review-capability-diffs": true,
+      "banned-packages": ["@malicious/pkg"],
+      "banned-publishers": ["did:dash:known-attacker"],
+      "required-provenance-identities": ["did:dash:acme-trusted-publisher"]
+    }
+  ]
+}

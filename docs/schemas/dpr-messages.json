@@ -1,0 +1,270 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dash DPR Protocol — HTTP/REST Fallback Message Schemas",
+  "description": "JSON Schema definitions for the three DPR protocol verbs: RESOLVE, FETCH, and PUBLISH. Used when the gRPC/protobuf transport is unavailable and the protocol degrades to HTTP/2 JSON.",
+  "definitions": {
+    "cid": {
+      "type": "string",
+      "pattern": "^b[a-z2-7]{52,}$",
+      "description": "BLAKE3 multihash CID (dag-cbor or raw codec)."
+    },
+    "inclusionProof": {
+      "type": "object",
+      "description": "Merkle inclusion proof for a transparency-log entry.",
+      "required": ["lemma", "rootHash", "treeSize"],
+      "properties": {
+        "lemma": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Merkle audit-path hashes from leaf to root."
+        },
+        "rootHash": {
+          "type": "string",
+          "description": "Current root hash of the transparency log."
+        },
+        "treeSize": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Current size of the transparency log."
+        }
+      }
+    },
+    "versionRange": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["exact"],
+          "properties": {
+            "exact": {
+              "type": "string",
+              "description": "Exact semver version, e.g. \"1.4.2\"."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["low", "high"],
+          "properties": {
+            "low": { "type": "string" },
+            "high": { "type": "string" },
+            "lowInclusive": { "type": "boolean", "default": true },
+            "highInclusive": { "type": "boolean", "default": true }
+          }
+        }
+      ]
+    },
+    "byteRange": {
+      "type": "object",
+      "required": ["offset", "length"],
+      "properties": {
+        "offset": { "type": "integer", "minimum": 0 },
+        "length": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "fileRange": {
+      "type": "object",
+      "required": ["filePath"],
+      "properties": {
+        "filePath": { "type": "string" },
+        "offset": { "type": "integer", "minimum": 0 },
+        "length": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Publish provenance metadata (Sigstore/OIDC lineage).",
+      "properties": {
+        "identity": { "type": "string" },
+        "timestamp": { "type": "integer" },
+        "builderId": { "type": "string" },
+        "sourceRepository": { "type": "string" },
+        "sourceCommit": { "type": "string" },
+        "slsaLevel": { "type": "string" },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "merkleProof": {
+      "type": "object",
+      "description": "BLAKE3 content-verification Merkle proof for a FETCH response.",
+      "required": ["rootHash", "leafHash", "siblings", "leafIndex", "treeSize"],
+      "properties": {
+        "rootHash": { "type": "string" },
+        "leafHash": { "type": "string" },
+        "siblings": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "leafIndex": { "type": "integer", "minimum": 0 },
+        "treeSize": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "attestation": {
+      "type": "object",
+      "required": ["type", "payload", "signature"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Attestation type (e.g. \"https://slsa.dev/provenance/v1\")."
+        },
+        "payload": {
+          "type": "string",
+          "contentEncoding": "base64",
+          "description": "Base64-encoded attestation payload."
+        },
+        "signature": {
+          "type": "string",
+          "contentEncoding": "base64",
+          "description": "Base64-encoded signature over the payload."
+        }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "description": "Publisher identity for PUBLISH requests.",
+      "properties": {
+        "oidcIssuer": { "type": "string" },
+        "oidcSubject": { "type": "string" },
+        "keyId": { "type": "string" },
+        "publicKey": {
+          "type": "string",
+          "contentEncoding": "base64"
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "required": ["version", "cid", "logIndex", "inclusionProof", "provenance"],
+      "properties": {
+        "version": { "type": "string" },
+        "cid": { "$ref": "#/definitions/cid" },
+        "logIndex": { "type": "integer", "minimum": 0 },
+        "inclusionProof": { "$ref": "#/definitions/inclusionProof" },
+        "provenance": { "$ref": "#/definitions/provenance" }
+      }
+    }
+  },
+  "messages": {
+    "ResolveRequest": {
+      "type": "object",
+      "required": ["name", "versionRanges"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Package name (may include scope, e.g. \"@scope/pkg\")."
+        },
+        "versionRanges": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/versionRange" },
+          "minItems": 1
+        },
+        "registry": {
+          "type": "string",
+          "description": "Optional registry URL; defaults to the configured default."
+        }
+      }
+    },
+    "ResolveResponse": {
+      "type": "object",
+      "required": ["bindings"],
+      "properties": {
+        "bindings": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/binding" }
+        }
+      }
+    },
+    "FetchRequest": {
+      "type": "object",
+      "required": ["cid"],
+      "properties": {
+        "cid": { "$ref": "#/definitions/cid" },
+        "ranges": {
+          "type": "array",
+          "items": {
+            "oneOf": [{ "$ref": "#/definitions/byteRange" }, { "$ref": "#/definitions/fileRange" }]
+          },
+          "description": "Optional subranges. If absent, the entire capsule content is returned."
+        }
+      }
+    },
+    "FetchResponse": {
+      "type": "object",
+      "required": ["content", "merkleProof"],
+      "properties": {
+        "content": {
+          "type": "string",
+          "contentEncoding": "base64",
+          "description": "Base64-encoded content bytes."
+        },
+        "merkleProof": { "$ref": "#/definitions/merkleProof" }
+      }
+    },
+    "PublishRequest": {
+      "type": "object",
+      "required": ["capsule", "attestations", "signature", "identity"],
+      "properties": {
+        "capsule": {
+          "type": "string",
+          "contentEncoding": "base64",
+          "description": "Base64-encoded capsule content."
+        },
+        "attestations": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/attestation" },
+          "minItems": 1
+        },
+        "signature": {
+          "type": "string",
+          "contentEncoding": "base64",
+          "description": "Publisher's signature over (capsule || attestations)."
+        },
+        "identity": { "$ref": "#/definitions/identity" }
+      }
+    },
+    "PublishResponse": {
+      "type": "object",
+      "required": ["cid", "version", "logIndex", "inclusionProof"],
+      "properties": {
+        "cid": { "$ref": "#/definitions/cid" },
+        "version": { "type": "string" },
+        "logIndex": { "type": "integer", "minimum": 0 },
+        "inclusionProof": { "$ref": "#/definitions/inclusionProof" }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "NAME_NOT_FOUND",
+            "VERSION_NOT_FOUND",
+            "CID_NOT_FOUND",
+            "INVALID_RANGE",
+            "INVALID_SIGNATURE",
+            "PUBLISH_REJECTED",
+            "REGISTRY_ERROR",
+            "RATE_LIMITED",
+            "UNAUTHORIZED",
+            "MERKLE_VERIFICATION_FAILED"
+          ]
+        },
+        "message": { "type": "string" },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": { "type": "string" },
+              "message": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

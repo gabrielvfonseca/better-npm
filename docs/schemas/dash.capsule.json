@@ -1,0 +1,219 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dash.dev/schemas/dash.capsule.json",
+  "title": "Dash Capsule Metadata",
+  "description": "Schema for the canonical metadata embedded inside a Dash capsule (.capsule file). The capsule is the atomic unit of distribution — an immutable, content-addressed archive containing a single package version's files plus metadata. The metadata section is encoded as CBOR (canonical TOML→CBOR) inside the capsule container.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "header": {
+      "type": "object",
+      "title": "Capsule Header",
+      "description": "Binary capsule header fields. The header is the first 16 bytes of every capsule.",
+      "additionalProperties": false,
+      "properties": {
+        "magic": {
+          "type": "string",
+          "const": "DASHCAP1",
+          "description": "File magic number. 8 ASCII bytes identifying this as a Dash capsule v1. Any file not starting with 'DASHCAP1' is rejected."
+        },
+        "version": {
+          "type": "integer",
+          "const": 1,
+          "description": "Capsule format version. Currently 1. On format changes, this integer is incremented."
+        },
+        "flags": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Bitmask of capsule-level flags. Bit 0: compression enabled (zstd). Bit 1: signed. Bits 2–7: reserved for future use.",
+          "examples": [0, 1, 3]
+        }
+      },
+      "required": ["magic", "version", "flags"]
+    },
+
+    "manifest": {
+      "title": "Resolved Manifest",
+      "description": "The fully resolved manifest for this package version. This is the canonical (TOML → CBOR) representation of the dash.toml with all optional fields resolved and defaults applied.",
+      "allOf": [{ "$ref": "dash.toml.json" }]
+    },
+
+    "fileTable": {
+      "type": "array",
+      "title": "File Table",
+      "description": "Canonical file table listing every file in the capsule. Sorted by path for deterministic ordering. Enables verifiable range fetch and file-level dedup: each file has its own BLAKE3 hash, so unchanged files across versions share storage.",
+      "items": {
+        "type": "object",
+        "title": "File Entry",
+        "description": "A single file entry in the capsule file table.",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Normalized relative file path within the capsule. Always forward-slash separated, no leading './'.",
+            "examples": ["dist/index.js", "src/index.ts", "README.md"]
+          },
+          "mode-class": {
+            "type": "string",
+            "enum": ["regular", "executable", "directory", "symlink"],
+            "description": "POSIX mode class. 'regular' (0o644, CDDL value 0), 'executable' (0o755, CDDL value 1), 'directory' (0o755, CDDL value 2), or 'symlink' (CDDL value 3). All other bits (uid, gid, sticky, setuid) are zeroed for canonical determinism."
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Uncompressed file size in bytes.",
+            "examples": [1234, 0]
+          },
+          "hash": {
+            "type": "string",
+            "pattern": "^b3:[a-z2-7]{55}$",
+            "description": "BLAKE3-256 hash of the file content. Used for file-level dedup and range-verified fetch.",
+            "examples": ["b3:aa11bb22cc33dd44ee55ff66gg77hh88ii99jj00kk11ll22mm33nn44oo55pp"]
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Byte offset of this file's compressed content within the FILE OBJECTS section. Enables range fetching.",
+            "examples": [0, 1024, 2048]
+          },
+          "compressed-size": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Compressed size in bytes within the FILE OBJECTS section (zstd). May be 0 for empty files.",
+            "examples": [512, 0]
+          }
+        },
+        "required": ["path", "mode-class", "size", "hash", "offset", "compressed-size"]
+      },
+      "minItems": 1
+    },
+
+    "attestations": {
+      "type": "object",
+      "title": "Attestations Section",
+      "description": "Attestations attached to the capsule (in-toto/SLSA provenance, SBOM, signatures). These are detached from the file objects so they can be added or rotated without changing the content CID of the code itself.",
+      "additionalProperties": false,
+      "properties": {
+        "provenance": {
+          "type": "object",
+          "title": "SLSA Provenance",
+          "description": "in-toto/SLSA attestation describing how the artifact was built: source repo, commit, builder, inputs.",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "https://in-toto.io/Statement/v1",
+              "description": "in-toto statement type URI."
+            },
+            "predicateType": {
+              "type": "string",
+              "const": "https://slsa.dev/provenance/v1",
+              "description": "SLSA predicate type URI."
+            },
+            "subject": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "digest": {
+                    "type": "object",
+                    "additionalProperties": { "type": "string" }
+                  }
+                }
+              },
+              "description": "Subject artifacts (the capsule itself)."
+            },
+            "predicate": {
+              "type": "object",
+              "description": "SLSA provenance predicate: builder identity, build metadata, materials, etc."
+            }
+          }
+        },
+        "sbom": {
+          "type": "object",
+          "title": "SBOM",
+          "description": "Software Bill of Materials in SPDX or CycloneDX format. Due to the lockfile already containing the complete content-pinned graph, the SBOM is exact rather than reconstructed.",
+          "properties": {
+            "format": {
+              "type": "string",
+              "enum": ["spdx", "cyclonedx"],
+              "description": "SBOM format: SPDX or CycloneDX."
+            },
+            "data": {
+              "type": "object",
+              "description": "SBOM payload (format-specific schema)."
+            }
+          }
+        },
+        "signatures": {
+          "type": "array",
+          "title": "Signatures",
+          "description": "Cryptographic signatures over the capsule content. Typically Sigstore-based with OIDC keyless signing.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "keyid": { "type": "string", "description": "Key identifier or DID." },
+              "sig": { "type": "string", "description": "Base64-encoded signature." },
+              "cert": {
+                "type": "string",
+                "description": "Base64-encoded signing certificate (if applicable)."
+              },
+              "algorithm": {
+                "type": "string",
+                "enum": ["ecdsa-p256", "ed25519", "rsa-3072"],
+                "description": "Signature algorithm."
+              }
+            },
+            "required": ["keyid", "sig", "algorithm"]
+          }
+        }
+      }
+    }
+  },
+
+  "required": ["header", "manifest", "fileTable"],
+  "examples": [
+    {
+      "header": {
+        "magic": "DASHCAP1",
+        "version": 1,
+        "flags": 3
+      },
+      "manifest": {
+        "package": {
+          "name": "@acme/http-client",
+          "version": "2.3.0",
+          "description": "Typed, retrying HTTP client with pluggable transports",
+          "license": "Apache-2.0"
+        }
+      },
+      "fileTable": [
+        {
+          "path": "dist/index.js",
+          "mode-class": "regular",
+          "size": 24576,
+          "hash": "b3:aa11bb22cc33dd44ee55ff66gg77hh88ii99jj00kk11ll22mm33nn44oo55pp",
+          "offset": 0,
+          "compressedSize": 8192
+        },
+        {
+          "path": "dist/index.d.ts",
+          "mode-class": "regular",
+          "size": 4096,
+          "hash": "b3:bb22cc33dd44ee55ff66gg77hh88ii99jj00kk11ll22mm33nn44oo55ppaa11",
+          "offset": 8192,
+          "compressedSize": 1024
+        }
+      ],
+      "attestations": {
+        "provenance": {
+          "type": "https://in-toto.io/Statement/v1",
+          "predicateType": "https://slsa.dev/provenance/v1"
+        },
+        "signatures": []
+      }
+    }
+  ]
+}

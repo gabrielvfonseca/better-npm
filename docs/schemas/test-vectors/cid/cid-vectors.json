@@ -1,0 +1,92 @@
+{
+  "$schema": "../test-vector-schema.json",
+  "specRef": "docs/specs/CONTENT-ADDRESSING.md",
+  "description": "CID construction test vectors: given canonical_capsule_bytes, compute the expected b3: CID per CONTENT-ADDRESSING.md §2.",
+  "version": 1,
+  "vectors": [
+    {
+      "inputDescription": "Empty capsule (zero bytes of canonical content)",
+      "canonicalBytes": "",
+      "blake3DigestHex": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "multihashHex": "1f20af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "expectedCid": "b3:d4qk6e2jxh27tingubae32rw3teutg6lexe23qisw7gjve6k4qpteyq"
+    },
+    {
+      "inputDescription": "Single null byte (binary edge case)",
+      "canonicalBytes": "00",
+      "blake3DigestHex": "2d3adedff11b61f14c886e35afa036736dcd87a74d27b5c1510225d0f592e213",
+      "multihashHex": "1f202d3adedff11b61f14c886e35afa036736dcd87a74d27b5c1510225d0f592e213",
+      "expectedCid": "b3:d4qc2ow637yrwyprjseg4nnpua3hg3onq6tu2j5vyfiqejoq6wjoeey"
+    },
+    {
+      "inputDescription": "Simple ASCII string 'hello' (5 bytes)",
+      "canonicalBytes": "68656c6c6f",
+      "blake3DigestHex": "ea8f163db38682925e4491c5e58d4bb3506ef8c14eb78a86e908c5624a67200f",
+      "multihashHex": "1f20ea8f163db38682925e4491c5e58d4bb3506ef8c14eb78a86e908c5624a67200f",
+      "expectedCid": "b3:d4qovdywhwzynauslzcjdrpfrvf3gudo7dau5n4kq3uqrrlcjjtsady"
+    },
+    {
+      "inputDescription": "CBOR empty map (a0) — minimal structured data",
+      "canonicalBytes": "a0",
+      "blake3DigestHex": "1f94cbf313b3ce23257a7251ea0fc95a24556ea611e4f8f475e549971baedb02",
+      "multihashHex": "1f201f94cbf313b3ce23257a7251ea0fc95a24556ea611e4f8f475e549971baedb02",
+      "expectedCid": "b3:d4qb7fgl6mj3htrdev5heupkb7evujcvn2tbdzhy6r26ksmxdoxnwaq"
+    },
+    {
+      "inputDescription": "CBOR map {a:1, b:2} with keys already in canonical sort order",
+      "canonicalBytes": "a2616101616202",
+      "blake3DigestHex": "7ee59ea6b0aab4ddb862c20b29ec133fc2fc6d2bafa1f0e4768314711f0dd674",
+      "multihashHex": "1f207ee59ea6b0aab4ddb862c20b29ec133fc2fc6d2bafa1f0e4768314711f0dd674",
+      "expectedCid": "b3:d4qh5zm6u2ykvng5xbrmeczj5qjt7qx4nuv27ipq4r3igfdrd4g5m5a"
+    },
+    {
+      "inputDescription": "CBOR map {b:2, a:1} with keys NOT sorted — tests that canonicalization sorts keys before hashing; produces DIFFERENT CID from vector 5 because canonicalization transforms this to a2616101616202 before hashing",
+      "canonicalBytes": "a2616202616101",
+      "blake3DigestHex": "69fcd94c34f8daf3c0302332c4491dcec610a5e9bf8ed2da51d4defe6fb6eb35",
+      "multihashHex": "1f2069fcd94c34f8daf3c0302332c4491dcec610a5e9bf8ed2da51d4defe6fb6eb35",
+      "expectedCid": "b3:d4qgt7gzjq2prwxtyaycgmwejeo45rqquxu37dws3ji5jxx6n63owni"
+    },
+    {
+      "inputDescription": "Unicode: U+2603 SNOWMAN (☃) encoded as UTF-8 (3 bytes: e2 98 83)",
+      "canonicalBytes": "e29883",
+      "blake3DigestHex": "16794465a53a570dbf1921233a1c96b810accb928cd04b4d42aea9dc281183c3",
+      "multihashHex": "1f2016794465a53a570dbf1921233a1c96b810accb928cd04b4d42aea9dc281183c3",
+      "expectedCid": "b3:d4qbm6kemwstuvynx4msciz2dsllqefmzojizucljvbk5ko4faiyhqy"
+    },
+    {
+      "inputDescription": "Binary sequence 0x00 through 0x1f (32 bytes, all low control characters)",
+      "canonicalBytes": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "blake3DigestHex": "e528e95798037df410543d9f31e396ecdd458d71b157d6014398bae32fb56c65",
+      "multihashHex": "1f20e528e95798037df410543d9f31e396ecdd458d71b157d6014398bae32fb56c65",
+      "expectedCid": "b3:d4qokkhjk6mag7pucbkd3hzr4olozxkfrvy3cv6wafbzroxdf62wyzi"
+    },
+    {
+      "inputDescription": "Arbitrary 9-byte sequence (non-CBOR) — tests byte-sequence CID determinism",
+      "canonicalBytes": "a1616ba16b61a20102",
+      "blake3DigestHex": "d52579dc6883150d371ec443a69b348dec33c2e643672b195b454fd501c49391",
+      "multihashHex": "1f20d52579dc6883150d371ec443a69b348dec33c2e643672b195b454fd501c49391",
+      "expectedCid": "b3:d4qnkjlz3ruigfing4pmiq5gtm2i33btyltegzzldfnukt6vahcjhei"
+    },
+    {
+      "inputDescription": "256 bytes of sequential data 0x00–0xff (large payload for throughput testing)",
+      "canonicalBytes": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+      "blake3DigestHex": "4a495ba42461748eca8fdad618f976aa726cc2903de9fcb40735a786ac1c196b",
+      "multihashHex": "1f204a495ba42461748eca8fdad618f976aa726cc2903de9fcb40735a786ac1c196b",
+      "expectedCid": "b3:d4qeusk3uqsgc5eozkh5vvqy7f3ku4tmykid32p4wqdtlj4gvqobs2y"
+    },
+    {
+      "inputDescription": "All-zero 32 bytes (boundary: every byte is 0x00, tests encoding of repeated nulls)",
+      "canonicalBytes": "0000000000000000000000000000000000000000000000000000000000000000",
+      "blake3DigestHex": "2ada83c1819a5372dae1238fc1ded123c8104fdaa15862aaee69428a1820fcda",
+      "multihashHex": "1f202ada83c1819a5372dae1238fc1ded123c8104fdaa15862aaee69428a1820fcda",
+      "expectedCid": "b3:d4qcvwudygazuu3s3lqshd6b33ishsaqj7nkcwdcvlxgsqukdaqpzwq"
+    },
+    {
+      "inputDescription": "CBOR {a: 1.0} where 1.0 is encoded as half-precision float f9 3c 00 — demonstrates a REJECTED encoding; canonical form MUST use integer 1 (0x01). Validators must reject this input.",
+      "canonicalBytes": "a16161f93c00",
+      "blake3DigestHex": "128157e5647a8d29a5d1c8edd204b8fb01c797c38ee02558d02158a4e3fb610f",
+      "multihashHex": "1f20128157e5647a8d29a5d1c8edd204b8fb01c797c38ee02558d02158a4e3fb610f",
+      "expectedCid": "b3:d4qbfakx4vshvdjjuxi4r3osas4pwaohs7by5ybfldiccwfe4p5wcdy"
+    }
+  ]
+}
