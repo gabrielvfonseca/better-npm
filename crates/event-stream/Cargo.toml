@@ -1,0 +1,24 @@
+[package]
+name = "dash-event-stream"
+version = { workspace = true }
+edition = "2024"
+license = "MIT"
+authors = ["Dash Team"]
+
+[dependencies]
+dash-provenance = { path = "../provenance" }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+tracing = { workspace = true }
+reqwest = { workspace = true, features = ["json", "rustls-tls"] }
+hmac = "0.12"
+sha2 = { workspace = true }
+uuid = { workspace = true, features = ["v4", "serde"] }
+chrono = { workspace = true }
+async-trait = "0.1"
+dashmap = { workspace = true }
+tokio-util = { version = "0.7", features = ["codec"] }
+hex = "0.4"
+constant_time_eq = "0.1"

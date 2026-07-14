@@ -1,0 +1,14 @@
+[package]
+name = "dash-sbom"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "SBOM generation (SPDX 2.3, CycloneDX 1.6) and license intelligence from lockfile"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+chrono = { workspace = true }
+dash-lockfile = { path = "../lockfile" }

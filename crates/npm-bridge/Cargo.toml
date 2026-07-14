@@ -1,0 +1,27 @@
+[package]
+name = "dash-npm-bridge"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+description = "npm compatibility bridge — tarball→capsule, federated upstream, dual-publish"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+reqwest = { workspace = true }
+tokio = { workspace = true }
+tar = { workspace = true }
+flate2 = { workspace = true }
+zstd = { workspace = true }
+ciborium = { workspace = true }
+thiserror = { workspace = true }
+semver = { workspace = true }
+dash-capsule = { workspace = true }
+dash-cid = { workspace = true }
+dash-manifest = { path = "../manifest" }
+dash-resolver = { path = "../resolver" }
+tracing = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

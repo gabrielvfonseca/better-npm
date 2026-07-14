@@ -1,0 +1,28 @@
+[package]
+name = "dash-plugin-registry"
+version = { workspace = true }
+edition = "2024"
+license = "MIT"
+authors = ["Dash Team"]
+
+[dependencies]
+dash-capsule = { path = "../capsule" }
+dash-cid = { path = "../cid" }
+dash-manifest = { path = "../manifest" }
+dash-policy = { path = "../policy" }
+dash-proto = { path = "../proto" }
+dash-sandbox = { path = "../sandbox" }
+semver = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+tracing = { workspace = true }
+dashmap = { workspace = true }
+async-trait = "0.1"
+ciborium = { workspace = true }
+sha2 = { workspace = true }
+hex = { workspace = true }
+walkdir = { workspace = true }
+reqwest = { workspace = true, features = ["json", "rustls-tls"] }
+chrono = { workspace = true }

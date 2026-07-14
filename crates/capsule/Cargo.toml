@@ -1,0 +1,14 @@
+[package]
+name = "dash-capsule"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+description = "DASHCAP1 capsule pack/unpack, file table, range read"
+
+[dependencies]
+dash-cid = { workspace = true }
+blake3 = { workspace = true }
+ciborium = { workspace = true }
+zstd = { workspace = true }
+thiserror = { workspace = true }

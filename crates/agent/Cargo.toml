@@ -1,0 +1,24 @@
+[package]
+name = "dash-agent"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "AI-native surface: tool-interface indexing, semantic search, and agent primitives"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+schemars = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+dash-manifest = { path = "../manifest" }
+dash-package = { path = "../package" }
+dash-cid = { workspace = true }
+semver = { workspace = true }
+sha2 = { workspace = true }
+hex = { workspace = true }
+regex = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

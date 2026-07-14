@@ -1,0 +1,13 @@
+[package]
+name = "dash-capability"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "Capability model engine — CapabilitySet, diff, intersection, and runtime permission generation"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+dash-lockfile = { path = "../lockfile" }

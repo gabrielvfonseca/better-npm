@@ -1,0 +1,35 @@
+[package]
+name = "dash-federation"
+version = { workspace = true }
+edition = "2024"
+license = "MIT"
+authors = ["Dash Team"]
+
+[dependencies]
+dash-capsule = { path = "../capsule" }
+dash-cid = { path = "../cid" }
+dash-governance = { path = "../governance" }
+dash-manifest = { path = "../manifest" }
+dash-policy = { path = "../policy" }
+dash-proto = { path = "../proto" }
+dash-provenance = { path = "../provenance" }
+dash-registry = { path = "../registry" }
+dash-store = { path = "../store" }
+semver = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+tracing = { workspace = true }
+reqwest = { workspace = true, features = ["json", "rustls-tls"] }
+bytes = { workspace = true }
+async-trait = "0.1"
+dashmap = { workspace = true }
+url = { workspace = true }
+chrono = { workspace = true }
+blake3 = "1"
+hex = "0.4"
+tempfile = "3"
+
+[dev-dependencies]
+tokio-test = "0.4"
