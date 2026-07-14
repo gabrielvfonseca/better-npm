@@ -20,7 +20,7 @@
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@dash/mdx": "workspace:*",
-    "@dash/ui": "workspace:*"
+    "@dash/design-system": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.7.0",

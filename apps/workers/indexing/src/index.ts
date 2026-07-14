@@ -1,5 +1,5 @@
-import { createLogger } from "@dash/logger"
 import { loadConfig } from "@dash/config"
+import { createLogger } from "@dash/logger"
 import { createSearchClient } from "@dash/search"
 import { createStorageClient } from "@dash/storage"
 

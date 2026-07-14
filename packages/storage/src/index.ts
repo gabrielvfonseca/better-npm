@@ -1,5 +1,13 @@
-import { readFileSync, writeFileSync, unlinkSync, existsSync, mkdirSync, readdirSync, statSync } from "node:fs"
-import { join, dirname } from "node:path"
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  statSync,
+  unlinkSync,
+  writeFileSync,
+} from "node:fs"
+import { dirname, join } from "node:path"
 
 export interface StorageBackend {
   read(path: string): Promise<Buffer>
@@ -94,7 +102,7 @@ export class S3Storage implements StorageBackend {
         ...this.authHeaders(),
         "Content-Type": "application/octet-stream",
       },
-      body: data,
+      body: data instanceof Buffer ? data : data,
     })
     if (!response.ok) throw new Error(`S3 write failed: ${response.statusText}`)
   }
@@ -139,16 +147,14 @@ export interface StorageConfig {
   s3?: S3StorageConfig
 }
 
-export class StorageFactory {
-  static create(config: StorageConfig): StorageBackend {
-    switch (config.type) {
-      case "local":
-        return new LocalStorage(config.baseDir ?? "./data/storage")
-      case "s3":
-        if (!config.s3) throw new Error("S3 configuration required")
-        return new S3Storage(config.s3)
-      default:
-        throw new Error(`Unknown storage type: ${config.type}`)
-    }
+export function createStorage(config: StorageConfig): StorageBackend {
+  switch (config.type) {
+    case "local":
+      return new LocalStorage(config.baseDir ?? "./data/storage")
+    case "s3":
+      if (!config.s3) throw new Error("S3 configuration required")
+      return new S3Storage(config.s3)
+    default:
+      throw new Error(`Unknown storage type: ${config.type}`)
   }
 }

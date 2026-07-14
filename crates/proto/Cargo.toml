@@ -1,0 +1,45 @@
+[package]
+name = "dash-proto"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+description = "DPR wire protocol client and server"
+build = "build.rs"
+
+[dependencies]
+dash-cid = { workspace = true }
+dash-capsule = { workspace = true }
+dash-provenance = { workspace = true }
+dash-lockfile = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+bytes = { workspace = true }
+tower = { workspace = true }
+tokio = { workspace = true }
+url = { workspace = true }
+prost = { workspace = true }
+prost-types = "0.13"
+tonic = { workspace = true, features = ["transport", "tls"] }
+tonic-health = { version = "0.12", optional = true }
+tower-http = { version = "0.6", features = ["trace"] }
+http = "1"
+http-body = "1"
+futures = "0.3"
+futures-util = "0.3"
+tracing = { workspace = true }
+base64 = { workspace = true }
+chrono = { workspace = true }
+
+[build-dependencies]
+tonic-build = "0.12"
+prost-types = "0.13"
+serde = { workspace = true }
+
+[features]
+default = ["transport"]
+health = ["tonic-health"]
+transport = ["tonic/transport"]
+
+[dev-dependencies]
+tokio-test = "0.4"

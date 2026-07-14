@@ -1,16 +1,16 @@
-import { createLogger } from "@dash/logger"
-import { loadConfig } from "@dash/config"
-import { createStorageClient } from "@dash/storage"
 import { createHash } from "node:crypto"
 import { createWriteStream } from "node:fs"
 import { mkdir } from "node:fs/promises"
-import { pipeline } from "node:stream/promises"
-import { Readable } from "node:stream"
-import { join } from "node:path"
 import { tmpdir } from "node:os"
+import { join } from "node:path"
+import { Readable } from "node:stream"
+import { pipeline } from "node:stream/promises"
+import { loadConfig } from "@dash/config"
+import { createLogger } from "@dash/logger"
+import { createStorageClient } from "@dash/storage"
 
 const logger = createLogger("workers-downloads")
-const config = loadConfig()
+const _config = loadConfig()
 
 export interface DownloadPayload {
   packageName: string
@@ -27,13 +27,19 @@ export async function handleDownload(payload: Record<string, unknown>): Promise<
   error?: string
 }> {
   const downloadPayload = payload as unknown as DownloadPayload
-  logger.info("Processing download job", { packageName: downloadPayload.packageName, packageVersion: downloadPayload.packageVersion })
+  logger.info("Processing download job", {
+    packageName: downloadPayload.packageName,
+    packageVersion: downloadPayload.packageVersion,
+  })
 
   try {
     const result = await processDownload(downloadPayload)
     return { status: "success", worker: "@dash/workers-downloads", result }
   } catch (error) {
-    logger.error("Failed to process download job", { packageName: downloadPayload.packageName, error: String(error) })
+    logger.error("Failed to process download job", {
+      packageName: downloadPayload.packageName,
+      error: String(error),
+    })
     return { status: "failure", worker: "@dash/workers-downloads", error: String(error) }
   }
 }
@@ -47,7 +53,11 @@ async function processDownload(payload: DownloadPayload): Promise<{
 }> {
   const { packageName, packageVersion, url, integrity, destination } = payload
 
-  const cacheDir = join(destination || join(tmpdir(), "dash-cache", "packages"), packageName, packageVersion)
+  const cacheDir = join(
+    destination || join(tmpdir(), "dash-cache", "packages"),
+    packageName,
+    packageVersion,
+  )
   await mkdir(cacheDir, { recursive: true })
 
   const filename = `${packageName}-${packageVersion}.tgz`
@@ -61,7 +71,7 @@ async function processDownload(payload: DownloadPayload): Promise<{
   }
 
   const contentLength = response.headers.get("content-length")
-  const expectedSize = contentLength ? parseInt(contentLength, 10) : undefined
+  const expectedSize = contentLength ? Number.parseInt(contentLength, 10) : undefined
 
   const arrayBuffer = await response.arrayBuffer()
   const buffer = Buffer.from(arrayBuffer)

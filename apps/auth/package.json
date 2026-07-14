@@ -14,8 +14,6 @@
   },
   "dependencies": {
     "hono": "^4.7.0",
-    "@hono/jwt": "^0.5.0",
-    "@hono/cors": "^0.5.0",
     "@dash/config": "workspace:*",
     "@dash/logger": "workspace:*",
     "@dash/auth": "workspace:*"

@@ -1,34 +1,31 @@
-import type { Logger } from "@dash/logger"
-import type { DashConfig } from "@dash/config"
-import type { PackageManifest } from "@dash/types"
-import { mkdtempSync, writeFileSync, rmSync } from "node:fs"
-import { join } from "node:path"
+import { mkdtempSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
+import { join } from "node:path"
+import type { DashConfig } from "@dash/config"
+import { Logger } from "@dash/logger"
+import type { PackageManifest } from "@dash/types"
 
 export function createTestLogger(): Logger {
-  const levels = ["debug", "info", "warn", "error", "fatal"]
-  const logger = { module: "test" } as Logger
-
-  for (const level of levels) {
-    (logger as Record<string, unknown>)[level] = () => {}
-  }
-
-  logger.child = () => createTestLogger()
-
-  return logger
+  return new Logger("test")
 }
 
 export function createTestConfig(overrides?: Partial<DashConfig>): DashConfig {
   const config: DashConfig = {
     api: { url: "http://localhost:3000", port: 3000, host: "0.0.0.0", corsOrigin: "*" },
     registry: { url: "http://localhost:4000", port: 4000, storagePath: "/tmp/dash-test/registry" },
-    auth: { secret: "test-secret", url: "http://localhost:3000/auth", issuer: "dash-test", tokenExpiry: "1h" },
+    auth: {
+      secret: "test-secret",
+      url: "http://localhost:3000/auth",
+      issuer: "dash-test",
+      tokenExpiry: "1h",
+    },
     telemetry: { enabled: false, serviceName: "dash-test", samplerRatio: 0 },
     storage: { s3Endpoint: "", s3Region: "", s3Bucket: "", s3AccessKey: "", s3SecretKey: "" },
     cache: { redisUrl: "", defaultTtl: 60 },
     workers: { concurrency: 1, queueUrl: "", timeoutMs: 5000 },
     search: { indexPath: "/tmp/dash-test/search", meiliHttpAddr: "", meiliMasterKey: "" },
     logging: { level: "silent", format: "json", destination: "stdout" },
+    benchmarks: { outputResults: false, outputPath: "benchmarks-results.json" },
   }
 
   if (overrides) {
@@ -54,13 +51,12 @@ function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial
   return result as T
 }
 
-export interface MockHandler {
-  (req: Request): Response | Promise<Response>
-}
+export type MockHandler = (req: Request) => Response | Promise<Response>
 
-export function createMockServer(
-  handlers: Record<string, MockHandler>,
-): { url: string; close: () => void } {
+export function createMockServer(handlers: Record<string, MockHandler>): {
+  url: string
+  close: () => void
+} {
   const routes = new Map<string, MockHandler>()
   for (const [path, handler] of Object.entries(handlers)) {
     routes.set(path, handler)
@@ -104,9 +100,7 @@ export function createTestPackage(overrides?: Partial<PackageManifest>): Package
   return { ...pkg, ...overrides }
 }
 
-export async function withTempDir(
-  fn: (dir: string) => Promise<void>,
-): Promise<void> {
+export async function withTempDir(fn: (dir: string) => Promise<void>): Promise<void> {
   const dir = mkdtempSync(join(tmpdir(), "dash-test-"))
   try {
     await fn(dir)

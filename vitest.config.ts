@@ -1,5 +1,5 @@
-import { defineConfig } from "vitest/config"
 import { resolve } from "node:path"
+import { defineConfig } from "vitest/config"
 
 export default defineConfig({
   test: {
@@ -28,7 +28,7 @@ export default defineConfig({
     testTimeout: 10_000,
     hookTimeout: 10_000,
     reporters: ["default", "verbose"],
-    onConsoleLog(log: string, _type: "stdout" | "stderr"): boolean | void {
+    onConsoleLog(log: string, _type: "stdout" | "stderr"): boolean | undefined {
       if (log.includes("deprecated")) return false
     },
   },
@@ -38,7 +38,7 @@ export default defineConfig({
       "@dash/client": resolve(__dirname, "packages/client/src"),
       "@dash/types": resolve(__dirname, "packages/types/src"),
       "@dash/schemas": resolve(__dirname, "packages/schemas/src"),
-      "@dash/ui": resolve(__dirname, "packages/ui/src"),
+      "@dash/design-system": resolve(__dirname, "packages/design-system/src"),
       "@dash/hooks": resolve(__dirname, "packages/hooks/src"),
       "@dash/utils": resolve(__dirname, "packages/utils/src"),
       "@dash/logger": resolve(__dirname, "packages/logger/src"),

@@ -1,17 +1,73 @@
 # `@dash/design-system`
 
-React component prop type definitions for the Dash design system.
+A comprehensive set of shadcn/ui-style React primitives for the Dash design system, built on top of [Base UI](https://base-ui.com) (`@base-ui/react`) instead of Radix UI.
 
-## Overview
+All components are unstyled, accessible, and composable. They ship as TypeScript source and follow shadcn conventions (`cn` utility, `class-variance-authority` variants, `data-slot` hooks, and Base UI's `render` composition model).
 
-Exports prop type interfaces for design system components: `Button`, `Input`, `Select`, `Card`, `Badge`, `Modal`, `Table<T>`, `Spinner`, `Tabs`, `Tooltip`, `Avatar`, `Dropdown`, `Pagination`, `Toast`, `Skeleton`, `ProgressBar`.
+## Installation
+
+```bash
+bun add @dash/design-system @base-ui/react
+```
+
+Peer dependencies: `react` and `react-dom` (^19).
 
 ## Usage
 
 ```tsx
-import type { ButtonProps, ModalProps, TableProps } from "@dash/design-system";
+import { Button, Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@dash/design-system"
 
-function MyComponent(props: ButtonProps) {
-  return <button className={props.variant}>{props.children}</button>;
+export function Example() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">Open</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Are you sure?</DialogTitle>
+          <DialogDescription>This action cannot be undone.</DialogDescription>
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
+  )
 }
 ```
+
+## Theming
+
+The components reference semantic design tokens (`bg-background`, `text-foreground`, `border-input`, `bg-primary`, …) that must be provided by your app:
+
+1. Import the token stylesheet once at your app root:
+
+   ```ts
+   import "@dash/design-system/styles.css"
+   ```
+
+2. Extend your Tailwind theme with the bundled preset (maps the CSS variables to Tailwind colors and exposes the `dark` variant):
+
+   ```ts
+   import designSystem from "@dash/design-system/tailwind-preset"
+
+   export default {
+     presets: [designSystem],
+     content: ["./src/**/*.{ts,tsx}", "./node_modules/@dash/design-system/src/**/*.{ts,tsx}"],
+   }
+   ```
+
+The `components.json` in this package records the shadcn configuration (`"base": "base"`) so the official shadcn CLI can keep these primitives in sync.
+
+## Components
+
+**Primitives:** `Button`, `Card` (+ `CardHeader`/`CardTitle`/`CardDescription`/`CardContent`/`CardFooter`), `Badge`, `Input`, `Textarea`, `Label`, `Alert` (+ `AlertTitle`/`AlertDescription`), `Skeleton`, `Spinner`, `Separator`, `Avatar` (+ `AvatarImage`/`AvatarFallback`).
+
+**Forms:** `Checkbox`, `Switch`, `RadioGroup` (+ `RadioGroupItem`), `Select` (+ `SelectTrigger`/`SelectContent`/`SelectItem`/`SelectValue`/`SelectLabel`/`SelectGroup`/`SelectSeparator`), `Slider`, `Progress`, `Accordion`, `Form` (+ `FormItem`/`FormLabel`/`FormControl`/`FormDescription`/`FormMessage`).
+
+**Overlays:** `Dialog`, `AlertDialog`, `Sheet` (Drawer), `Popover`, `Tooltip` (+ `TooltipProvider`), `DropdownMenu`.
+
+**Display & navigation:** `Tabs`, `Toast` (+ `Toaster`, `useToast`, `ToastProvider`), `Pagination`, `Table` (+ `TableHeader`/`TableBody`/`TableFooter`/`TableHead`/`TableRow`/`TableCell`/`TableCaption`).
+
+## Utilities
+
+- `cn(...classes)` — `clsx` + `tailwind-merge` helper.
+- `buttonVariants` / `badgeVariants` — `cva` variant resolvers for composition via Base UI's `render` prop.

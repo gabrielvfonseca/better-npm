@@ -16,7 +16,7 @@
     "next": "^15.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@dash/ui": "workspace:*",
+    "@dash/design-system": "workspace:*",
     "@dash/hooks": "workspace:*",
     "@dash/sdk": "workspace:*",
     "recharts": "^2.15.0"

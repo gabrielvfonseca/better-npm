@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "base-nova",
+  "base": "base",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "tailwind.config.ts",
+    "css": "src/styles.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide-react",
+  "aliases": {
+    "components": "@dash/design-system",
+    "utils": "@dash/design-system/lib",
+    "ui": "@dash/design-system",
+    "lib": "@dash/design-system/lib",
+    "hooks": "@dash/design-system/hooks"
+  },
+  "resolvedPaths": {
+    "components": "packages/design-system/src",
+    "utils": "packages/design-system/src/lib",
+    "ui": "packages/design-system/src",
+    "lib": "packages/design-system/src/lib",
+    "hooks": "packages/design-system/src/hooks"
+  }
+}

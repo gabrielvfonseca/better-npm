@@ -1,9 +1,9 @@
-import { createLogger } from "@dash/logger"
 import { loadConfig } from "@dash/config"
+import { createLogger } from "@dash/logger"
 import { createStorageClient } from "@dash/storage"
 
 const logger = createLogger("workers-scanning")
-const config = loadConfig()
+const _config = loadConfig()
 
 export interface ScanPayload {
   packageName: string
@@ -101,7 +101,7 @@ async function scanFile(filename: string, content: string): Promise<Vulnerabilit
   const lines = content.split("\n")
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]!
+    const line = lines[i]
     const lineNumber = i + 1
 
     const evalVuln = checkEvalUsage(line, filename, lineNumber)
@@ -136,7 +136,8 @@ function checkEvalUsage(line: string, file: string, lineNumber: number): Vulnera
       file,
       line: lineNumber,
       message: "Use of eval() or dynamic Function constructor can lead to code injection",
-      recommendation: "Avoid using eval(). Use safer alternatives like JSON.parse() or proper parsers.",
+      recommendation:
+        "Avoid using eval(). Use safer alternatives like JSON.parse() or proper parsers.",
     }
   }
   return null
@@ -150,13 +151,18 @@ function checkInnerHTML(line: string, file: string, lineNumber: number): Vulnera
       file,
       line: lineNumber,
       message: "Setting innerHTML can lead to XSS vulnerabilities",
-      recommendation: "Use textContent or insertAdjacentText() instead, or sanitize input with DOMPurify.",
+      recommendation:
+        "Use textContent or insertAdjacentText() instead, or sanitize input with DOMPurify.",
     }
   }
   return null
 }
 
-function checkHardcodedSecrets(line: string, file: string, lineNumber: number): Vulnerability | null {
+function checkHardcodedSecrets(
+  line: string,
+  file: string,
+  lineNumber: number,
+): Vulnerability | null {
   const secretPatterns = [
     /(?:api[_-]?key|apikey|secret|password|token|auth)\s*[:=]\s*['"][A-Za-z0-9_\-.]{16,}['"]/i,
     /(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{36,}/,
@@ -172,14 +178,19 @@ function checkHardcodedSecrets(line: string, file: string, lineNumber: number): 
         file,
         line: lineNumber,
         message: "Possible hardcoded secret detected",
-        recommendation: "Use environment variables or a secrets manager. Never commit secrets to source control.",
+        recommendation:
+          "Use environment variables or a secrets manager. Never commit secrets to source control.",
       }
     }
   }
   return null
 }
 
-function checkCommandInjection(line: string, file: string, lineNumber: number): Vulnerability | null {
+function checkCommandInjection(
+  line: string,
+  file: string,
+  lineNumber: number,
+): Vulnerability | null {
   if (/\b(?:exec|spawn|execSync|spawnSync|execFile|execFileSync)\s*\(/.test(line)) {
     return {
       type: "command-injection",
@@ -187,13 +198,18 @@ function checkCommandInjection(line: string, file: string, lineNumber: number): 
       file,
       line: lineNumber,
       message: "Use of child process execution functions can lead to command injection",
-      recommendation: "Avoid passing user input to exec/spawn. Use execFile with argument arrays if needed.",
+      recommendation:
+        "Avoid passing user input to exec/spawn. Use execFile with argument arrays if needed.",
     }
   }
   return null
 }
 
-function checkPrototypePollution(line: string, file: string, lineNumber: number): Vulnerability | null {
+function checkPrototypePollution(
+  line: string,
+  file: string,
+  lineNumber: number,
+): Vulnerability | null {
   if (/\[\s*['"]__proto__['"]\s*\]/.test(line) || /\.__proto__\s*=/.test(line)) {
     return {
       type: "prototype-pollution",
@@ -201,7 +217,8 @@ function checkPrototypePollution(line: string, file: string, lineNumber: number)
       file,
       line: lineNumber,
       message: "Potential prototype pollution vulnerability",
-      recommendation: "Use Object.create(null) or Object.freeze() on prototypes. Validate object keys before assignment.",
+      recommendation:
+        "Use Object.create(null) or Object.freeze() on prototypes. Validate object keys before assignment.",
     }
   }
   return null
@@ -212,7 +229,9 @@ async function analyzeDependencies(content: string, file: string): Promise<Vulne
 
   try {
     const packageJson = JSON.parse(content)
-    const allDeps = { ...packageJson.dependencies, ...packageJson.devDependencies } as Record<string, string> | undefined
+    const allDeps = { ...packageJson.dependencies, ...packageJson.devDependencies } as
+      | Record<string, string>
+      | undefined
 
     if (allDeps) {
       for (const [name, version] of Object.entries(allDeps)) {
@@ -223,7 +242,8 @@ async function analyzeDependencies(content: string, file: string): Promise<Vulne
             severity: "medium",
             file,
             message: `Dependency '${name}' uses wildcard version '${version}'`,
-            recommendation: "Pin to a specific version range instead of using '*' to avoid unexpected breaking changes.",
+            recommendation:
+              "Pin to a specific version range instead of using '*' to avoid unexpected breaking changes.",
           })
         }
       }

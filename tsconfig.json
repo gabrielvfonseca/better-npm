@@ -21,6 +21,7 @@
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "verbatimModuleSyntax": true,
+    "jsx": "preserve",
     "paths": {
       "@dash/sdk": ["./packages/sdk/src"],
       "@dash/sdk/*": ["./packages/sdk/src/*"],
@@ -30,8 +31,8 @@
       "@dash/types/*": ["./packages/types/src/*"],
       "@dash/schemas": ["./packages/schemas/src"],
       "@dash/schemas/*": ["./packages/schemas/src/*"],
-      "@dash/ui": ["./packages/ui/src"],
-      "@dash/ui/*": ["./packages/ui/src/*"],
+      "@dash/design-system": ["./packages/design-system/src"],
+      "@dash/design-system/*": ["./packages/design-system/src/*"],
       "@dash/hooks": ["./packages/hooks/src"],
       "@dash/hooks/*": ["./packages/hooks/src/*"],
       "@dash/utils": ["./packages/utils/src"],
@@ -72,12 +73,5 @@
       "@dash/icons/*": ["./packages/icons/src/*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build",
-    ".next",
-    "coverage",
-    "target"
-  ]
+  "exclude": ["node_modules", "dist", "build", ".next", "coverage", "target"]
 }

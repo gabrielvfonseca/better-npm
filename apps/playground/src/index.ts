@@ -1,11 +1,11 @@
+import { loadConfig } from "@dash/config"
+import { createLogger } from "@dash/logger"
 import { Hono } from "hono"
 import { HTTPException } from "hono/http-exception"
-import { createLogger } from "@dash/logger"
-import { loadConfig } from "@dash/config"
 import type { StatusCode } from "hono/utils/http-status"
 
 const logger = createLogger("playground")
-const config = loadConfig()
+const _config = loadConfig()
 
 const app = new Hono()
 
@@ -158,7 +158,7 @@ app.post("/playground/run", async (c) => {
   } catch (err) {
     if (err instanceof HTTPException) throw err
     logger.error("Code execution failed", { error: String(err) })
-    return c.json({ error: "Code execution failed: " + String(err) }, 500)
+    return c.json({ error: `Code execution failed: ${String(err)}` }, 500)
   }
 })
 
@@ -176,7 +176,7 @@ app.post("/playground/format", async (c) => {
   } catch (err) {
     if (err instanceof HTTPException) throw err
     logger.error("Code formatting failed", { error: String(err) })
-    return c.json({ error: "Code formatting failed: " + String(err) }, 500)
+    return c.json({ error: `Code formatting failed: ${String(err)}` }, 500)
   }
 })
 
@@ -192,7 +192,7 @@ app.onError((err, c) => {
 
 app.notFound((c) => c.json({ error: "Not found", status: 404 }, 404))
 
-async function runInSandbox(code: string, language: string) {
+async function runInSandbox(code: string, _language: string) {
   const start = performance.now()
   let output = ""
 
@@ -200,16 +200,16 @@ async function runInSandbox(code: string, language: string) {
     const logs: string[] = []
     const mockConsole = {
       log: (...args: unknown[]) => logs.push(args.map(String).join(" ")),
-      error: (...args: unknown[]) => logs.push("Error: " + args.map(String).join(" ")),
-      warn: (...args: unknown[]) => logs.push("Warn: " + args.map(String).join(" ")),
-      info: (...args: unknown[]) => logs.push("Info: " + args.map(String).join(" ")),
+      error: (...args: unknown[]) => logs.push(`Error: ${args.map(String).join(" ")}`),
+      warn: (...args: unknown[]) => logs.push(`Warn: ${args.map(String).join(" ")}`),
+      info: (...args: unknown[]) => logs.push(`Info: ${args.map(String).join(" ")}`),
     }
 
     const fn = new Function("console", code)
     fn(mockConsole)
     output = logs.join("\n")
   } catch (err) {
-    output = "Execution error: " + String(err)
+    output = `Execution error: ${String(err)}`
   }
 
   return { output, executionTime: performance.now() - start }

@@ -5,7 +5,6 @@ pre-commit:
       glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,css,md,mdx}"
       run: |
         bunx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files} && git add {staged_files}
-
 commit-msg:
   commands:
     lint-commit:
@@ -14,13 +13,11 @@ commit-msg:
           echo "Aborting: commit message must follow Conventional Commits (e.g. 'feat(scope): summary')."
           exit 1
         fi
-
 pre-push:
   commands:
     test:
       run: cargo test --workspace --no-fail-fast && bun run test && cd conformance && bunx vitest run
-
 post-checkout:
   commands:
     reindex:
-      run: echo "Switched branch — reindexing" && bun install 2>/dev/null || true
+      run: echo "Switched branch -- reindexing" && bun install 2>/dev/null || true

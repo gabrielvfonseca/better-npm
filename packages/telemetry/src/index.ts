@@ -46,24 +46,37 @@ export async function shutdownTracing(): Promise<void> {
   tracer = undefined
 }
 
-export function recordMetric(name: string, value: number, attributes?: Record<string, string>): void {
+export function recordMetric(
+  _name: string,
+  _value: number,
+  _attributes?: Record<string, string>,
+): void {
   if (isShutdown) return
-  if (attributes) void 0
+  // attributes intentionally unused in this implementation
 }
 
-export function incrementCounter(name: string, value: number = 1, attributes?: Record<string, string>): void {
+export function incrementCounter(
+  _name: string,
+  _value = 1,
+  _attributes?: Record<string, string>,
+): void {
   if (isShutdown) return
-  if (attributes) void 0
+  // attributes intentionally unused in this implementation
 }
 
-export function recordHistogram(name: string, value: number, attributes?: Record<string, string>): void {
+export function recordHistogram(
+  _name: string,
+  _value: number,
+  _attributes?: Record<string, string>,
+): void {
   if (isShutdown) return
-  if (attributes) void 0
+  // attributes intentionally unused in this implementation
 }
 
-export function setAttribute(key: string, value: string): void {
+export function setAttribute(_key: string, _value: string): void {
   if (isShutdown) return
-  if (key) void 0
+  // key intentionally unused in this implementation
+  // value intentionally unused in this implementation
 }
 
 export function getTracer(): TraceTracer {
@@ -85,4 +98,49 @@ export async function wrapWithSpan<T>(name: string, fn: () => Promise<T>): Promi
   } finally {
     span.end()
   }
+}
+
+// Additional telemetry client for health checks
+export interface TelemetryClient {
+  ingestEvents(events: { name: string; timestamp: number }[]): Promise<{ accepted: boolean }[]>
+  ingestMetrics(metrics: { name: string; value: number }[]): Promise<{ accepted: boolean }[]>
+  isConnected(): boolean
+  exportPrometheus(): Promise<string>
+  checkDatabase(): Promise<{ connected: boolean }>
+}
+
+export class TelemetryClientImpl implements TelemetryClient {
+  async ingestEvents(
+    _events: { name: string; timestamp: number }[],
+  ): Promise<{ accepted: boolean }[]> {
+    // No-op implementation: accept all events
+    return _events.map(() => ({ accepted: true }))
+  }
+
+  async ingestMetrics(
+    _metrics: { name: string; value: number }[],
+  ): Promise<{ accepted: boolean }[]> {
+    // No-op implementation: accept all metrics
+    return _metrics.map(() => ({ accepted: true }))
+  }
+
+  isConnected(): boolean {
+    // Assume connected for now
+    return true
+  }
+
+  async exportPrometheus(): Promise<string> {
+    // Return an empty Prometheus metrics string
+    return ""
+  }
+
+  async checkDatabase(): Promise<{ connected: boolean }> {
+    // In a real implementation, this would check actual database connectivity
+    // For now, return healthy as a placeholder
+    return { connected: true }
+  }
+}
+
+export function createTelemetryClient(): TelemetryClient {
+  return new TelemetryClientImpl()
 }

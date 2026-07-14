@@ -1,10 +1,10 @@
-import { createLogger } from "@dash/logger"
-import { loadConfig } from "@dash/config"
-import { createStorageClient } from "@dash/storage"
 import { createHash, verify } from "node:crypto"
+import { loadConfig } from "@dash/config"
+import { createLogger } from "@dash/logger"
+import { createStorageClient } from "@dash/storage"
 
 const logger = createLogger("workers-signatures")
-const config = loadConfig()
+const _config = loadConfig()
 
 export interface SignaturePayload {
   packageName: string
@@ -77,12 +77,7 @@ async function processSignature(payload: SignaturePayload): Promise<Verification
     algorithm = "rsa-sha512"
   } catch {
     try {
-      isValid = verify(
-        "sha512",
-        contentBuffer,
-        keyBuffer,
-        signatureBuffer,
-      )
+      isValid = verify("sha512", contentBuffer, keyBuffer, signatureBuffer)
       algorithm = "ecdsa-sha512"
     } catch {
       throw new Error("Unable to verify signature: unsupported key type or invalid format")

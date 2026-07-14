@@ -2,12 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src",
     "jsx": "preserve",
     "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowJs": true,
     "noEmit": true
   },
-  "include": ["src", "next-env.d.ts"]
+  "include": ["src"]
 }

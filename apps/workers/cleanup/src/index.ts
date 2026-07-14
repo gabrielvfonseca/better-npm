@@ -1,9 +1,9 @@
-import { createLogger } from "@dash/logger"
 import { loadConfig } from "@dash/config"
+import { createLogger } from "@dash/logger"
 import { createStorageClient } from "@dash/storage"
 
 const logger = createLogger("workers-cleanup")
-const config = loadConfig()
+const _config = loadConfig()
 
 export interface CleanupPayload {
   olderThan?: string
@@ -50,7 +50,9 @@ async function processCleanup(payload: CleanupPayload): Promise<{
   const storageClient = await createStorageClient()
 
   const cleanupTypes = types ?? ["cache", "temp", "old-versions", "logs", "orphaned-metadata"]
-  const cutoffDate = olderThan ? new Date(olderThan) : new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  const cutoffDate = olderThan
+    ? new Date(olderThan)
+    : new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
   const stats: CleanupStats[] = []
 
   for (const type of cleanupTypes) {
@@ -62,19 +64,19 @@ async function processCleanup(payload: CleanupPayload): Promise<{
 
       switch (type) {
         case "cache":
-          ({ removed, bytesFreed } = await cleanupCache(storageClient, cutoffDate))
+          ;({ removed, bytesFreed } = await cleanupCache(storageClient, cutoffDate))
           break
         case "temp":
-          ({ removed, bytesFreed } = await cleanupTemp(storageClient, cutoffDate))
+          ;({ removed, bytesFreed } = await cleanupTemp(storageClient, cutoffDate))
           break
         case "old-versions":
-          ({ removed, bytesFreed } = await cleanupOldVersions(storageClient, cutoffDate))
+          ;({ removed, bytesFreed } = await cleanupOldVersions(storageClient, cutoffDate))
           break
         case "logs":
-          ({ removed, bytesFreed } = await cleanupLogs(storageClient, cutoffDate))
+          ;({ removed, bytesFreed } = await cleanupLogs(storageClient, cutoffDate))
           break
         case "orphaned-metadata":
-          ({ removed, bytesFreed } = await cleanupOrphanedMetadata(storageClient, cutoffDate))
+          ;({ removed, bytesFreed } = await cleanupOrphanedMetadata(storageClient, cutoffDate))
           break
         default:
           logger.warn("Unknown cleanup type", { type })
@@ -84,7 +86,12 @@ async function processCleanup(payload: CleanupPayload): Promise<{
       const duration = performance.now() - start
       stats.push({ type, removed, bytesFreed, duration })
 
-      logger.info("Cleanup completed", { type, removed, bytesFreed, duration: `${duration.toFixed(0)}ms` })
+      logger.info("Cleanup completed", {
+        type,
+        removed,
+        bytesFreed,
+        duration: `${duration.toFixed(0)}ms`,
+      })
     } catch (error) {
       logger.error("Cleanup failed for type", { type, error: String(error) })
       stats.push({ type, removed: 0, bytesFreed: 0, duration: 0 })

@@ -16,7 +16,6 @@
       "complexity": {
         "noBannedTypes": "error",
         "noExtraBooleanCast": "error",
-        "noMultipleSpaces": "error",
         "noUselessCatch": "error",
         "noUselessConstructor": "error",
         "noUselessLoneBlockStatements": "error",
@@ -63,8 +62,7 @@
         "noExplicitAny": "warn",
         "noShadowRestrictedNames": "error",
         "useDefaultSwitchClauseLast": "error",
-        "useGetterReturn": "error",
-        "useNamedEnum": "error"
+        "useGetterReturn": "error"
       },
       "a11y": {
         "noSvgWithoutTitle": "off",

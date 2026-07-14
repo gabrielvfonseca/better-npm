@@ -1,15 +1,15 @@
+import { loadConfig } from "@dash/config"
+import { createLogger } from "@dash/logger"
+import { type TelemetryClient, createTelemetryClient } from "@dash/telemetry"
 import { Hono } from "hono"
 import { HTTPException } from "hono/http-exception"
-import { createLogger } from "@dash/logger"
-import { loadConfig } from "@dash/config"
-import { createTelemetryClient, type TelemetryClient } from "@dash/telemetry"
 import type { StatusCode } from "hono/utils/http-status"
 
 const logger = createLogger("status")
 const config = loadConfig()
 
 const app = new Hono()
-let telemetry: TelemetryClient
+let telemetry: TelemetryClient | undefined = undefined
 
 interface ComponentStatus {
   name: string
@@ -56,8 +56,8 @@ app.get("/status/components", async (c) => {
 
 app.get("/status/incidents", async (c) => {
   try {
-    const page = Math.max(1, parseInt(c.req.query("page") ?? "1", 10))
-    const limit = Math.min(100, Math.max(1, parseInt(c.req.query("limit") ?? "20", 10)))
+    const page = Math.max(1, Number.parseInt(c.req.query("page") ?? "1", 10))
+    const limit = Math.min(100, Math.max(1, Number.parseInt(c.req.query("limit") ?? "20", 10)))
 
     const incidents = await getIncidentHistory(page, limit)
     return c.json({
@@ -114,7 +114,12 @@ async function checkAllComponents(): Promise<ComponentStatus[]> {
         message: dbHealth.connected ? undefined : "Database connection failed",
       })
     } catch {
-      checks.push({ name: "Database", status: "down", lastChecked: new Date().toISOString(), message: "Health check failed" })
+      checks.push({
+        name: "Database",
+        status: "down",
+        lastChecked: new Date().toISOString(),
+        message: "Health check failed",
+      })
     }
   }
 
@@ -131,10 +136,22 @@ async function checkComponent(name: string, healthUrl: string): Promise<Componen
       return { name, status: "operational", latency, lastChecked: new Date().toISOString() }
     }
 
-    return { name, status: "degraded", latency, lastChecked: new Date().toISOString(), message: `HTTP ${response.status}` }
+    return {
+      name,
+      status: "degraded",
+      latency,
+      lastChecked: new Date().toISOString(),
+      message: `HTTP ${response.status}`,
+    }
   } catch {
     const latency = performance.now() - start
-    return { name, status: "down", latency, lastChecked: new Date().toISOString(), message: "Unreachable" }
+    return {
+      name,
+      status: "down",
+      latency,
+      lastChecked: new Date().toISOString(),
+      message: "Unreachable",
+    }
   }
 }
 
@@ -145,12 +162,15 @@ function determineOverallStatus(components: ComponentStatus[]): string {
   return "operational"
 }
 
-async function getIncidentHistory(page: number, limit: number): Promise<{ data: unknown[]; total: number }> {
+async function getIncidentHistory(
+  _page: number,
+  _limit: number,
+): Promise<{ data: unknown[]; total: number }> {
   return { data: [], total: 0 }
 }
 
 export async function createStatusService(telemetryClient?: TelemetryClient) {
-  telemetry = telemetryClient ?? (config.telemetry ? (await createTelemetryClient(config.telemetry)) : undefined!)
+  telemetry = telemetryClient ?? (config.telemetry ? await createTelemetryClient() : undefined)
   logger.info("Status service initialized")
   return app
 }

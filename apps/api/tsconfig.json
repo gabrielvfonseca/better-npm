@@ -2,7 +2,21 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "../../",
+    "noEmit": true
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "../../packages/**/*.ts",
+    "../../packages/**/*.tsx",
+    "../../packages/**/*.jsx"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/vite.config.ts",
+    "**/vitest.config.ts"
+  ]
 }

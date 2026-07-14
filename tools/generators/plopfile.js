@@ -39,33 +39,25 @@ export default function (plop) {
 
   plop.setHelper("pluralize", (str) => {
     if (/[sxz]$/i.test(str) || /[^aeioudgkprt]h$/i.test(str)) {
-      return str + "es"
+      return `${str}es`
     }
     if (/[^aeiou]y$/i.test(str)) {
-      return str.slice(0, -1) + "ies"
+      return `${str.slice(0, -1)}ies`
     }
-    return str + "s"
+    return `${str}s`
   })
 
   plop.setHelper("upperCase", (str) => String(str).toUpperCase())
   plop.setHelper("lowerCase", (str) => String(str).toLowerCase())
   plop.setHelper("trim", (str) => String(str).trim())
 
-  plop.setHelper("eq", function (a, b) {
-    return a === b
-  })
+  plop.setHelper("eq", (a, b) => a === b)
 
-  plop.setHelper("or", function (a, b) {
-    return a || b
-  })
+  plop.setHelper("or", (a, b) => a || b)
 
-  plop.setHelper("and", function (a, b) {
-    return a && b
-  })
+  plop.setHelper("and", (a, b) => a && b)
 
-  plop.setHelper("not", function (a) {
-    return !a
-  })
+  plop.setHelper("not", (a) => !a)
 
   plop.setHelper("ifEquals", function (a, b, opts) {
     return a === b ? opts.fn(this) : opts.inverse(this)
@@ -77,9 +69,11 @@ export default function (plop) {
     return "../".repeat(n)
   })
 
-  plop.setHelper("split", function (str, separator) {
+  plop.setHelper("split", (str, separator) => {
     if (!str) return []
-    return String(str).split(separator || ",").map((s) => s.trim())
+    return String(str)
+      .split(separator || ",")
+      .map((s) => s.trim())
   })
 
   plop.setHelper("timestamp", () => {
@@ -97,12 +91,12 @@ export default function (plop) {
   // Partials
   // ──────────────────────────────────────────────
 
-  plop.setPartial("license", "// MIT License\n// Copyright (c) {{year}} Dash\n// Permission is hereby granted...")
-
   plop.setPartial(
-    "jshint",
-    "/* jshint esversion: 11 */\n/* global console, process, require */",
+    "license",
+    "// MIT License\n// Copyright (c) {{year}} Dash\n// Permission is hereby granted...",
   )
+
+  plop.setPartial("jshint", "/* jshint esversion: 11 */\n/* global console, process, require */")
 
   plop.setPartial("shebang", "#!/usr/bin/env node\n")
 
@@ -115,12 +109,12 @@ export default function (plop) {
   // Custom Action Types
   // ──────────────────────────────────────────────
 
-  plop.setActionType("runBunInstall", function (_answers, _config, _plop) {
+  plop.setActionType("runBunInstall", (_answers, _config, _plop) => {
     execSync("bun install", { cwd: process.cwd(), stdio: "inherit" })
     return "bun install completed"
   })
 
-  plop.setActionType("runCargoCheck", function (answers, _config, _plop) {
+  plop.setActionType("runCargoCheck", (answers, _config, _plop) => {
     const cratePath = `crates/${answers.name.replace(/\s+/g, "-")}`
     execSync(`cargo check -p dash-${answers.name.replace(/\s+/g, "-")}`, {
       cwd: process.cwd(),
@@ -129,7 +123,7 @@ export default function (plop) {
     return `cargo check passed for ${cratePath}`
   })
 
-  plop.setActionType("format", function (_answers, _config, _plop) {
+  plop.setActionType("format", (_answers, _config, _plop) => {
     execSync("bunx @biomejs/biome format --write .", {
       cwd: process.cwd(),
       stdio: "inherit",
@@ -174,8 +168,7 @@ export default function (plop) {
         type: "modify",
         pattern: /(\/\/ Path aliases for packages)/,
         path: "tsconfig.json",
-        template:
-          "$1\n// @dash/{{dashCase name}} -> ./packages/{{dashCase name}}/src",
+        template: "$1\n// @dash/{{dashCase name}} -> ./packages/{{dashCase name}}/src",
       },
     ],
   })
@@ -250,12 +243,12 @@ export default function (plop) {
         default: false,
       },
     ],
-    actions: function (data) {
+    actions: (data) => {
       const actions = []
 
       actions.push({
         type: "addMany",
-        destination: "packages/ui/src/components/{{pascalCase name}}",
+        destination: "packages/design-system/src/components/{{pascalCase name}}",
         templateFiles: "tools/generators/component/templates/**/*",
         base: "tools/generators/component/templates",
         skipIfExists: true,
@@ -264,12 +257,12 @@ export default function (plop) {
       if (!data.hasTests) {
         actions.push({
           type: "modify",
-          path: "packages/ui/src/components/{{pascalCase name}}/{{pascalCase name}}.test.tsx",
+          path: "packages/design-system/src/components/{{pascalCase name}}/{{pascalCase name}}.test.tsx",
           skip: () => "Skipping test file",
         })
         actions.push({
           type: "add",
-          path: "packages/ui/src/components/{{pascalCase name}}/.test-skip",
+          path: "packages/design-system/src/components/{{pascalCase name}}/.test-skip",
           skip: () => true,
         })
       }
@@ -277,7 +270,7 @@ export default function (plop) {
       if (!data.hasStory) {
         actions.push({
           type: "modify",
-          path: "packages/ui/src/components/{{pascalCase name}}/{{pascalCase name}}.stories.tsx",
+          path: "packages/design-system/src/components/{{pascalCase name}}/{{pascalCase name}}.stories.tsx",
           skip: () => "Skipping story file",
         })
       }
@@ -312,7 +305,7 @@ export default function (plop) {
         default: true,
       },
     ],
-    actions: function (data) {
+    actions: (data) => {
       const actions = [
         {
           type: "add",
@@ -342,8 +335,7 @@ export default function (plop) {
         message: "Crate name (dash-case):",
         validate: (input) => {
           if (!input) return "Crate name is required"
-          if (!/^[a-z][a-z0-9-]*$/.test(input))
-            return "Must be dash-case (e.g., my-crate)"
+          if (!/^[a-z][a-z0-9-]*$/.test(input)) return "Must be dash-case (e.g., my-crate)"
           return true
         },
       },
@@ -368,7 +360,7 @@ export default function (plop) {
         message: "Additional dependencies (comma-separated, e.g., serde,tokio):",
       },
     ],
-    actions: function (data) {
+    actions: (data) => {
       const actions = []
 
       actions.push({

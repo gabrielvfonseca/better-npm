@@ -1,5 +1,5 @@
-import { createLogger } from "@dash/logger"
 import { loadConfig } from "@dash/config"
+import { createLogger } from "@dash/logger"
 
 const logger = createLogger("benchmarks")
 const config = loadConfig()
@@ -30,7 +30,13 @@ const benchmarks: Benchmark[] = [
         await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`benchmark-${i}`))
       }
       const duration = performance.now() - start
-      return { name: "crypto-hash", category: "crypto", duration, iterations, opsPerSecond: (iterations / duration) * 1000 }
+      return {
+        name: "crypto-hash",
+        category: "crypto",
+        duration,
+        iterations,
+        opsPerSecond: (iterations / duration) * 1000,
+      }
     },
   },
   {
@@ -44,7 +50,13 @@ const benchmarks: Benchmark[] = [
         JSON.parse(JSON.stringify(obj))
       }
       const duration = performance.now() - start
-      return { name: "json-parse", category: "serialization", duration, iterations, opsPerSecond: (iterations / duration) * 1000 }
+      return {
+        name: "json-parse",
+        category: "serialization",
+        duration,
+        iterations,
+        opsPerSecond: (iterations / duration) * 1000,
+      }
     },
   },
   {
@@ -58,7 +70,13 @@ const benchmarks: Benchmark[] = [
         arr.sort((a, b) => a - b)
       }
       const duration = performance.now() - start
-      return { name: "array-sort", category: "algorithm", duration, iterations, opsPerSecond: (iterations / duration) * 1000 }
+      return {
+        name: "array-sort",
+        category: "algorithm",
+        duration,
+        iterations,
+        opsPerSecond: (iterations / duration) * 1000,
+      }
     },
   },
   {
@@ -67,12 +85,18 @@ const benchmarks: Benchmark[] = [
     run: () => {
       const iterations = 50000
       const start = performance.now()
-      let result = ""
+      let _result = ""
       for (let i = 0; i < iterations; i++) {
-        result += `item-${i},`
+        _result += `item-${i},`
       }
       const duration = performance.now() - start
-      return { name: "string-concat", category: "string", duration, iterations, opsPerSecond: (iterations / duration) * 1000 }
+      return {
+        name: "string-concat",
+        category: "string",
+        duration,
+        iterations,
+        opsPerSecond: (iterations / duration) * 1000,
+      }
     },
   },
   {
@@ -86,7 +110,13 @@ const benchmarks: Benchmark[] = [
         text.match(/[a-z]+/g)
       }
       const duration = performance.now() - start
-      return { name: "regex-match", category: "string", duration, iterations, opsPerSecond: (iterations / duration) * 1000 }
+      return {
+        name: "regex-match",
+        category: "string",
+        duration,
+        iterations,
+        opsPerSecond: (iterations / duration) * 1000,
+      }
     },
   },
   {
@@ -100,7 +130,13 @@ const benchmarks: Benchmark[] = [
         set.has(i % 10000)
       }
       const duration = performance.now() - start
-      return { name: "set-lookup", category: "data-structure", duration, iterations, opsPerSecond: (iterations / duration) * 1000 }
+      return {
+        name: "set-lookup",
+        category: "data-structure",
+        duration,
+        iterations,
+        opsPerSecond: (iterations / duration) * 1000,
+      }
     },
   },
   {
@@ -116,7 +152,13 @@ const benchmarks: Benchmark[] = [
         map.delete(`key-${i}`)
       }
       const duration = performance.now() - start
-      return { name: "map-operations", category: "data-structure", duration, iterations, opsPerSecond: (iterations / duration) * 1000 }
+      return {
+        name: "map-operations",
+        category: "data-structure",
+        duration,
+        iterations,
+        opsPerSecond: (iterations / duration) * 1000,
+      }
     },
   },
   {
@@ -135,7 +177,13 @@ const benchmarks: Benchmark[] = [
         ])
       }
       const duration = performance.now() - start
-      return { name: "promise-all", category: "async", duration, iterations, opsPerSecond: (iterations / duration) * 1000 }
+      return {
+        name: "promise-all",
+        category: "async",
+        duration,
+        iterations,
+        opsPerSecond: (iterations / duration) * 1000,
+      }
     },
   },
   {
@@ -149,7 +197,13 @@ const benchmarks: Benchmark[] = [
         arr.reduce((a, b) => a + b, 0)
       }
       const duration = performance.now() - start
-      return { name: "array-reduce", category: "algorithm", duration, iterations, opsPerSecond: (iterations / duration) * 1000 }
+      return {
+        name: "array-reduce",
+        category: "algorithm",
+        duration,
+        iterations,
+        opsPerSecond: (iterations / duration) * 1000,
+      }
     },
   },
   {
@@ -162,7 +216,13 @@ const benchmarks: Benchmark[] = [
         crypto.randomUUID()
       }
       const duration = performance.now() - start
-      return { name: "crypto-uuid", category: "crypto", duration, iterations, opsPerSecond: (iterations / duration) * 1000 }
+      return {
+        name: "crypto-uuid",
+        category: "crypto",
+        duration,
+        iterations,
+        opsPerSecond: (iterations / duration) * 1000,
+      }
     },
   },
 ]
@@ -179,12 +239,19 @@ export async function runBenchmark(name: string): Promise<BenchmarkResult> {
 
   logger.info("Running benchmark", { name, category: benchmark.category })
   const result = await benchmark.run()
-  logger.info("Benchmark completed", { name, duration: result.duration, opsPerSecond: result.opsPerSecond })
+  logger.info("Benchmark completed", {
+    name,
+    duration: result.duration,
+    opsPerSecond: result.opsPerSecond,
+  })
 
   return result
 }
 
-export async function runBenchmarks(): Promise<{ results: BenchmarkResult[]; summary: { total: number; totalDuration: number; avgOpsPerSecond: number } }> {
+export async function runBenchmarks(): Promise<{
+  results: BenchmarkResult[]
+  summary: { total: number; totalDuration: number; avgOpsPerSecond: number }
+}> {
   logger.info("Running all benchmarks", { count: benchmarks.length })
   const start = performance.now()
 
@@ -208,9 +275,10 @@ export async function runBenchmarks(): Promise<{ results: BenchmarkResult[]; sum
 
   const totalDuration = performance.now() - start
   const validResults = results.filter((r) => r.opsPerSecond > 0)
-  const avgOpsPerSecond = validResults.length > 0
-    ? validResults.reduce((sum, r) => sum + r.opsPerSecond, 0) / validResults.length
-    : 0
+  const avgOpsPerSecond =
+    validResults.length > 0
+      ? validResults.reduce((sum, r) => sum + r.opsPerSecond, 0) / validResults.length
+      : 0
 
   const summary = { total: results.length, totalDuration, avgOpsPerSecond }
 
@@ -219,7 +287,10 @@ export async function runBenchmarks(): Promise<{ results: BenchmarkResult[]; sum
   if (config.benchmarks?.outputResults) {
     const outputPath = config.benchmarks?.outputPath ?? "benchmarks-results.json"
     const fs = await import("node:fs/promises")
-    await fs.writeFile(outputPath, JSON.stringify({ results, summary, timestamp: new Date().toISOString() }, null, 2))
+    await fs.writeFile(
+      outputPath,
+      JSON.stringify({ results, summary, timestamp: new Date().toISOString() }, null, 2),
+    )
     logger.info("Benchmark results written", { path: outputPath })
   }
 

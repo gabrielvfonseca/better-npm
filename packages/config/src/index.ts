@@ -52,6 +52,10 @@ export interface DashConfig {
     format: string
     destination: string
   }
+  benchmarks: {
+    outputResults?: boolean
+    outputPath?: string
+  }
 }
 
 const DEFAULT_CONFIG: DashConfig = {
@@ -102,6 +106,10 @@ const DEFAULT_CONFIG: DashConfig = {
     level: "info",
     format: "text",
     destination: "stdout",
+  },
+  benchmarks: {
+    outputResults: false,
+    outputPath: "benchmarks-results.json",
   },
 }
 
@@ -185,12 +193,12 @@ export function getEnvVar(name: string, defaultValue?: string): string {
 }
 
 export function isDevelopment(): boolean {
-  const nodeEnv = process.env["NODE_ENV"]
+  const nodeEnv = process.env.NODE_ENV
   return !nodeEnv || nodeEnv === "development" || nodeEnv === "dev"
 }
 
 export function isProduction(): boolean {
-  return process.env["NODE_ENV"] === "production"
+  return process.env.NODE_ENV === "production"
 }
 
 function deepMergeConfig(base: DashConfig, override: Partial<DashConfig>): DashConfig {
@@ -199,7 +207,10 @@ function deepMergeConfig(base: DashConfig, override: Partial<DashConfig>): DashC
     const val = override[key]
     if (val && typeof val === "object" && !Array.isArray(val)) {
       const existing = result[key]
-      result[key] = { ...(existing as Record<string, unknown>), ...(val as Record<string, unknown>) }
+      result[key] = {
+        ...(existing as Record<string, unknown>),
+        ...(val as Record<string, unknown>),
+      }
     } else if (val !== undefined) {
       result[key] = val
     }

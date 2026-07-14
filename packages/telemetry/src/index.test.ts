@@ -1,12 +1,12 @@
-import { describe, it, expect, vi, afterEach } from "vitest"
+import { afterEach, describe, expect, it } from "vitest"
 import {
-  startTracing,
-  shutdownTracing,
-  recordMetric,
+  getTracer,
   incrementCounter,
   recordHistogram,
+  recordMetric,
   setAttribute,
-  getTracer,
+  shutdownTracing,
+  startTracing,
   wrapWithSpan,
 } from "./index.js"
 

@@ -1,9 +1,9 @@
-import { createLogger } from "@dash/logger"
 import { loadConfig } from "@dash/config"
+import { createLogger } from "@dash/logger"
 import { createStorageClient } from "@dash/storage"
 
 const logger = createLogger("workers-metadata")
-const config = loadConfig()
+const _config = loadConfig()
 
 export interface MetadataPayload {
   packageName: string
@@ -65,12 +65,18 @@ async function processMetadata(payload: MetadataPayload): Promise<{
   }
 
   if (Array.isArray(rawMetadata.keywords)) {
-    enriched.normalizedKeywords = (rawMetadata.keywords as string[]).map((k: string) => k.toLowerCase().trim())
+    enriched.normalizedKeywords = (rawMetadata.keywords as string[]).map((k: string) =>
+      k.toLowerCase().trim(),
+    )
   }
 
   if (rawMetadata.dependencies) {
-    enriched.dependencyGraph = buildDependencyGraph(rawMetadata.dependencies as Record<string, string>)
-    enriched.totalDependencies = Object.keys(rawMetadata.dependencies as Record<string, string>).length
+    enriched.dependencyGraph = buildDependencyGraph(
+      rawMetadata.dependencies as Record<string, string>,
+    )
+    enriched.totalDependencies = Object.keys(
+      rawMetadata.dependencies as Record<string, string>,
+    ).length
   }
 
   if (typeof rawMetadata.readme === "string") {
@@ -146,7 +152,9 @@ async function extractLicenseInfo(license: string): Promise<Record<string, unkno
   }
 }
 
-function buildDependencyGraph(dependencies: Record<string, string>): Array<{ name: string; version: string }> {
+function buildDependencyGraph(
+  dependencies: Record<string, string>,
+): Array<{ name: string; version: string }> {
   return Object.entries(dependencies).map(([name, version]) => ({
     name,
     version: version.replace(/^[\^~]/, ""),

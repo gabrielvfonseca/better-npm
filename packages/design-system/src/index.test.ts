@@ -1,33 +1,116 @@
 import { describe, expect, it } from "vitest"
 
-describe("@dash/ui", () => {
-  it("should export type definitions", () => {
-    const types = [
-      "ButtonProps",
-      "InputProps",
-      "SelectProps",
-      "CardProps",
-      "BadgeProps",
-      "ModalProps",
-      "TableProps",
-      "SpinnerProps",
-      "TabsProps",
-      "TooltipProps",
-      "AvatarProps",
-      "DropdownProps",
-      "PaginationProps",
-      "ToastProps",
-      "SkeletonProps",
-      "ProgressBarProps",
-    ]
+import * as DesignSystem from "./index"
 
-    const mod = {} as Record<string, unknown>
-    for (const name of types) {
-      mod[name] = true
-    }
+const expectedExports = [
+  "cn",
+  "Button",
+  "buttonVariants",
+  "Card",
+  "CardHeader",
+  "CardTitle",
+  "CardDescription",
+  "CardContent",
+  "CardFooter",
+  "Badge",
+  "badgeVariants",
+  "Input",
+  "Textarea",
+  "Label",
+  "Alert",
+  "AlertTitle",
+  "AlertDescription",
+  "Skeleton",
+  "Spinner",
+  "Separator",
+  "Avatar",
+  "AvatarImage",
+  "AvatarFallback",
+  "Checkbox",
+  "Switch",
+  "RadioGroup",
+  "RadioGroupItem",
+  "Select",
+  "SelectTrigger",
+  "SelectContent",
+  "SelectItem",
+  "SelectValue",
+  "Slider",
+  "Progress",
+  "Accordion",
+  "AccordionItem",
+  "AccordionTrigger",
+  "AccordionContent",
+  "Dialog",
+  "DialogTrigger",
+  "DialogContent",
+  "DialogHeader",
+  "DialogFooter",
+  "DialogTitle",
+  "DialogDescription",
+  "AlertDialog",
+  "AlertDialogTrigger",
+  "AlertDialogContent",
+  "AlertDialogTitle",
+  "AlertDialogDescription",
+  "Sheet",
+  "SheetTrigger",
+  "SheetContent",
+  "SheetTitle",
+  "SheetDescription",
+  "Popover",
+  "PopoverTrigger",
+  "PopoverContent",
+  "Tooltip",
+  "TooltipProvider",
+  "TooltipTrigger",
+  "TooltipContent",
+  "Tabs",
+  "TabsList",
+  "TabsTrigger",
+  "TabsContent",
+  "DropdownMenu",
+  "DropdownMenuTrigger",
+  "DropdownMenuContent",
+  "DropdownMenuItem",
+  "DropdownMenuCheckboxItem",
+  "DropdownMenuRadioItem",
+  "DropdownMenuLabel",
+  "DropdownMenuSeparator",
+  "DropdownMenuSub",
+  "DropdownMenuSubTrigger",
+  "DropdownMenuSubContent",
+  "Toast",
+  "ToastProvider",
+  "ToastTitle",
+  "ToastDescription",
+  "ToastAction",
+  "Toaster",
+  "useToast",
+  "Pagination",
+  "Table",
+  "TableHeader",
+  "TableBody",
+  "TableHead",
+  "TableRow",
+  "TableCell",
+  "TableCaption",
+  "Form",
+  "FormItem",
+  "FormLabel",
+  "FormControl",
+  "FormDescription",
+  "FormMessage",
+] as const
 
-    for (const name of types) {
-      expect(mod[name]).toBe(true)
+describe("@dash/design-system", () => {
+  it("exports all UI primitives", () => {
+    for (const name of expectedExports) {
+      expect(DesignSystem[name], `missing export: ${name}`).toBeDefined()
     }
+  })
+
+  it("cn merges class names", () => {
+    expect(DesignSystem.cn("a", undefined, "c")).toBe("a c")
   })
 })

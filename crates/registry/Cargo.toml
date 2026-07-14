@@ -1,0 +1,40 @@
+[package]
+name = "dash-registry"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish = false
+description = "DPR control-plane services: name service, content service, and DPR gRPC implementation"
+
+[[bin]]
+name = "dash-gateway"
+path = "src/bin/gateway.rs"
+
+[dependencies]
+dash-proto = { workspace = true }
+dash-provenance = { workspace = true }
+dash-store = { path = "../store" }
+dash-cid = { workspace = true }
+dash-capsule = { path = "../capsule" }
+dash-resolver = { path = "../resolver" }
+dash-lockfile = { workspace = true }
+dash-manifest = { path = "../manifest" }
+dash-hashing = { path = "../hashing" }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+dashmap = { workspace = true }
+semver = { workspace = true }
+tonic = { workspace = true }
+prost = { workspace = true }
+bytes = { workspace = true }
+clap = { workspace = true, features = ["derive"] }
+async-trait = "0.1"
+hex = { workspace = true }
+blake3 = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

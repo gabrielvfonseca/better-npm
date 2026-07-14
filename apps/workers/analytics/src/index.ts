@@ -1,5 +1,5 @@
-import { createLogger } from "@dash/logger"
 import { loadConfig } from "@dash/config"
+import { createLogger } from "@dash/logger"
 import { createTelemetryClient } from "@dash/telemetry"
 
 const logger = createLogger("workers-analytics")

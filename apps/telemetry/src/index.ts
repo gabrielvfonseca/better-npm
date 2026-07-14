@@ -1,9 +1,9 @@
+import { loadConfig } from "@dash/config"
+import { createLogger } from "@dash/logger"
+import { type TelemetryClient, createTelemetryClient } from "@dash/telemetry"
 import { Hono } from "hono"
 import { HTTPException } from "hono/http-exception"
-import { createLogger } from "@dash/logger"
-import { loadConfig } from "@dash/config"
-import { createTelemetryClient, type TelemetryClient } from "@dash/telemetry"
-import type { StatusCode } from "hono/utils/http-status"
+import type { ContentfulStatusCode } from "hono/utils/http-status"
 
 const logger = createLogger("telemetry")
 const config = loadConfig()
@@ -32,8 +32,10 @@ app.post("/events", async (c) => {
     }
 
     for (const event of events) {
-      if (!event.name || !event.timestamp) {
-        throw new HTTPException(400, { message: "Each event must have 'name' and 'timestamp' fields" })
+      if (!(event.name && event.timestamp)) {
+        throw new HTTPException(400, {
+          message: "Each event must have 'name' and 'timestamp' fields",
+        })
       }
     }
 
@@ -104,10 +106,10 @@ app.get("/metrics", async (c) => {
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
-    return c.json({ error: err.message, status: err.status }, err.status as StatusCode)
+    return c.json({ error: err.message }, { status: err.status as ContentfulStatusCode })
   }
   logger.error("Unhandled error", { error: err.message })
-  return c.json({ error: "Internal server error", status: 500 }, 500)
+  return c.json({ error: "Internal server error" }, { status: 500 })
 })
 
 app.notFound((c) => c.json({ error: "Not found", status: 404 }, 404))

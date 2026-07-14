@@ -1,0 +1,8 @@
+{
+  "extends": "../packages/typescript-config/tsconfig.node.json",
+  "compilerOptions": {
+    "types": ["vitest/globals"]
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["dist", "node_modules"]
+}

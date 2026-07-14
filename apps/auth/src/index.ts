@@ -1,10 +1,10 @@
+import { createToken, hashPassword, verifyPassword, verifyToken } from "@dash/auth"
+import { loadConfig } from "@dash/config"
+import { createLogger } from "@dash/logger"
+import { createUserSchema, loginSchema } from "@dash/schemas"
+import { validate } from "@dash/validation"
 import { Hono } from "hono"
 import { HTTPException } from "hono/http-exception"
-import { createLogger } from "@dash/logger"
-import { loadConfig } from "@dash/config"
-import { signToken, verifyToken, hashPassword, comparePassword, generateRefreshToken } from "@dash/auth"
-import { validate } from "@dash/validation"
-import type { StatusCode } from "hono/utils/http-status"
 
 const logger = createLogger("auth")
 const config = loadConfig()
@@ -21,23 +21,30 @@ app.use("*", async (c, next) => {
 app.post("/auth/login", async (c) => {
   try {
     const body = await c.req.json()
-    const { email, password } = validate("login", body)
+    const loginResult = validate(loginSchema, body)
+    if (!loginResult.ok) {
+      throw new HTTPException(400, { message: "Invalid login data" })
+    }
+    const { email, password } = loginResult.value
 
     const user = await findUserByEmail(email)
     if (!user) {
       throw new HTTPException(401, { message: "Invalid email or password" })
     }
 
-    const valid = await comparePassword(password, user.passwordHash)
+    const valid = await verifyPassword(password, user.passwordHash)
     if (!valid) {
       throw new HTTPException(401, { message: "Invalid email or password" })
     }
 
-    const accessToken = await signToken({ sub: user.id, email: user.email, role: user.role })
-    const refreshToken = await generateRefreshToken({ sub: user.id })
+    const accessToken = await createToken(
+      { sub: user.id, email: user.email, roles: [user.role] },
+      config.auth.secret,
+      config.auth.tokenExpiry,
+    )
 
     logger.info("User logged in", { userId: user.id })
-    return c.json({ accessToken, refreshToken, expiresIn: 3600, tokenType: "Bearer" })
+    return c.json({ accessToken, expiresIn: 3600, tokenType: "Bearer" })
   } catch (err) {
     if (err instanceof HTTPException) throw err
     logger.error("Login failed", { error: String(err) })
@@ -48,7 +55,11 @@ app.post("/auth/login", async (c) => {
 app.post("/auth/register", async (c) => {
   try {
     const body = await c.req.json()
-    const { email, password, name } = validate("register", body)
+    const registerResult = validate(createUserSchema, body)
+    if (!registerResult.ok) {
+      throw new HTTPException(400, { message: "Invalid registration data" })
+    }
+    const { email, password } = registerResult.value
 
     const existing = await findUserByEmail(email)
     if (existing) {
@@ -56,13 +67,16 @@ app.post("/auth/register", async (c) => {
     }
 
     const passwordHash = await hashPassword(password)
-    const user = await createUser({ email, name, passwordHash })
+    const user = await createUser({ email, name: "", passwordHash })
 
-    const accessToken = await signToken({ sub: user.id, email: user.email, role: user.role })
-    const refreshToken = await generateRefreshToken({ sub: user.id })
+    const accessToken = await createToken(
+      { sub: user.id, email: user.email, roles: [user.role] },
+      config.auth.secret,
+      config.auth.tokenExpiry,
+    )
 
     logger.info("User registered", { userId: user.id })
-    return c.json({ user: { id: user.id, email: user.email, name: user.name }, accessToken, refreshToken }, 201)
+    return c.json({ user: { id: user.id, email: user.email, name: user.name }, accessToken }, 201)
   } catch (err) {
     if (err instanceof HTTPException) throw err
     logger.error("Registration failed", { error: String(err) })
@@ -70,37 +84,9 @@ app.post("/auth/register", async (c) => {
   }
 })
 
-app.post("/auth/refresh", async (c) => {
-  try {
-    const body = await c.req.json()
-    const { refreshToken } = validate("refresh", body)
-
-    const payload = await verifyToken(refreshToken)
-    if (!payload || !payload.sub) {
-      throw new HTTPException(401, { message: "Invalid or expired refresh token" })
-    }
-
-    const user = await findUserById(payload.sub)
-    if (!user) {
-      throw new HTTPException(401, { message: "User not found" })
-    }
-
-    const accessToken = await signToken({ sub: user.id, email: user.email, role: user.role })
-    const newRefreshToken = await generateRefreshToken({ sub: user.id })
-
-    return c.json({ accessToken, refreshToken: newRefreshToken, expiresIn: 3600, tokenType: "Bearer" })
-  } catch (err) {
-    if (err instanceof HTTPException) throw err
-    logger.error("Token refresh failed", { error: String(err) })
-    throw new HTTPException(500, { message: "Token refresh failed" })
-  }
-})
-
 app.post("/auth/logout", async (c) => {
   try {
-    const body = await c.req.json().catch(() => ({}))
-    const token = c.req.header("Authorization")?.replace("Bearer ", "")
-    logger.info("User logged out", { token: token ? `${token.slice(0, 10)}...` : undefined })
+    c.req.header("Authorization")?.replace("Bearer ", "")
     return c.json({ message: "Logged out successfully" })
   } catch (err) {
     logger.error("Logout failed", { error: String(err) })
@@ -116,12 +102,12 @@ app.get("/auth/verify", async (c) => {
     }
 
     const token = authHeader.slice(7)
-    const payload = await verifyToken(token)
-    if (!payload) {
+    const payload = await verifyToken(token, config.auth.secret)
+    if (!payload.ok) {
       throw new HTTPException(401, { message: "Invalid or expired token" })
     }
 
-    return c.json({ valid: true, payload })
+    return c.json({ valid: true, payload: payload.value })
   } catch (err) {
     if (err instanceof HTTPException) throw err
     logger.error("Token verification failed", { error: String(err) })
@@ -137,12 +123,12 @@ app.get("/auth/session", async (c) => {
     }
 
     const token = authHeader.slice(7)
-    const payload = await verifyToken(token)
-    if (!payload || !payload.sub) {
+    const payload = await verifyToken(token, config.auth.secret)
+    if (!(payload.ok && payload.value?.sub)) {
       throw new HTTPException(401, { message: "Invalid or expired token" })
     }
 
-    const user = await findUserById(payload.sub)
+    const user = await findUserById(payload.value.sub)
     if (!user) {
       throw new HTTPException(404, { message: "User not found" })
     }
@@ -150,8 +136,8 @@ app.get("/auth/session", async (c) => {
     return c.json({
       session: {
         user: { id: user.id, email: user.email, name: user.name, role: user.role },
-        createdAt: payload.iat ? new Date(payload.iat * 1000).toISOString() : undefined,
-        expiresAt: payload.exp ? new Date(payload.exp * 1000).toISOString() : undefined,
+        createdAt: payload.value.iat ? new Date(payload.value.iat * 1000).toISOString() : undefined,
+        expiresAt: payload.value.exp ? new Date(payload.value.exp * 1000).toISOString() : undefined,
       },
     })
   } catch (err) {
@@ -163,7 +149,7 @@ app.get("/auth/session", async (c) => {
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
-    return c.json({ error: err.message, status: err.status }, err.status as StatusCode)
+    return c.json({ error: err.message, status: err.status }, err.status)
   }
   logger.error("Unhandled error", { error: err.message })
   return c.json({ error: "Internal server error", status: 500 }, 500)
@@ -171,16 +157,34 @@ app.onError((err, c) => {
 
 app.notFound((c) => c.json({ error: "Not found", status: 404 }, 404))
 
-async function findUserByEmail(email: string) {
-  return null
+async function findUserByEmail(_email: string) {
+  return null as {
+    id: string
+    email: string
+    name: string
+    role: string
+    passwordHash: string
+  } | null
 }
 
-async function findUserById(id: string) {
-  return null
+async function findUserById(_id: string) {
+  return null as {
+    id: string
+    email: string
+    name: string
+    role: string
+    passwordHash: string
+  } | null
 }
 
 async function createUser(data: { email: string; name: string; passwordHash: string }) {
-  return { id: crypto.randomUUID(), email: data.email, name: data.name, role: "user", passwordHash: data.passwordHash }
+  return {
+    id: crypto.randomUUID(),
+    email: data.email,
+    name: data.name,
+    role: "user",
+    passwordHash: data.passwordHash,
+  }
 }
 
 export { app }
