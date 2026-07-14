@@ -1,0 +1,144 @@
+syntax = "proto3";
+
+package dash.dpr.v1;
+
+option go_package = "github.com/dash-io/dash/proto/dpr/v1;dprv1";
+
+import "common/v1/common.proto";
+
+service DprService {
+  rpc Resolve(ResolveRequest) returns (ResolveResponse);
+  rpc Fetch(FetchRequest) returns (FetchResponse);
+  rpc Publish(PublishRequest) returns (PublishResponse);
+}
+
+message ResolveRequest {
+  string name = 1;
+  repeated VersionRange version_ranges = 2;
+  string registry = 3;
+}
+
+message VersionRange {
+  oneof range {
+    string exact = 1;
+    RangeConstraint constraint = 2;
+  }
+}
+
+message RangeConstraint {
+  string low = 1;
+  string high = 2;
+  bool low_inclusive = 3;
+  bool high_inclusive = 4;
+}
+
+message ResolveResponse {
+  repeated Binding bindings = 1;
+}
+
+message Binding {
+  string version = 1;
+  string cid = 2;
+  uint64 log_index = 3;
+  InclusionProof inclusion_proof = 4;
+  Provenance provenance = 5;
+}
+
+message InclusionProof {
+  repeated string lemma = 1;
+  string root_hash = 2;
+  uint64 tree_size = 3;
+}
+
+message Provenance {
+  string identity = 1;
+  int64 timestamp = 2;
+  string builder_id = 3;
+  string source_repository = 4;
+  string source_commit = 5;
+  string slsa_level = 6;
+  dash.common.v1.Metadata metadata = 7;
+}
+
+message FetchRequest {
+  string cid = 1;
+  repeated Range ranges = 2;
+}
+
+message Range {
+  oneof range {
+    ByteRange byte_range = 1;
+    FileRange file_range = 2;
+  }
+}
+
+message ByteRange {
+  uint64 offset = 1;
+  uint64 length = 2;
+}
+
+message FileRange {
+  string file_path = 1;
+  uint64 offset = 2;
+  uint64 length = 3;
+}
+
+message FetchResponse {
+  bytes content = 1;
+  MerkleProof merkle_proof = 2;
+}
+
+message MerkleProof {
+  string root_hash = 1;
+  string leaf_hash = 2;
+  repeated string siblings = 3;
+  uint64 leaf_index = 4;
+  uint64 tree_size = 5;
+}
+
+message PublishRequest {
+  bytes capsule = 1;
+  repeated Attestation attestations = 2;
+  string signature = 3;
+  Identity identity = 4;
+}
+
+message Attestation {
+  string type = 1;
+  bytes payload = 2;
+  string signature = 3;
+}
+
+message Identity {
+  string oidc_issuer = 1;
+  string oidc_subject = 2;
+  string key_id = 3;
+  bytes public_key = 4;
+}
+
+message PublishResponse {
+  string cid = 1;
+  string version = 2;
+  uint64 log_index = 3;
+  InclusionProof inclusion_proof = 4;
+}
+
+message Error {
+  DprErrorCode code = 1;
+  string message = 2;
+  repeated dash.common.v1.ErrorDetail details = 3;
+}
+
+enum DprErrorCode {
+  DPR_ERROR_CODE_UNSPECIFIED = 0;
+  DPR_ERROR_CODE_NAME_NOT_FOUND = 1;
+  DPR_ERROR_CODE_VERSION_NOT_FOUND = 2;
+  DPR_ERROR_CODE_CID_NOT_FOUND = 3;
+  DPR_ERROR_CODE_INVALID_RANGE = 4;
+  DPR_ERROR_CODE_INVALID_SIGNATURE = 5;
+  DPR_ERROR_CODE_PUBLISH_REJECTED = 6;
+  DPR_ERROR_CODE_REGISTRY_ERROR = 7;
+  DPR_ERROR_CODE_RATE_LIMITED = 8;
+  DPR_ERROR_CODE_UNAUTHORIZED = 9;
+  DPR_ERROR_CODE_MERKLE_VERIFICATION_FAILED = 10;
+}
