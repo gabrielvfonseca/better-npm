@@ -3,6 +3,9 @@ node_modules/
 .pnp
 .pnp.js
 
+# Tests
+test_import/
+
 # Build outputs
 dist/
 build/
