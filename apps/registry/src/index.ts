@@ -1,16 +1,14 @@
-import { loadConfig } from "@dash/config"
 import { createLogger } from "@dash/logger"
-import { StorageFactory } from "@dash/storage"
+import { type PackageStorage, PackageStorageFactory } from "@dash/storage"
 import { publishPackageSchema, validate } from "@dash/validation"
 import { Hono } from "hono"
 import { HTTPException } from "hono/http-exception"
 import { z } from "zod"
 
 const logger = createLogger("registry")
-const _config = loadConfig()
 
 const app = new Hono()
-let _storage: ReturnType<typeof StorageFactory.create>
+let packageStorage: PackageStorage = PackageStorageFactory.create()
 
 app.use("*", async (c, next) => {
   const start = performance.now()
@@ -24,7 +22,7 @@ app.get("/packages/:name", async (c) => {
     const name = c.req.param("name")
     if (!name) throw new HTTPException(400, { message: "Package name is required" })
 
-    const storage = StorageFactory.create({ type: "local" })
+    const storage = packageStorage
     const pkg = await storage.getPackage(name)
     if (!pkg) throw new HTTPException(404, { message: `Package '${name}' not found` })
 
@@ -43,7 +41,7 @@ app.get("/packages/:name/:version", async (c) => {
     if (!(name && version))
       throw new HTTPException(400, { message: "Package name and version are required" })
 
-    const storage = StorageFactory.create({ type: "local" })
+    const storage = packageStorage
     const pkg = await storage.getPackageVersion(name, version)
     if (!pkg) throw new HTTPException(404, { message: `Package '${name}@${version}' not found` })
 
@@ -74,7 +72,7 @@ app.put("/packages/:name", async (c) => {
     }
     const payload = validationResult.value
 
-    const storage = StorageFactory.create({ type: "local" })
+    const storage = packageStorage
     const result = await storage.publishPackage(name, payload)
     logger.info("Package published", { name, version: payload.version })
 
@@ -93,7 +91,7 @@ app.delete("/packages/:name/:version", async (c) => {
     if (!(name && version))
       throw new HTTPException(400, { message: "Package name and version are required" })
 
-    const storage = StorageFactory.create({ type: "local" })
+    const storage = packageStorage
     await storage.unpublishPackageVersion(name, version)
     logger.info("Package version unpublished", { name, version })
 
@@ -114,7 +112,7 @@ app.get("/search", async (c) => {
     const query = c.req.query("q")
     if (!query) throw new HTTPException(400, { message: "Search query is required" })
 
-    const storage = StorageFactory.create({ type: "local" })
+    const storage = packageStorage
     const results = await storage.searchPackages(query)
     return c.json({ results, query, total: results.length })
   } catch (err) {
@@ -140,7 +138,7 @@ app.post("/packages/:name/deprecate", async (c) => {
     }
     const { reason } = validationResult.value
 
-    const storage = StorageFactory.create({ type: "local" })
+    const storage = packageStorage
     const result = version
       ? await storage.deprecatePackageVersion(name, version, reason)
       : await storage.deprecatePackage(name, reason)
@@ -166,8 +164,8 @@ app.onError((err, c) => {
 
 app.notFound((c) => c.json({ error: "Not found", status: 404 }, 404))
 
-export async function createRegistry(storageBackend?: ReturnType<typeof StorageFactory.create>) {
-  const _storage = storageBackend ?? StorageFactory.create({ type: "local" })
+export async function createRegistry(storageBackend?: PackageStorage) {
+  packageStorage = storageBackend ?? PackageStorageFactory.create()
   logger.info("Registry initialized with storage backend")
   return app
 }

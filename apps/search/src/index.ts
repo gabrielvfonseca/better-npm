@@ -3,7 +3,7 @@ import { createLogger } from "@dash/logger"
 import { type SearchClient, createSearchClient } from "@dash/search"
 import { Hono } from "hono"
 import { HTTPException } from "hono/http-exception"
-import type { StatusCode } from "hono/utils/http-status"
+import type { ContentfulStatusCode } from "hono/utils/http-status"
 
 const logger = createLogger("search")
 const config = loadConfig()
@@ -29,7 +29,7 @@ app.get("/search", async (c) => {
     const limit = Math.min(100, Math.max(1, Number.parseInt(c.req.query("limit") ?? "20", 10)))
     const filters = parseFilters(c.req.query("filters"))
 
-    const results = await searchClient.search(query, { page, limit, filters })
+    const results = await searchClient.search({ q: query, page, pageSize: limit, filters })
     logger.info("Search completed", { query, page, limit, total: results.total })
 
     return c.json({
@@ -56,7 +56,7 @@ app.get("/suggest", async (c) => {
       throw new HTTPException(400, { message: "Suggestion query is required" })
     }
 
-    const suggestions = await searchClient.suggest(query, { limit: 8 })
+    const suggestions = await searchClient.suggest(query)
     return c.json({ suggestions, query })
   } catch (err) {
     if (err instanceof HTTPException) throw err
@@ -74,9 +74,9 @@ app.post("/index", async (c) => {
       throw new HTTPException(400, { message: "Document name and data are required" })
     }
 
-    const result = await searchClient.index(name, data)
+    await searchClient.index(name, data)
     logger.info("Document indexed", { name })
-    return c.json({ indexed: true, name, id: result.id }, 201)
+    return c.json({ indexed: true, name }, 201)
   } catch (err) {
     if (err instanceof HTTPException) throw err
     logger.error("Indexing failed", { error: String(err) })
@@ -91,7 +91,7 @@ app.delete("/index/:name", async (c) => {
 
     // Since SearchClient doesn't have a remove method, we'll implement a basic version
     // In a real implementation, this would call the search engine's delete API
-    const _result = await searchClient.index(name, []) // Empty array to "clear" the document
+    await searchClient.index(name, []) // Empty array to "clear" the document
     logger.info("Document cleared from index", { name })
     return c.json({ cleared: true, name })
   } catch (err) {
@@ -115,7 +115,7 @@ app.get("/health", (c) => {
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
-    return c.json({ error: err.message, status: err.status }, err.status as StatusCode)
+    return c.json({ error: err.message, status: err.status }, err.status as ContentfulStatusCode)
   }
   logger.error("Unhandled error", { error: err.message })
   return c.json({ error: "Internal server error", status: 500 }, 500)
@@ -134,7 +134,13 @@ function parseFilters(filtersRaw: string | undefined): Record<string, string> | 
 }
 
 export async function createSearchService(client?: SearchClient) {
-  searchClient = client ?? (await createSearchClient(config.search))
+  searchClient =
+    client ??
+    (await createSearchClient({
+      endpoint: config.search.meiliHttpAddr,
+      apiKey: config.search.meiliMasterKey,
+      indexPrefix: config.search.indexPath,
+    }))
   logger.info("Search service initialized")
   return app
 }

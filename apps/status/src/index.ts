@@ -3,7 +3,7 @@ import { createLogger } from "@dash/logger"
 import { type TelemetryClient, createTelemetryClient } from "@dash/telemetry"
 import { Hono } from "hono"
 import { HTTPException } from "hono/http-exception"
-import type { StatusCode } from "hono/utils/http-status"
+import type { ContentfulStatusCode } from "hono/utils/http-status"
 
 const logger = createLogger("status")
 const config = loadConfig()
@@ -87,7 +87,7 @@ app.get("/health", (c) => {
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
-    return c.json({ error: err.message, status: err.status }, err.status as StatusCode)
+    return c.json({ error: err.message, status: err.status }, err.status as ContentfulStatusCode)
   }
   logger.error("Unhandled error", { error: err.message })
   return c.json({ error: "Internal server error", status: 500 }, 500)
