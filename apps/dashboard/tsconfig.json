@@ -3,7 +3,13 @@
   "compilerOptions": {
     "outDir": ".next",
     "jsx": "preserve",
-    "noEmit": true
+    "noEmit": true,
+    "allowJs": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
 }

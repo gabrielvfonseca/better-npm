@@ -4,7 +4,13 @@
     "outDir": "dist",
     "jsx": "preserve",
     "module": "ESNext",
-    "noEmit": true
+    "noEmit": true,
+    "allowJs": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["src"]
+  "include": ["src", ".next/types/**/*.ts"]
 }
