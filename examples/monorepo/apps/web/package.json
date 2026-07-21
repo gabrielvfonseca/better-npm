@@ -2,12 +2,13 @@
   "name": "@dash/example-web",
   "version": "0.0.1",
   "private": true,
-  "dependencies": {
-    "@dash/example-shared": "workspace:*",
-    "@dash/sdk": "workspace:*"
-  },
+  "type": "module",
   "scripts": {
-    "dev": "tsx src/index.ts"
+    "dev": "tsx src/index.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@dash/example-shared": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.0.0",

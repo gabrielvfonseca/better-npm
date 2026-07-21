@@ -4,8 +4,8 @@
   "private": true,
   "workspaces": ["packages/*", "apps/*"],
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev"
+    "build": "tsc -p packages/shared/tsconfig.json && tsc -p apps/web/tsconfig.json",
+    "dev": "tsx apps/web/src/index.ts"
   },
   "devDependencies": {
     "turbo": "^2.0.0",

@@ -1,20 +1,20 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from "react"
 
 interface Package {
-  name: string;
-  description: string;
-  version: string;
+  name: string
+  description: string
+  version: string
 }
 
 function App() {
-  const [pkg, setPkg] = useState<Package | null>(null);
+  const [pkg, setPkg] = useState<Package | null>(null)
 
   useEffect(() => {
-    fetch('/api/v1/packages/lodash')
+    fetch("/api/v1/packages/lodash")
       .then((res) => res.json())
       .then((data: Package) => setPkg(data))
-      .catch(() => {});
-  }, []);
+      .catch(() => {})
+  }, [])
 
   return (
     <div>
@@ -28,7 +28,7 @@ function App() {
         </div>
       )}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
