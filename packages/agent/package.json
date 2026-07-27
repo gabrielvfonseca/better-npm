@@ -22,7 +22,7 @@
   "devDependencies": {
     "typescript": "^5.7.0",
     "vitest": "^3.0.0",
-    "vite": "^6.0.0",
+    "vite": "^8.1.5",
     "vite-plugin-dts": "^4.0.0"
   },
   "description": "AI-native SDK for Dash — agent capability queries, semantic search, upgrade planning, audit, and safe transactional apply",
