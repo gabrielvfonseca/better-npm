@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "hono": "^4.7.0",
-    "@hono/zod-openapi": "^0.18.0",
+    "@hono/zod-openapi": "^1.5.1",
     "@dash/config": "workspace:*",
     "@dash/logger": "workspace:*",
     "@dash/validation": "workspace:*",
