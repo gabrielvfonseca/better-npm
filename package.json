@@ -43,7 +43,7 @@
     "turbo": "^2.4.0",
     "@biomejs/biome": "^1.9.0",
     "@changesets/cli": "^2.28.0",
-    "typescript": "^5.7.0",
+    "typescript": "^7.0.2",
     "plop": "^4.0.0",
     "vitest": "^3.0.0",
     "lefthook": "^1.10.0",
