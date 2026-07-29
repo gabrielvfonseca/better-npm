@@ -90,7 +90,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-turbo-
       - run: bun run test
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/lcov.info
@@ -110,7 +110,7 @@ jobs:
         with:
           cache-on-failure: true
       - run: cargo test --workspace --all-features --no-fail-fast
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./target/coverage/**/lcov.info
