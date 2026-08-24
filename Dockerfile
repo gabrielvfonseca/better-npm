@@ -1,6 +1,6 @@
 # syntax=docker.io/docker/dockerfile:1.7
 
-FROM oven/bun:1.2-alpine AS base
+FROM oven/bun:1.4-alpine AS base
 WORKDIR /app
 
 ARG APP
