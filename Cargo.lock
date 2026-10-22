@@ -363,6 +363,1074 @@ dependencies = [
 ]
 
 [[package]]
+name = "bnpm-agent"
+version = "0.0.0"
+dependencies = [
+ "bnpm-cid",
+ "bnpm-manifest",
+ "bnpm-package",
+ "hex",
+ "regex",
+ "schemars 0.8.22",
+ "semver",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-archive"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-compression",
+ "bnpm-filesystem",
+ "bnpm-hashing",
+ "bytes",
+ "flate2",
+ "serde",
+ "tar",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "walkdir",
+ "zip",
+ "zstd",
+]
+
+[[package]]
+name = "bnpm-auth"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "base64",
+ "bnpm-config",
+ "bnpm-crypto",
+ "bnpm-network",
+ "chrono",
+ "dashmap",
+ "jsonwebtoken",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "url",
+ "uuid",
+]
+
+[[package]]
+name = "bnpm-benchmark"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-concurrency",
+ "bnpm-config",
+ "bnpm-filesystem",
+ "bnpm-hashing",
+ "bnpm-logger",
+ "criterion",
+ "rand 0.8.6",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-cache"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "bnpm-config",
+ "bnpm-filesystem",
+ "bnpm-hashing",
+ "bytes",
+ "chrono",
+ "dashmap",
+ "moka",
+ "redis",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "bnpm-capability"
+version = "0.0.0"
+dependencies = [
+ "bnpm-lockfile",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "bnpm-capsule"
+version = "0.0.0"
+dependencies = [
+ "blake3",
+ "bnpm-cid",
+ "ciborium",
+ "thiserror",
+ "zstd",
+]
+
+[[package]]
+name = "bnpm-cid"
+version = "0.0.0"
+dependencies = [
+ "blake3",
+ "ciborium",
+ "ciborium-io",
+ "hex",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "bnpm-cli"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "assert_cmd",
+ "bnpm-cache",
+ "bnpm-concurrency",
+ "bnpm-config",
+ "bnpm-diagnostics",
+ "bnpm-downloader",
+ "bnpm-installer",
+ "bnpm-lockfile",
+ "bnpm-logger",
+ "bnpm-manifest",
+ "bnpm-network",
+ "bnpm-package",
+ "bnpm-plugin",
+ "bnpm-progress",
+ "bnpm-publisher",
+ "bnpm-registry-client",
+ "bnpm-resolver",
+ "bnpm-runtime",
+ "bnpm-sandbox",
+ "bnpm-store",
+ "bnpm-telemetry",
+ "bnpm-workspace",
+ "clap",
+ "dirs",
+ "predicates",
+ "semver",
+ "serde_json",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-compression"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-filesystem",
+ "bnpm-hashing",
+ "bytes",
+ "flate2",
+ "futures",
+ "serde",
+ "tar",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "zip",
+ "zstd",
+]
+
+[[package]]
+name = "bnpm-concurrency"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "dashmap",
+ "futures",
+ "futures-util",
+ "parking_lot",
+ "rayon",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-config"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "arc-swap",
+ "bnpm-filesystem",
+ "dirs",
+ "once_cell",
+ "regex",
+ "schemars 0.8.22",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "thiserror",
+ "toml",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-conformance-runner"
+version = "0.0.0"
+dependencies = [
+ "blake3",
+ "bnpm-capsule",
+ "bnpm-cid",
+ "bnpm-store",
+ "clap",
+ "hex",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+]
+
+[[package]]
+name = "bnpm-crypto"
+version = "0.0.0"
+dependencies = [
+ "aes-gcm",
+ "anyhow",
+ "base64",
+ "blake3",
+ "bytes",
+ "ed25519-dalek",
+ "hex",
+ "rand 0.8.6",
+ "rsa",
+ "serde",
+ "sha2",
+ "sha3",
+ "thiserror",
+ "zeroize",
+]
+
+[[package]]
+name = "bnpm-diagnostics"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-config",
+ "bnpm-filesystem",
+ "bnpm-logger",
+ "chrono",
+ "dirs",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "bnpm-downloader"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-cache",
+ "bnpm-concurrency",
+ "bnpm-config",
+ "bnpm-filesystem",
+ "bnpm-hashing",
+ "bnpm-integrity",
+ "bnpm-network",
+ "bnpm-package",
+ "bnpm-progress",
+ "bnpm-telemetry",
+ "futures",
+ "futures-util",
+ "reqwest",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-event-stream"
+version = "0.0.0"
+dependencies = [
+ "async-trait",
+ "bnpm-provenance",
+ "chrono",
+ "constant_time_eq 0.1.5",
+ "dashmap",
+ "hex",
+ "hmac",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "bnpm-federation"
+version = "0.0.0"
+dependencies = [
+ "async-trait",
+ "blake3",
+ "bnpm-capsule",
+ "bnpm-cid",
+ "bnpm-governance",
+ "bnpm-manifest",
+ "bnpm-policy",
+ "bnpm-proto",
+ "bnpm-provenance",
+ "bnpm-registry",
+ "bnpm-store",
+ "bytes",
+ "chrono",
+ "dashmap",
+ "hex",
+ "reqwest",
+ "semver",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tokio-test",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "bnpm-filesystem"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-concurrency",
+ "bytes",
+ "dashmap",
+ "glob",
+ "rayon",
+ "regex",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "uuid",
+ "walkdir",
+]
+
+[[package]]
+name = "bnpm-governance"
+version = "0.0.0"
+dependencies = [
+ "chrono",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "uuid",
+]
+
+[[package]]
+name = "bnpm-graph"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-lockfile",
+ "bnpm-manifest",
+ "bnpm-package",
+ "dashmap",
+ "futures",
+ "petgraph",
+ "rayon",
+ "regex",
+ "semver",
+ "serde",
+ "thiserror",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-hashing"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "base64",
+ "blake3",
+ "bytes",
+ "hex",
+ "serde",
+ "sha2",
+ "sha3",
+ "thiserror",
+]
+
+[[package]]
+name = "bnpm-installer"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-archive",
+ "bnpm-cache",
+ "bnpm-compression",
+ "bnpm-concurrency",
+ "bnpm-config",
+ "bnpm-downloader",
+ "bnpm-filesystem",
+ "bnpm-hashing",
+ "bnpm-integrity",
+ "bnpm-linker",
+ "bnpm-lockfile",
+ "bnpm-manifest",
+ "bnpm-package",
+ "bnpm-progress",
+ "bnpm-resolver",
+ "bnpm-sandbox",
+ "bnpm-signatures",
+ "bnpm-store",
+ "futures",
+ "serde",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-integrity"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "base64",
+ "blake3",
+ "bnpm-filesystem",
+ "bnpm-hashing",
+ "bytes",
+ "hex",
+ "rayon",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sha3",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
+name = "bnpm-linker"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "bnpm-filesystem",
+ "bnpm-hashing",
+ "bnpm-package",
+ "bnpm-store",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-lockfile"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-config",
+ "bnpm-hashing",
+ "bnpm-manifest",
+ "bnpm-package",
+ "chrono",
+ "hex",
+ "semver",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "thiserror",
+ "toml",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-logger"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-config",
+ "bnpm-telemetry",
+ "chrono",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-appender",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "bnpm-manifest"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-config",
+ "bnpm-package",
+ "regex",
+ "schemars 0.8.22",
+ "semver",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "toml",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "bnpm-network"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-config",
+ "bnpm-telemetry",
+ "bytes",
+ "futures",
+ "http",
+ "reqwest",
+ "thiserror",
+ "tokio",
+ "tower 0.5.3",
+ "tower-http",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "bnpm-npm-bridge"
+version = "0.0.0"
+dependencies = [
+ "bnpm-capsule",
+ "bnpm-cid",
+ "bnpm-manifest",
+ "bnpm-resolver",
+ "ciborium",
+ "flate2",
+ "reqwest",
+ "semver",
+ "serde",
+ "serde_json",
+ "tar",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "zstd",
+]
+
+[[package]]
+name = "bnpm-package"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "blake3",
+ "bnpm-filesystem",
+ "bnpm-hashing",
+ "bnpm-integrity",
+ "bytes",
+ "chrono",
+ "hex",
+ "regex",
+ "schemars 0.8.22",
+ "semver",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sha3",
+ "thiserror",
+ "url",
+ "uuid",
+]
+
+[[package]]
+name = "bnpm-plugin"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-concurrency",
+ "bnpm-config",
+ "bnpm-filesystem",
+ "bnpm-logger",
+ "bnpm-manifest",
+ "bnpm-package",
+ "dirs",
+ "libloading",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-plugin-registry"
+version = "0.0.0"
+dependencies = [
+ "async-trait",
+ "bnpm-capsule",
+ "bnpm-cid",
+ "bnpm-manifest",
+ "bnpm-policy",
+ "bnpm-proto",
+ "bnpm-sandbox",
+ "chrono",
+ "ciborium",
+ "dashmap",
+ "hex",
+ "reqwest",
+ "semver",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "walkdir",
+]
+
+[[package]]
+name = "bnpm-policy"
+version = "0.0.0"
+dependencies = [
+ "bnpm-cid",
+ "bnpm-lockfile",
+ "bnpm-manifest",
+ "bnpm-package",
+ "bnpm-resolver",
+ "semver",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "toml",
+]
+
+[[package]]
+name = "bnpm-progress"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-concurrency",
+ "bnpm-config",
+ "chrono",
+ "console",
+ "indicatif",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-proto"
+version = "0.0.0"
+dependencies = [
+ "base64",
+ "bnpm-capsule",
+ "bnpm-cid",
+ "bnpm-lockfile",
+ "bnpm-provenance",
+ "bytes",
+ "chrono",
+ "futures",
+ "futures-util",
+ "http",
+ "http-body",
+ "prost",
+ "prost-types",
+ "serde",
+ "thiserror",
+ "tokio",
+ "tokio-test",
+ "tonic",
+ "tonic-build",
+ "tonic-health",
+ "tower 0.5.3",
+ "tower-http",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "bnpm-protocol"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-package",
+ "bytes",
+ "chrono",
+ "hmac",
+ "prost",
+ "schemars 0.8.22",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror",
+ "tonic",
+ "url",
+ "uuid",
+]
+
+[[package]]
+name = "bnpm-provenance"
+version = "0.0.0"
+dependencies = [
+ "base64",
+ "blake3",
+ "bnpm-cid",
+ "ed25519-dalek",
+ "hex",
+ "rand 0.8.6",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
+name = "bnpm-publisher"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-archive",
+ "bnpm-auth",
+ "bnpm-compression",
+ "bnpm-config",
+ "bnpm-filesystem",
+ "bnpm-hashing",
+ "bnpm-integrity",
+ "bnpm-manifest",
+ "bnpm-package",
+ "bnpm-progress",
+ "bnpm-registry-client",
+ "bnpm-signatures",
+ "bnpm-telemetry",
+ "chrono",
+ "futures",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-registry"
+version = "0.0.0"
+dependencies = [
+ "async-trait",
+ "blake3",
+ "bnpm-capsule",
+ "bnpm-cid",
+ "bnpm-hashing",
+ "bnpm-lockfile",
+ "bnpm-manifest",
+ "bnpm-proto",
+ "bnpm-provenance",
+ "bnpm-resolver",
+ "bnpm-store",
+ "bytes",
+ "clap",
+ "dashmap",
+ "hex",
+ "prost",
+ "semver",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tonic",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "bnpm-registry-client"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "base64",
+ "bnpm-auth",
+ "bnpm-cache",
+ "bnpm-config",
+ "bnpm-network",
+ "bnpm-package",
+ "bnpm-protocol",
+ "bnpm-telemetry",
+ "bytes",
+ "chrono",
+ "futures",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "bnpm-reputation"
+version = "0.0.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "bnpm-resolver"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-cache",
+ "bnpm-config",
+ "bnpm-graph",
+ "bnpm-lockfile",
+ "bnpm-manifest",
+ "bnpm-package",
+ "dashmap",
+ "futures",
+ "hex",
+ "rand 0.8.6",
+ "rayon",
+ "semver",
+ "serde",
+ "tempfile",
+ "thiserror",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-runtime"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-concurrency",
+ "bnpm-config",
+ "bnpm-filesystem",
+ "bnpm-logger",
+ "bnpm-telemetry",
+ "serde",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-sandbox"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-concurrency",
+ "bnpm-config",
+ "bnpm-filesystem",
+ "rand 0.8.6",
+ "serde",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-sbom"
+version = "0.0.0"
+dependencies = [
+ "bnpm-lockfile",
+ "chrono",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "bnpm-signatures"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "base64",
+ "blake3",
+ "bnpm-crypto",
+ "bnpm-filesystem",
+ "bnpm-hashing",
+ "bnpm-integrity",
+ "bytes",
+ "ed25519-dalek",
+ "hex",
+ "rand 0.8.6",
+ "rsa",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sha3",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
+name = "bnpm-store"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "bnpm-cache",
+ "bnpm-config",
+ "bnpm-filesystem",
+ "bnpm-hashing",
+ "bytes",
+ "chrono",
+ "dashmap",
+ "deadpool",
+ "futures",
+ "hex",
+ "moka",
+ "object_store",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "bnpm-telemetry"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-config",
+ "chrono",
+ "opentelemetry",
+ "opentelemetry-otlp",
+ "opentelemetry_sdk",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-appender",
+ "tracing-opentelemetry",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "bnpm-testing"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-cache",
+ "bnpm-concurrency",
+ "bnpm-config",
+ "bnpm-crypto",
+ "bnpm-filesystem",
+ "bnpm-hashing",
+ "bnpm-logger",
+ "bnpm-package",
+ "bnpm-registry-client",
+ "bnpm-store",
+ "futures",
+ "rand 0.8.6",
+ "semver",
+ "serde",
+ "tempfile",
+ "testcontainers",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "bnpm-utils"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "base64",
+ "bnpm-concurrency",
+ "bnpm-hashing",
+ "bytes",
+ "chrono",
+ "hex",
+ "rand 0.8.6",
+ "regex",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "uuid",
+ "walkdir",
+]
+
+[[package]]
+name = "bnpm-wasm"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-cache",
+ "bnpm-filesystem",
+ "bnpm-hashing",
+ "bnpm-runtime",
+ "bytes",
+ "serde",
+ "thiserror",
+ "tracing",
+]
+
+[[package]]
+name = "bnpm-workspace"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "bnpm-concurrency",
+ "bnpm-config",
+ "bnpm-filesystem",
+ "bnpm-graph",
+ "bnpm-lockfile",
+ "bnpm-manifest",
+ "bnpm-package",
+ "glob",
+ "regex",
+ "semver",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "toml",
+ "tracing",
+ "walkdir",
+]
+
+[[package]]
 name = "bollard"
 version = "0.18.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -690,6 +1758,12 @@ checksum = "c2459377285ad874054d797f3ccebf984978aa39129f6eafde5cdc8315b612f8"
 
 [[package]]
 name = "constant_time_eq"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "245097e9a4535ee1e3e3931fcfcd55a796a44c643e8596ff6566d68f09b87bbc"
+
+[[package]]
+name = "constant_time_eq"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7c74b8349d32d297c9134b8c88677813a227df8f779daa29bfc29c183fe3dca6"
@@ -933,779 +2007,6 @@ dependencies = [
  "darling_core",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "dash-archive"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "bytes",
- "dash-compression",
- "dash-filesystem",
- "dash-hashing",
- "flate2",
- "serde",
- "tar",
- "thiserror",
- "tokio",
- "tracing",
- "walkdir",
- "zip",
- "zstd",
-]
-
-[[package]]
-name = "dash-auth"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "base64",
- "chrono",
- "dash-config",
- "dash-crypto",
- "dash-network",
- "dashmap",
- "jsonwebtoken",
- "reqwest",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "tracing",
- "url",
- "uuid",
-]
-
-[[package]]
-name = "dash-benchmark"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "criterion",
- "dash-concurrency",
- "dash-config",
- "dash-filesystem",
- "dash-hashing",
- "dash-logger",
- "rand 0.8.6",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "dash-cache"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "bytes",
- "chrono",
- "dash-config",
- "dash-filesystem",
- "dash-hashing",
- "dashmap",
- "moka",
- "redis",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "dash-cli"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "assert_cmd",
- "clap",
- "dash-cache",
- "dash-concurrency",
- "dash-config",
- "dash-diagnostics",
- "dash-downloader",
- "dash-installer",
- "dash-lockfile",
- "dash-logger",
- "dash-manifest",
- "dash-network",
- "dash-package",
- "dash-plugin",
- "dash-progress",
- "dash-publisher",
- "dash-registry-client",
- "dash-resolver",
- "dash-runtime",
- "dash-sandbox",
- "dash-store",
- "dash-telemetry",
- "dash-workspace",
- "dirs",
- "predicates",
- "semver",
- "serde_json",
- "tempfile",
- "thiserror",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "dash-compression"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "bytes",
- "dash-filesystem",
- "dash-hashing",
- "flate2",
- "futures",
- "serde",
- "tar",
- "thiserror",
- "tokio",
- "tracing",
- "zip",
- "zstd",
-]
-
-[[package]]
-name = "dash-concurrency"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "dashmap",
- "futures",
- "futures-util",
- "parking_lot",
- "rayon",
- "thiserror",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "dash-config"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "arc-swap",
- "dash-filesystem",
- "dirs",
- "once_cell",
- "regex",
- "schemars 0.8.22",
- "serde",
- "serde_json",
- "serde_yaml",
- "thiserror",
- "toml",
- "tracing",
-]
-
-[[package]]
-name = "dash-crypto"
-version = "0.0.0"
-dependencies = [
- "aes-gcm",
- "anyhow",
- "base64",
- "blake3",
- "bytes",
- "ed25519-dalek",
- "hex",
- "rand 0.8.6",
- "rsa",
- "serde",
- "sha2",
- "sha3",
- "thiserror",
- "zeroize",
-]
-
-[[package]]
-name = "dash-diagnostics"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "dash-config",
- "dash-filesystem",
- "dash-logger",
- "dirs",
- "serde",
- "serde_json",
- "thiserror",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "dash-downloader"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "dash-cache",
- "dash-concurrency",
- "dash-config",
- "dash-filesystem",
- "dash-hashing",
- "dash-integrity",
- "dash-network",
- "dash-package",
- "dash-progress",
- "dash-telemetry",
- "futures",
- "futures-util",
- "reqwest",
- "thiserror",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "dash-filesystem"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "bytes",
- "dash-concurrency",
- "dashmap",
- "glob",
- "rayon",
- "regex",
- "tempfile",
- "thiserror",
- "tokio",
- "tracing",
- "uuid",
- "walkdir",
-]
-
-[[package]]
-name = "dash-graph"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "dash-lockfile",
- "dash-manifest",
- "dash-package",
- "dashmap",
- "futures",
- "petgraph",
- "rayon",
- "regex",
- "semver",
- "serde",
- "thiserror",
- "tracing",
-]
-
-[[package]]
-name = "dash-hashing"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "base64",
- "blake3",
- "bytes",
- "hex",
- "serde",
- "sha2",
- "sha3",
- "thiserror",
-]
-
-[[package]]
-name = "dash-installer"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "dash-archive",
- "dash-cache",
- "dash-compression",
- "dash-concurrency",
- "dash-config",
- "dash-downloader",
- "dash-filesystem",
- "dash-hashing",
- "dash-integrity",
- "dash-linker",
- "dash-lockfile",
- "dash-manifest",
- "dash-package",
- "dash-progress",
- "dash-resolver",
- "dash-sandbox",
- "dash-signatures",
- "dash-store",
- "futures",
- "serde",
- "thiserror",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "dash-integrity"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "base64",
- "blake3",
- "bytes",
- "dash-filesystem",
- "dash-hashing",
- "hex",
- "rayon",
- "serde",
- "serde_json",
- "sha2",
- "sha3",
- "thiserror",
- "tokio",
-]
-
-[[package]]
-name = "dash-linker"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "dash-filesystem",
- "dash-hashing",
- "dash-package",
- "dash-store",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "dash-lockfile"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "dash-config",
- "dash-hashing",
- "dash-manifest",
- "dash-package",
- "hex",
- "semver",
- "serde",
- "serde_json",
- "serde_yaml",
- "thiserror",
- "toml",
- "tracing",
-]
-
-[[package]]
-name = "dash-logger"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "dash-config",
- "dash-telemetry",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "tracing",
- "tracing-appender",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "dash-manifest"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "dash-config",
- "dash-package",
- "regex",
- "schemars 0.8.22",
- "semver",
- "serde",
- "serde_json",
- "thiserror",
- "toml",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "dash-network"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "bytes",
- "dash-config",
- "dash-telemetry",
- "futures",
- "http",
- "reqwest",
- "thiserror",
- "tokio",
- "tower 0.5.3",
- "tower-http",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "dash-package"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "blake3",
- "bytes",
- "chrono",
- "dash-filesystem",
- "dash-hashing",
- "dash-integrity",
- "hex",
- "regex",
- "schemars 0.8.22",
- "semver",
- "serde",
- "serde_json",
- "sha2",
- "sha3",
- "thiserror",
- "url",
- "uuid",
-]
-
-[[package]]
-name = "dash-plugin"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "dash-concurrency",
- "dash-config",
- "dash-filesystem",
- "dash-logger",
- "dash-manifest",
- "dash-package",
- "dirs",
- "libloading",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "dash-progress"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "console",
- "dash-concurrency",
- "dash-config",
- "indicatif",
- "thiserror",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "dash-protocol"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "bytes",
- "chrono",
- "dash-package",
- "hmac",
- "prost",
- "schemars 0.8.22",
- "serde",
- "serde_json",
- "sha2",
- "thiserror",
- "tonic",
- "url",
- "uuid",
-]
-
-[[package]]
-name = "dash-publisher"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "dash-archive",
- "dash-auth",
- "dash-compression",
- "dash-config",
- "dash-filesystem",
- "dash-hashing",
- "dash-integrity",
- "dash-manifest",
- "dash-package",
- "dash-progress",
- "dash-registry-client",
- "dash-signatures",
- "dash-telemetry",
- "futures",
- "reqwest",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "dash-registry-client"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "base64",
- "bytes",
- "chrono",
- "dash-auth",
- "dash-cache",
- "dash-config",
- "dash-network",
- "dash-package",
- "dash-protocol",
- "dash-telemetry",
- "futures",
- "reqwest",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "dash-resolver"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "dash-cache",
- "dash-config",
- "dash-graph",
- "dash-lockfile",
- "dash-manifest",
- "dash-package",
- "dashmap",
- "futures",
- "hex",
- "rand 0.8.6",
- "rayon",
- "semver",
- "serde",
- "tempfile",
- "thiserror",
- "tracing",
-]
-
-[[package]]
-name = "dash-runtime"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "dash-concurrency",
- "dash-config",
- "dash-filesystem",
- "dash-logger",
- "dash-telemetry",
- "serde",
- "thiserror",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "dash-sandbox"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "dash-concurrency",
- "dash-config",
- "dash-filesystem",
- "rand 0.8.6",
- "serde",
- "tempfile",
- "thiserror",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "dash-signatures"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "base64",
- "blake3",
- "bytes",
- "dash-crypto",
- "dash-filesystem",
- "dash-hashing",
- "dash-integrity",
- "ed25519-dalek",
- "hex",
- "rand 0.8.6",
- "rsa",
- "serde",
- "serde_json",
- "sha2",
- "sha3",
- "thiserror",
- "tokio",
-]
-
-[[package]]
-name = "dash-store"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "bytes",
- "chrono",
- "dash-cache",
- "dash-config",
- "dash-filesystem",
- "dash-hashing",
- "dashmap",
- "deadpool",
- "futures",
- "hex",
- "moka",
- "object_store",
- "serde",
- "serde_json",
- "sqlx",
- "thiserror",
- "tokio",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "dash-telemetry"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "chrono",
- "dash-config",
- "opentelemetry",
- "opentelemetry-otlp",
- "opentelemetry_sdk",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "tracing",
- "tracing-appender",
- "tracing-opentelemetry",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "dash-testing"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "dash-cache",
- "dash-concurrency",
- "dash-config",
- "dash-crypto",
- "dash-filesystem",
- "dash-hashing",
- "dash-logger",
- "dash-package",
- "dash-registry-client",
- "dash-store",
- "futures",
- "rand 0.8.6",
- "semver",
- "serde",
- "tempfile",
- "testcontainers",
- "thiserror",
- "tokio",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "dash-utils"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "base64",
- "bytes",
- "chrono",
- "dash-concurrency",
- "dash-hashing",
- "hex",
- "rand 0.8.6",
- "regex",
- "serde",
- "serde_json",
- "thiserror",
- "uuid",
- "walkdir",
-]
-
-[[package]]
-name = "dash-wasm"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "bytes",
- "dash-cache",
- "dash-filesystem",
- "dash-hashing",
- "dash-runtime",
- "serde",
- "thiserror",
- "tracing",
-]
-
-[[package]]
-name = "dash-workspace"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "dash-concurrency",
- "dash-config",
- "dash-filesystem",
- "dash-graph",
- "dash-lockfile",
- "dash-manifest",
- "dash-package",
- "glob",
- "regex",
- "semver",
- "serde",
- "serde_json",
- "thiserror",
- "toml",
- "tracing",
- "walkdir",
 ]
 
 [[package]]
@@ -2953,6 +3254,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "multimap"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1d87ecb2933e8aeadb3e3a02b828fed80a7528047e68b4f424523a0981a3a084"
+
+[[package]]
 name = "native-tls"
 version = "0.2.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3505,6 +3812,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "prettyplease"
+version = "0.2.37"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "479ca8adacdd7ce8f1fb39ce9ecccbfe93a3f1344b3d0d97f20bc0196208f62b"
+dependencies = [
+ "proc-macro2",
+ "syn",
+]
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.106"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3524,6 +3841,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "prost-build"
+version = "0.13.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "be769465445e8c1474e9c5dac2018218498557af32d9ed057325ec9a41ae81bf"
+dependencies = [
+ "heck",
+ "itertools 0.14.0",
+ "log",
+ "multimap",
+ "once_cell",
+ "petgraph",
+ "prettyplease",
+ "prost",
+ "prost-types",
+ "regex",
+ "syn",
+ "tempfile",
+]
+
+[[package]]
 name = "prost-derive"
 version = "0.13.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3534,6 +3871,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "prost-types"
+version = "0.13.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "52c2c1bf36ddb1a1c396b3601a3cec27c2462e45f07c386894ec3ccf5332bd16"
+dependencies = [
+ "prost",
 ]
 
 [[package]]
@@ -3929,6 +4275,7 @@ version = "0.23.41"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6b92b125634d9b795e7beca796cc790df15a7fb38323bf3196fda83292d06b1f"
 dependencies = [
+ "log",
  "once_cell",
  "ring",
  "rustls-pki-types",
@@ -4933,6 +5280,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "tokio-test"
+version = "0.4.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "12bc5db7778a8e08ee255090861e0e7aac55e784300077e7ed293c7be36168b2"
+dependencies = [
+ "futures-core",
+ "tokio",
+ "tokio-stream",
+]
+
+[[package]]
 name = "tokio-util"
 version = "0.7.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5007,13 +5365,42 @@ dependencies = [
  "percent-encoding",
  "pin-project",
  "prost",
+ "rustls-pemfile",
  "socket2 0.5.10",
  "tokio",
+ "tokio-rustls",
  "tokio-stream",
  "tower 0.4.13",
  "tower-layer",
  "tower-service",
  "tracing",
+]
+
+[[package]]
+name = "tonic-build"
+version = "0.12.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9557ce109ea773b399c9b9e5dca39294110b74f1f342cb347a80d1fce8c26a11"
+dependencies = [
+ "prettyplease",
+ "proc-macro2",
+ "prost-build",
+ "prost-types",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "tonic-health"
+version = "0.12.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1eaf34ddb812120f5c601162d5429933c9b527d901ab0e7f930d3147e33a09b2"
+dependencies = [
+ "async-stream",
+ "prost",
+ "tokio",
+ "tokio-stream",
+ "tonic",
 ]
 
 [[package]]
