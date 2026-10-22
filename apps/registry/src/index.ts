@@ -1,21 +1,23 @@
-import { parseAuthHeader, verifyToken } from "@better-npm/auth"
+import { type AuthToken, parseAuthHeader, verifyToken } from "@better-npm/auth"
 import { loadConfig } from "@better-npm/config"
 import { createLogger } from "@better-npm/logger"
-import { type PackageStorage, PackageStorageFactory } from "@better-npm/storage"
+import { type PackageStorage, PackageStorageFactory, PackageStoreError } from "@better-npm/storage"
 import { publishPackageSchema, validate } from "@better-npm/validation"
 import { type Context, Hono, type Next } from "hono"
 import { HTTPException } from "hono/http-exception"
 import { z } from "zod"
 
+type Env = { Variables: { user: AuthToken } }
+
 const logger = createLogger("registry")
 const config = loadConfig()
 
-const app = new Hono()
+const app = new Hono<Env>()
 let packageStorage: PackageStorage = PackageStorageFactory.create()
 
 const PUBLISHER_ROLES = ["publisher", "admin"]
 
-const requirePublisher = async (c: Context, next: Next) => {
+const requirePublisher = async (c: Context<Env>, next: Next) => {
   const header = parseAuthHeader(c.req.header("authorization") ?? "")
   if (!header.ok) throw new HTTPException(401, { message: "Authentication required" })
 
@@ -26,7 +28,17 @@ const requirePublisher = async (c: Context, next: Next) => {
     throw new HTTPException(403, { message: "Publisher role required" })
   }
 
+  c.set("user", token.value)
   await next()
+}
+
+const assertCanModify = async (c: Context<Env>, name: string): Promise<void> => {
+  const pkg = await packageStorage.getPackage(name)
+  if (!pkg) return
+
+  const user = c.get("user")
+  if (user.roles.includes("admin") || pkg.owners.includes(user.sub)) return
+  throw new HTTPException(403, { message: `You are not an owner of '${name}'` })
 }
 
 app.use("*", async (c, next) => {
@@ -91,13 +103,15 @@ app.put("/packages/:name", requirePublisher, async (c) => {
     }
     const payload = validationResult.value
 
-    const storage = packageStorage
-    const result = await storage.publishPackage(name, payload)
+    await assertCanModify(c, name)
+    const result = await packageStorage.publishPackage(name, payload, c.get("user").sub)
     logger.info("Package published", { name, version: payload.version })
 
     return c.json({ package: result }, 201)
   } catch (err) {
     if (err instanceof HTTPException) throw err
+    if (err instanceof PackageStoreError)
+      throw new HTTPException(err.status, { message: err.message })
     logger.error("Failed to publish package", { name: c.req.param("name"), error: String(err) })
     throw new HTTPException(500, { message: "Failed to publish package" })
   }
@@ -110,8 +124,10 @@ app.delete("/packages/:name/:version", requirePublisher, async (c) => {
     if (!(name && version))
       throw new HTTPException(400, { message: "Package name and version are required" })
 
-    const storage = packageStorage
-    await storage.unpublishPackageVersion(name, version)
+    await assertCanModify(c, name)
+    const removed = await packageStorage.unpublishPackageVersion(name, version)
+    if (!removed)
+      throw new HTTPException(404, { message: `Package '${name}@${version}' not found` })
     logger.info("Package version unpublished", { name, version })
 
     return c.json({ message: `Package '${name}@${version}' unpublished` })
@@ -157,10 +173,16 @@ app.post("/packages/:name/deprecate", requirePublisher, async (c) => {
     }
     const { reason } = validationResult.value
 
+    await assertCanModify(c, name)
     const storage = packageStorage
     const result = version
       ? await storage.deprecatePackageVersion(name, version, reason)
       : await storage.deprecatePackage(name, reason)
+    if (!result) {
+      throw new HTTPException(404, {
+        message: version ? `Package '${name}@${version}' not found` : `Package '${name}' not found`,
+      })
+    }
 
     logger.info("Package deprecated", { name, version, reason })
     return c.json({ package: result, deprecated: true, reason })
