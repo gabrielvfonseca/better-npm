@@ -3,17 +3,20 @@ import * as React from "react"
 
 import { cn } from "../lib/utils"
 
-export type SeparatorProps = Omit<React.ComponentProps<typeof BaseSeparator>, "decorative"> & {
+export type SeparatorProps = Omit<
+  React.ComponentProps<typeof BaseSeparator>,
+  "decorative" | "ref"
+> & {
   decorative?: boolean
 }
 
-const Separator = React.forwardRef<React.ElementRef<typeof BaseSeparator>, SeparatorProps>(
+const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
   ({ className, orientation = "horizontal", decorative = true, ...props }, ref) => (
     <BaseSeparator
-      ref={ref as React.Ref<typeof BaseSeparator>}
+      ref={ref}
       data-slot="separator"
       orientation={orientation}
-      decorative={decorative}
+      role={decorative ? "none" : "separator"}
       className={cn(
         "bg-border shrink-0",
         orientation === "horizontal" ? "h-px w-full" : "h-full w-px",

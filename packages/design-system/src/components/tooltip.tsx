@@ -26,13 +26,13 @@ function Tooltip({ delay = 600, closeDelay = 0, ...props }: TooltipProps) {
 Tooltip.displayName = "Tooltip"
 
 const TooltipTrigger = React.forwardRef<
-  React.ElementRef<typeof BaseTooltip.Trigger>,
+  HTMLButtonElement,
   React.ComponentProps<typeof BaseTooltip.Trigger>
 >(({ className, ...props }, ref) => {
   const { delay, closeDelay } = React.useContext(TooltipDelayContext)
   return (
     <BaseTooltip.Trigger
-      ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+      ref={ref}
       data-slot="tooltip-trigger"
       delay={delay}
       closeDelay={closeDelay}
@@ -44,7 +44,7 @@ const TooltipTrigger = React.forwardRef<
 TooltipTrigger.displayName = "TooltipTrigger"
 
 const TooltipContent = React.forwardRef<
-  React.ElementRef<typeof BaseTooltip.Popup>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseTooltip.Popup> & {
     sideOffset?: number
   }
@@ -52,7 +52,7 @@ const TooltipContent = React.forwardRef<
   <BaseTooltip.Portal>
     <BaseTooltip.Positioner data-slot="tooltip-positioner" sideOffset={sideOffset} className="z-50">
       <BaseTooltip.Popup
-        ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+        ref={ref}
         data-slot="tooltip-content"
         className={cn(
           "z-50 overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground shadow-md animate-fade-in",

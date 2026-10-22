@@ -15,11 +15,11 @@ function SelectValue(props: React.ComponentProps<typeof BaseSelect.Value>) {
 }
 
 const SelectTrigger = React.forwardRef<
-  React.ElementRef<typeof BaseSelect.Trigger>,
+  HTMLButtonElement,
   React.ComponentProps<typeof BaseSelect.Trigger>
 >(({ className, children, ...props }, ref) => (
   <BaseSelect.Trigger
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="select-trigger"
     className={cn(
       "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 data-[placeholder]:text-muted-foreground",
@@ -36,7 +36,7 @@ const SelectTrigger = React.forwardRef<
 SelectTrigger.displayName = "SelectTrigger"
 
 const SelectContent = React.forwardRef<
-  React.ElementRef<typeof BaseSelect.Popup>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseSelect.Popup> &
     Pick<React.ComponentProps<typeof BaseSelect.Positioner>, "sideOffset" | "align" | "alignOffset">
 >(({ className, children, sideOffset = 4, align = "start", ...props }, ref) => (
@@ -48,7 +48,7 @@ const SelectContent = React.forwardRef<
       className="z-50 w-(--anchor-width) max-h-[min(24rem,var(--available-height))]"
     >
       <BaseSelect.Popup
-        ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+        ref={ref}
         data-slot="select-content"
         className={cn(
           "max-h-[min(24rem,var(--available-height))] w-(--anchor-width) min-w-32 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
@@ -69,11 +69,11 @@ const SelectContent = React.forwardRef<
 SelectContent.displayName = "SelectContent"
 
 const SelectLabel = React.forwardRef<
-  React.ElementRef<typeof BaseSelect.GroupLabel>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseSelect.GroupLabel>
 >(({ className, ...props }, ref) => (
   <BaseSelect.GroupLabel
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="select-label"
     className={cn("px-2 py-1.5 text-xs font-medium text-muted-foreground", className)}
     {...props}
@@ -81,35 +81,34 @@ const SelectLabel = React.forwardRef<
 ))
 SelectLabel.displayName = "SelectLabel"
 
-const SelectItem = React.forwardRef<
-  React.ElementRef<typeof BaseSelect.Item>,
-  React.ComponentProps<typeof BaseSelect.Item>
->(({ className, children, ...props }, ref) => (
-  <BaseSelect.Item
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
-    data-slot="select-item"
-    className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pe-2 ps-8 text-sm outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      className,
-    )}
-    {...props}
-  >
-    <span className="absolute start-2 flex size-3.5 items-center justify-center">
-      <BaseSelect.ItemIndicator className="flex items-center justify-center">
-        <CheckIcon className="size-4" />
-      </BaseSelect.ItemIndicator>
-    </span>
-    <BaseSelect.ItemText className="flex flex-col">{children}</BaseSelect.ItemText>
-  </BaseSelect.Item>
-))
+const SelectItem = React.forwardRef<HTMLDivElement, React.ComponentProps<typeof BaseSelect.Item>>(
+  ({ className, children, ...props }, ref) => (
+    <BaseSelect.Item
+      ref={ref}
+      data-slot="select-item"
+      className={cn(
+        "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pe-2 ps-8 text-sm outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        className,
+      )}
+      {...props}
+    >
+      <span className="absolute start-2 flex size-3.5 items-center justify-center">
+        <BaseSelect.ItemIndicator className="flex items-center justify-center">
+          <CheckIcon className="size-4" />
+        </BaseSelect.ItemIndicator>
+      </span>
+      <BaseSelect.ItemText className="flex flex-col">{children}</BaseSelect.ItemText>
+    </BaseSelect.Item>
+  ),
+)
 SelectItem.displayName = "SelectItem"
 
 const SelectSeparator = React.forwardRef<
-  React.ElementRef<typeof BaseSelect.Separator>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseSelect.Separator>
 >(({ className, ...props }, ref) => (
   <BaseSelect.Separator
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="select-separator"
     className={cn("-mx-1 my-1 h-px bg-muted", className)}
     {...props}

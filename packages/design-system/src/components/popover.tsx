@@ -9,33 +9,23 @@ const Popover = (props: React.ComponentProps<typeof BasePopover.Root>) => (
 Popover.displayName = "Popover"
 
 const PopoverTrigger = React.forwardRef<
-  React.ElementRef<typeof BasePopover.Trigger>,
+  HTMLButtonElement,
   React.ComponentProps<typeof BasePopover.Trigger>
 >(({ className, ...props }, ref) => (
-  <BasePopover.Trigger
-    ref={ref as React.Ref<typeof BasePopover.Trigger>}
-    data-slot="popover-trigger"
-    className={className}
-    {...props}
-  />
+  <BasePopover.Trigger ref={ref} data-slot="popover-trigger" className={className} {...props} />
 ))
 PopoverTrigger.displayName = "PopoverTrigger"
 
 const PopoverAnchor = React.forwardRef<
-  React.ElementRef<typeof BasePopover.Positioner>,
+  HTMLDivElement,
   React.ComponentProps<typeof BasePopover.Positioner>
 >(({ className, ...props }, ref) => (
-  <BasePopover.Positioner
-    ref={ref as React.Ref<typeof BasePopover.Positioner>}
-    data-slot="popover-anchor"
-    className={className}
-    {...props}
-  />
+  <BasePopover.Positioner ref={ref} data-slot="popover-anchor" className={className} {...props} />
 ))
 PopoverAnchor.displayName = "PopoverAnchor"
 
 const PopoverContent = React.forwardRef<
-  React.ElementRef<typeof BasePopover.Popup>,
+  HTMLDivElement,
   React.ComponentProps<typeof BasePopover.Popup> & {
     align?: "start" | "center" | "end"
     sideOffset?: number
@@ -49,7 +39,7 @@ const PopoverContent = React.forwardRef<
       className="z-50 outline-none"
     >
       <BasePopover.Popup
-        ref={ref as React.Ref<typeof BasePopover.Popup>}
+        ref={ref}
         data-slot="popover-content"
         className={cn(
           "z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none",
@@ -65,24 +55,19 @@ const PopoverContent = React.forwardRef<
 PopoverContent.displayName = "PopoverContent"
 
 const PopoverClose = React.forwardRef<
-  React.ElementRef<typeof BasePopover.Close>,
+  HTMLButtonElement,
   React.ComponentProps<typeof BasePopover.Close>
 >(({ className, ...props }, ref) => (
-  <BasePopover.Close
-    ref={ref as React.Ref<typeof BasePopover.Close>}
-    data-slot="popover-close"
-    className={className}
-    {...props}
-  />
+  <BasePopover.Close ref={ref} data-slot="popover-close" className={className} {...props} />
 ))
 PopoverClose.displayName = "PopoverClose"
 
 const PopoverArrow = React.forwardRef<
-  React.ElementRef<typeof BasePopover.Arrow>,
+  HTMLDivElement,
   React.ComponentProps<typeof BasePopover.Arrow>
 >(({ className, ...props }, ref) => (
   <BasePopover.Arrow
-    ref={ref as React.Ref<typeof BasePopover.Arrow>}
+    ref={ref}
     data-slot="popover-arrow"
     className={cn("fill-popover", className)}
     {...props}

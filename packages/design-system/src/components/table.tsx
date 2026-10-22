@@ -6,7 +6,7 @@ const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableE
   ({ className, ...props }, ref) => (
     <div data-slot="table-container" className="relative w-full overflow-auto">
       <table
-        ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+        ref={ref}
         data-slot="table"
         className={cn("w-full caption-bottom text-sm", className)}
         {...props}
@@ -21,7 +21,7 @@ const TableHeader = React.forwardRef<
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
   <thead
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="table-header"
     className={cn("[&_tr]:border-b", className)}
     {...props}
@@ -34,7 +34,7 @@ const TableBody = React.forwardRef<
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
   <tbody
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="table-body"
     className={cn("[&_tr:last-child]:border-0", className)}
     {...props}
@@ -47,7 +47,7 @@ const TableFooter = React.forwardRef<
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
   <tfoot
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="table-footer"
     className={cn("border-t bg-muted/50 font-medium [&>tr]:last:border-b-0", className)}
     {...props}
@@ -58,7 +58,7 @@ TableFooter.displayName = "TableFooter"
 const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement>>(
   ({ className, ...props }, ref) => (
     <tr
-      ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+      ref={ref}
       data-slot="table-row"
       className={cn(
         "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
@@ -75,7 +75,7 @@ const TableHead = React.forwardRef<
   React.ThHTMLAttributes<HTMLTableCellElement>
 >(({ className, ...props }, ref) => (
   <th
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="table-head"
     className={cn(
       "h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
@@ -91,7 +91,7 @@ const TableCell = React.forwardRef<
   React.TdHTMLAttributes<HTMLTableCellElement>
 >(({ className, ...props }, ref) => (
   <td
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="table-cell"
     className={cn("p-2 align-middle [&:has([role=checkbox])]:pr-0", className)}
     {...props}
@@ -104,7 +104,7 @@ const TableCaption = React.forwardRef<
   React.HTMLAttributes<HTMLTableCaptionElement>
 >(({ className, ...props }, ref) => (
   <caption
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="table-caption"
     className={cn("mt-4 text-sm text-muted-foreground", className)}
     {...props}

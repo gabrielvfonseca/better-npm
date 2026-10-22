@@ -10,28 +10,18 @@ const DropdownMenu = (props: React.ComponentProps<typeof BaseMenu.Root>) => (
 DropdownMenu.displayName = "DropdownMenu"
 
 const DropdownMenuTrigger = React.forwardRef<
-  React.ElementRef<typeof BaseMenu.Trigger>,
+  HTMLButtonElement,
   React.ComponentProps<typeof BaseMenu.Trigger>
 >(({ className, ...props }, ref) => (
-  <BaseMenu.Trigger
-    ref={ref as React.Ref<typeof BaseMenu.Trigger>}
-    data-slot="dropdown-menu-trigger"
-    className={className}
-    {...props}
-  />
+  <BaseMenu.Trigger ref={ref} data-slot="dropdown-menu-trigger" className={className} {...props} />
 ))
 DropdownMenuTrigger.displayName = "DropdownMenuTrigger"
 
 const DropdownMenuGroup = React.forwardRef<
-  React.ElementRef<typeof BaseMenu.Group>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseMenu.Group>
 >(({ className, ...props }, ref) => (
-  <BaseMenu.Group
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
-    data-slot="dropdown-menu-group"
-    className={className}
-    {...props}
-  />
+  <BaseMenu.Group ref={ref} data-slot="dropdown-menu-group" className={className} {...props} />
 ))
 DropdownMenuGroup.displayName = "DropdownMenuGroup"
 
@@ -46,11 +36,11 @@ const DropdownMenuSub = (props: React.ComponentProps<typeof BaseMenu.SubmenuRoot
 DropdownMenuSub.displayName = "DropdownMenuSub"
 
 const DropdownMenuRadioGroup = React.forwardRef<
-  React.ElementRef<typeof BaseMenu.RadioGroup>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseMenu.RadioGroup>
 >(({ className, ...props }, ref) => (
   <BaseMenu.RadioGroup
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="dropdown-menu-radio-group"
     className={className}
     {...props}
@@ -59,11 +49,11 @@ const DropdownMenuRadioGroup = React.forwardRef<
 DropdownMenuRadioGroup.displayName = "DropdownMenuRadioGroup"
 
 const DropdownMenuSubTrigger = React.forwardRef<
-  React.ElementRef<typeof BaseMenu.SubmenuTrigger>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseMenu.SubmenuTrigger>
 >(({ className, children, ...props }, ref) => (
   <BaseMenu.SubmenuTrigger
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="dropdown-menu-sub-trigger"
     className={cn(
       "flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent",
@@ -78,7 +68,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
 DropdownMenuSubTrigger.displayName = "DropdownMenuSubTrigger"
 
 const DropdownMenuSubContent = React.forwardRef<
-  React.ElementRef<typeof BaseMenu.Popup>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseMenu.Positioner>
 >(({ className, children, ...props }, ref) => (
   <DropdownMenuPortal>
@@ -90,7 +80,7 @@ const DropdownMenuSubContent = React.forwardRef<
       {...props}
     >
       <BaseMenu.Popup
-        ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+        ref={ref}
         data-slot="dropdown-menu-sub-content"
         className={cn(
           "z-50 min-w-32 overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg",
@@ -105,7 +95,7 @@ const DropdownMenuSubContent = React.forwardRef<
 DropdownMenuSubContent.displayName = "DropdownMenuSubContent"
 
 const DropdownMenuContent = React.forwardRef<
-  React.ElementRef<typeof BaseMenu.Popup>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseMenu.Positioner> & { portal?: boolean }
 >(({ className, children, portal = true, sideOffset = 4, align = "end", ...props }, ref) => {
   const positioner = (
@@ -117,7 +107,7 @@ const DropdownMenuContent = React.forwardRef<
       {...props}
     >
       <BaseMenu.Popup
-        ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+        ref={ref}
         data-slot="dropdown-menu-content"
         className={cn(
           "z-50 min-w-32 overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
@@ -133,11 +123,11 @@ const DropdownMenuContent = React.forwardRef<
 DropdownMenuContent.displayName = "DropdownMenuContent"
 
 const DropdownMenuItem = React.forwardRef<
-  React.ElementRef<typeof BaseMenu.Item>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseMenu.Item> & { inset?: boolean }
 >(({ className, inset, ...props }, ref) => (
   <BaseMenu.Item
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="dropdown-menu-item"
     className={cn(
       "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
@@ -150,11 +140,11 @@ const DropdownMenuItem = React.forwardRef<
 DropdownMenuItem.displayName = "DropdownMenuItem"
 
 const DropdownMenuCheckboxItem = React.forwardRef<
-  React.ElementRef<typeof BaseMenu.CheckboxItem>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseMenu.CheckboxItem>
 >(({ className, children, checked, ...props }, ref) => (
   <BaseMenu.CheckboxItem
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="dropdown-menu-checkbox-item"
     className={cn(
       "relative flex cursor-default select-none items-center rounded-sm py-1.5 pe-2 ps-8 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
@@ -174,11 +164,11 @@ const DropdownMenuCheckboxItem = React.forwardRef<
 DropdownMenuCheckboxItem.displayName = "DropdownMenuCheckboxItem"
 
 const DropdownMenuRadioItem = React.forwardRef<
-  React.ElementRef<typeof BaseMenu.RadioItem>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseMenu.RadioItem>
 >(({ className, children, ...props }, ref) => (
   <BaseMenu.RadioItem
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="dropdown-menu-radio-item"
     className={cn(
       "relative flex cursor-default select-none items-center rounded-sm py-1.5 pe-2 ps-8 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
@@ -197,11 +187,11 @@ const DropdownMenuRadioItem = React.forwardRef<
 DropdownMenuRadioItem.displayName = "DropdownMenuRadioItem"
 
 const DropdownMenuLabel = React.forwardRef<
-  React.ElementRef<typeof BaseMenu.GroupLabel>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseMenu.GroupLabel> & { inset?: boolean }
 >(({ className, inset, ...props }, ref) => (
   <BaseMenu.GroupLabel
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="dropdown-menu-label"
     className={cn("px-2 py-1.5 text-sm font-semibold", inset && "ps-8", className)}
     {...props}
@@ -210,11 +200,11 @@ const DropdownMenuLabel = React.forwardRef<
 DropdownMenuLabel.displayName = "DropdownMenuLabel"
 
 const DropdownMenuSeparator = React.forwardRef<
-  React.ElementRef<typeof BaseMenu.Separator>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseMenu.Separator>
 >(({ className, ...props }, ref) => (
   <BaseMenu.Separator
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="dropdown-menu-separator"
     className={cn("-mx-1 my-1 h-px bg-muted", className)}
     {...props}

@@ -36,7 +36,7 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, ...props }, ref) => (
     <button
-      ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+      ref={ref}
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}

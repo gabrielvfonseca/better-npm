@@ -10,11 +10,11 @@ const AlertDialog = (props: React.ComponentProps<typeof BaseAlertDialog.Root>) =
 AlertDialog.displayName = "AlertDialog"
 
 const AlertDialogTrigger = React.forwardRef<
-  React.ElementRef<typeof BaseAlertDialog.Trigger>,
+  HTMLButtonElement,
   React.ComponentProps<typeof BaseAlertDialog.Trigger>
 >(({ className, ...props }, ref) => (
   <BaseAlertDialog.Trigger
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="alert-dialog-trigger"
     className={className}
     {...props}
@@ -28,11 +28,11 @@ const AlertDialogPortal = (props: React.ComponentProps<typeof BaseAlertDialog.Po
 AlertDialogPortal.displayName = "AlertDialogPortal"
 
 const AlertDialogClose = React.forwardRef<
-  React.ElementRef<typeof BaseAlertDialog.Close>,
+  HTMLButtonElement,
   React.ComponentProps<typeof BaseAlertDialog.Close>
 >(({ className, ...props }, ref) => (
   <BaseAlertDialog.Close
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="alert-dialog-close"
     className={className}
     {...props}
@@ -41,11 +41,11 @@ const AlertDialogClose = React.forwardRef<
 AlertDialogClose.displayName = "AlertDialogClose"
 
 const AlertDialogOverlay = React.forwardRef<
-  React.ElementRef<typeof BaseAlertDialog.Backdrop>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseAlertDialog.Backdrop>
 >(({ className, ...props }, ref) => (
   <BaseAlertDialog.Backdrop
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="overlay"
     className={cn("fixed inset-0 z-50 bg-black/50", className)}
     {...props}
@@ -54,13 +54,13 @@ const AlertDialogOverlay = React.forwardRef<
 AlertDialogOverlay.displayName = "AlertDialogOverlay"
 
 const AlertDialogContent = React.forwardRef<
-  React.ElementRef<typeof BaseAlertDialog.Popup>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseAlertDialog.Popup> & { showCloseButton?: boolean }
 >(({ className, children, showCloseButton = true, ...props }, ref) => (
   <AlertDialogPortal>
     <AlertDialogOverlay />
     <BaseAlertDialog.Popup
-      ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+      ref={ref}
       data-slot="alert-dialog-content"
       className={cn(
         "fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border bg-background p-6 shadow-lg rounded-lg duration-200 max-h-[calc(100dvh-2rem)] overflow-y-auto",
@@ -101,11 +101,11 @@ function AlertDialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDiv
 }
 
 const AlertDialogTitle = React.forwardRef<
-  React.ElementRef<typeof BaseAlertDialog.Title>,
+  HTMLHeadingElement,
   React.ComponentProps<typeof BaseAlertDialog.Title>
 >(({ className, ...props }, ref) => (
   <BaseAlertDialog.Title
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="alert-dialog-title"
     className={cn("text-lg font-semibold leading-none tracking-tight", className)}
     {...props}
@@ -114,11 +114,11 @@ const AlertDialogTitle = React.forwardRef<
 AlertDialogTitle.displayName = "AlertDialogTitle"
 
 const AlertDialogDescription = React.forwardRef<
-  React.ElementRef<typeof BaseAlertDialog.Description>,
+  HTMLParagraphElement,
   React.ComponentProps<typeof BaseAlertDialog.Description>
 >(({ className, ...props }, ref) => (
   <BaseAlertDialog.Description
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="alert-dialog-description"
     className={cn("text-sm text-muted-foreground", className)}
     {...props}

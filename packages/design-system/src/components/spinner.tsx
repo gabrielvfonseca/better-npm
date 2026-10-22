@@ -26,7 +26,7 @@ export interface SpinnerProps extends React.SVGAttributes<SVGSVGElement> {
 const Spinner = React.forwardRef<SVGSVGElement, SpinnerProps>(
   ({ className, size, label = "Loading", ...props }, ref) => (
     <Loader2
-      ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+      ref={ref}
       role="status"
       aria-label={label}
       className={cn(spinnerVariants({ size }), className)}

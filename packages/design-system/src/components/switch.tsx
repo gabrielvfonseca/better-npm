@@ -5,26 +5,24 @@ import { cn } from "../lib/utils"
 
 export type SwitchProps = React.ComponentProps<typeof BaseSwitch.Root>
 
-const Switch = React.forwardRef<React.ElementRef<typeof BaseSwitch.Root>, SwitchProps>(
-  ({ className, ...props }, ref) => (
-    <BaseSwitch.Root
-      ref={ref as React.Ref<typeof BaseDialog.Trigger>}
-      data-slot="switch"
+const Switch = React.forwardRef<HTMLDivElement, SwitchProps>(({ className, ...props }, ref) => (
+  <BaseSwitch.Root
+    ref={ref}
+    data-slot="switch"
+    className={cn(
+      "peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[checked]:bg-primary data-[unchecked]:bg-input",
+      className,
+    )}
+    {...props}
+  >
+    <BaseSwitch.Thumb
+      data-slot="switch-thumb"
       className={cn(
-        "peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[checked]:bg-primary data-[unchecked]:bg-input",
-        className,
+        "pointer-events-none block size-4 rounded-full bg-background shadow-lg ring-0 transition-transform data-[checked]:translate-x-4 data-[unchecked]:translate-x-0",
       )}
-      {...props}
-    >
-      <BaseSwitch.Thumb
-        data-slot="switch-thumb"
-        className={cn(
-          "pointer-events-none block size-4 rounded-full bg-background shadow-lg ring-0 transition-transform data-[checked]:translate-x-4 data-[unchecked]:translate-x-0",
-        )}
-      />
-    </BaseSwitch.Root>
-  ),
-)
+    />
+  </BaseSwitch.Root>
+))
 Switch.displayName = "Switch"
 
 export { Switch }

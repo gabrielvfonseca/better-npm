@@ -10,28 +10,18 @@ const Sheet = (props: React.ComponentProps<typeof BaseDrawer.Root>) => (
 Sheet.displayName = "Sheet"
 
 const SheetTrigger = React.forwardRef<
-  React.ElementRef<typeof BaseDrawer.Trigger>,
+  HTMLButtonElement,
   React.ComponentProps<typeof BaseDrawer.Trigger>
 >(({ className, ...props }, ref) => (
-  <BaseDrawer.Trigger
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
-    data-slot="sheet-trigger"
-    className={className}
-    {...props}
-  />
+  <BaseDrawer.Trigger ref={ref} data-slot="sheet-trigger" className={className} {...props} />
 ))
 SheetTrigger.displayName = "SheetTrigger"
 
 const SheetClose = React.forwardRef<
-  React.ElementRef<typeof BaseDrawer.Close>,
+  HTMLButtonElement,
   React.ComponentProps<typeof BaseDrawer.Close>
 >(({ className, ...props }, ref) => (
-  <BaseDrawer.Close
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
-    data-slot="sheet-close"
-    className={className}
-    {...props}
-  />
+  <BaseDrawer.Close ref={ref} data-slot="sheet-close" className={className} {...props} />
 ))
 SheetClose.displayName = "SheetClose"
 
@@ -41,11 +31,11 @@ const SheetPortal = (props: React.ComponentProps<typeof BaseDrawer.Portal>) => (
 SheetPortal.displayName = "SheetPortal"
 
 const SheetOverlay = React.forwardRef<
-  React.ElementRef<typeof BaseDrawer.Backdrop>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseDrawer.Backdrop>
 >(({ className, ...props }, ref) => (
   <BaseDrawer.Backdrop
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="overlay"
     className={cn("fixed inset-0 z-50 bg-black/50", className)}
     {...props}
@@ -54,7 +44,7 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = "SheetOverlay"
 
 const SheetContent = React.forwardRef<
-  React.ElementRef<typeof BaseDrawer.Popup>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseDrawer.Popup> & {
     side?: "top" | "right" | "bottom" | "left"
     showCloseButton?: boolean
@@ -63,7 +53,7 @@ const SheetContent = React.forwardRef<
   <SheetPortal>
     <SheetOverlay />
     <BaseDrawer.Popup
-      ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+      ref={ref}
       data-slot="sheet-content"
       data-side={side}
       className={cn(
@@ -110,11 +100,11 @@ function SheetFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
 }
 
 const SheetTitle = React.forwardRef<
-  React.ElementRef<typeof BaseDrawer.Title>,
+  HTMLHeadingElement,
   React.ComponentProps<typeof BaseDrawer.Title>
 >(({ className, ...props }, ref) => (
   <BaseDrawer.Title
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="sheet-title"
     className={cn("text-lg font-semibold text-foreground", className)}
     {...props}
@@ -123,11 +113,11 @@ const SheetTitle = React.forwardRef<
 SheetTitle.displayName = "SheetTitle"
 
 const SheetDescription = React.forwardRef<
-  React.ElementRef<typeof BaseDrawer.Description>,
+  HTMLParagraphElement,
   React.ComponentProps<typeof BaseDrawer.Description>
 >(({ className, ...props }, ref) => (
   <BaseDrawer.Description
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+    ref={ref}
     data-slot="sheet-description"
     className={cn("text-sm text-muted-foreground", className)}
     {...props}

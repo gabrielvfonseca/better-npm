@@ -48,7 +48,7 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
 
     return (
       <nav
-        ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+        ref={ref}
         data-slot="pagination"
         aria-label="pagination"
         className={cn("mx-auto flex w-full justify-center", className)}

@@ -10,15 +10,10 @@ const Dialog = (props: React.ComponentProps<typeof BaseDialog.Root>) => (
 Dialog.displayName = "Dialog"
 
 const DialogTrigger = React.forwardRef<
-  React.ElementRef<typeof BaseDialog.Trigger>,
+  HTMLButtonElement,
   React.ComponentProps<typeof BaseDialog.Trigger>
 >(({ className, ...props }, ref) => (
-  <BaseDialog.Trigger
-    ref={ref as React.Ref<typeof BaseDialog.Trigger>}
-    data-slot="dialog-trigger"
-    className={className}
-    {...props}
-  />
+  <BaseDialog.Trigger ref={ref} data-slot="dialog-trigger" className={className} {...props} />
 ))
 DialogTrigger.displayName = "DialogTrigger"
 
@@ -28,24 +23,19 @@ const DialogPortal = (props: React.ComponentProps<typeof BaseDialog.Portal>) => 
 DialogPortal.displayName = "DialogPortal"
 
 const DialogClose = React.forwardRef<
-  React.ElementRef<typeof BaseDialog.Close>,
+  HTMLButtonElement,
   React.ComponentProps<typeof BaseDialog.Close>
 >(({ className, ...props }, ref) => (
-  <BaseDialog.Close
-    ref={ref as React.Ref<typeof BaseDialog.Close>}
-    data-slot="dialog-close"
-    className={className}
-    {...props}
-  />
+  <BaseDialog.Close ref={ref} data-slot="dialog-close" className={className} {...props} />
 ))
 DialogClose.displayName = "DialogClose"
 
 const DialogOverlay = React.forwardRef<
-  React.ElementRef<typeof BaseDialog.Backdrop>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseDialog.Backdrop>
 >(({ className, ...props }, ref) => (
   <BaseDialog.Backdrop
-    ref={ref as React.Ref<typeof BaseDialog.Backdrop>}
+    ref={ref}
     data-slot="overlay"
     className={cn("fixed inset-0 z-50 bg-black/50", className)}
     {...props}
@@ -54,13 +44,13 @@ const DialogOverlay = React.forwardRef<
 DialogOverlay.displayName = "DialogOverlay"
 
 const DialogContent = React.forwardRef<
-  React.ElementRef<typeof BaseDialog.Popup>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseDialog.Popup> & { showCloseButton?: boolean }
 >(({ className, children, showCloseButton = true, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <BaseDialog.Popup
-      ref={ref as React.Ref<typeof BaseDialog.Popup>}
+      ref={ref}
       data-slot="dialog-content"
       className={cn(
         "fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border bg-background p-6 shadow-lg rounded-lg duration-200 max-h-[calc(100dvh-2rem)] overflow-y-auto",
@@ -101,11 +91,11 @@ function DialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivEleme
 }
 
 const DialogTitle = React.forwardRef<
-  React.ElementRef<typeof BaseDialog.Title>,
+  HTMLHeadingElement,
   React.ComponentProps<typeof BaseDialog.Title>
 >(({ className, ...props }, ref) => (
   <BaseDialog.Title
-    ref={ref as React.Ref<typeof BaseDialog.Title>}
+    ref={ref}
     data-slot="dialog-title"
     className={cn("text-lg font-semibold leading-none tracking-tight", className)}
     {...props}
@@ -114,11 +104,11 @@ const DialogTitle = React.forwardRef<
 DialogTitle.displayName = "DialogTitle"
 
 const DialogDescription = React.forwardRef<
-  React.ElementRef<typeof BaseDialog.Description>,
+  HTMLParagraphElement,
   React.ComponentProps<typeof BaseDialog.Description>
 >(({ className, ...props }, ref) => (
   <BaseDialog.Description
-    ref={ref as React.Ref<typeof BaseDialog.Description>}
+    ref={ref}
     data-slot="dialog-description"
     className={cn("text-sm text-muted-foreground", className)}
     {...props}

@@ -4,25 +4,24 @@ import * as React from "react"
 
 import { cn } from "../lib/utils"
 
-const Accordion = React.forwardRef<
-  React.ElementRef<typeof BaseAccordion.Root>,
-  React.ComponentProps<typeof BaseAccordion.Root>
->(({ className, ...props }, ref) => (
-  <BaseAccordion.Root
-    ref={ref as React.Ref<typeof BaseAccordion.Root>}
-    data-slot="accordion"
-    className={cn("w-full", className)}
-    {...props}
-  />
-))
+const Accordion = React.forwardRef<HTMLDivElement, React.ComponentProps<typeof BaseAccordion.Root>>(
+  ({ className, ...props }, ref) => (
+    <BaseAccordion.Root
+      ref={ref}
+      data-slot="accordion"
+      className={cn("w-full", className)}
+      {...props}
+    />
+  ),
+)
 Accordion.displayName = "Accordion"
 
 const AccordionItem = React.forwardRef<
-  React.ElementRef<typeof BaseAccordion.Item>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseAccordion.Item>
 >(({ className, ...props }, ref) => (
   <BaseAccordion.Item
-    ref={ref as React.Ref<typeof BaseAccordion.Item>}
+    ref={ref}
     data-slot="accordion-item"
     className={cn("border-b last:border-b-0", className)}
     {...props}
@@ -31,12 +30,12 @@ const AccordionItem = React.forwardRef<
 AccordionItem.displayName = "AccordionItem"
 
 const AccordionTrigger = React.forwardRef<
-  React.ElementRef<typeof BaseAccordion.Trigger>,
+  HTMLButtonElement,
   React.ComponentProps<typeof BaseAccordion.Trigger>
 >(({ className, children, ...props }, ref) => (
   <BaseAccordion.Header className="flex">
     <BaseAccordion.Trigger
-      ref={ref as React.Ref<typeof BaseAccordion.Trigger>}
+      ref={ref}
       data-slot="accordion-trigger"
       className={cn(
         "flex flex-1 items-center justify-between py-4 text-left text-sm font-medium transition-all hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [&[data-panel-open]>svg]:rotate-180",
@@ -52,11 +51,11 @@ const AccordionTrigger = React.forwardRef<
 AccordionTrigger.displayName = "AccordionTrigger"
 
 const AccordionContent = React.forwardRef<
-  React.ElementRef<typeof BaseAccordion.Panel>,
+  HTMLDivElement,
   React.ComponentProps<typeof BaseAccordion.Panel>
 >(({ className, children, ...props }, ref) => (
   <BaseAccordion.Panel
-    ref={ref as React.Ref<typeof BaseAccordion.Panel>}
+    ref={ref}
     data-slot="accordion-content"
     className="overflow-hidden text-sm data-[starting-style]:animate-accordion-up data-[ending-style]:animate-accordion-down"
     {...props}

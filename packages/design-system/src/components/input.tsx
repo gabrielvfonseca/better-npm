@@ -7,7 +7,7 @@ export type InputProps = React.InputHTMLAttributes<HTMLInputElement>
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => (
     <input
-      ref={ref as React.Ref<typeof BaseDialog.Trigger>}
+      ref={ref}
       type={type}
       data-slot="input"
       className={cn(
