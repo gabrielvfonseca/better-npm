@@ -234,11 +234,17 @@ export function loadConfig(options?: { file?: string; env?: string }): BnpmConfi
     }
   }
 
-  if (
-    isProduction() &&
-    (config.auth.secret === DEFAULT_CONFIG.auth.secret || config.auth.secret.length < 32)
-  ) {
-    throw new Error("AUTH_SECRET must be set to at least 32 characters in production")
+  const usesDefaultSecrets =
+    config.auth.secret === DEFAULT_CONFIG.auth.secret ||
+    config.auth.secret.length < 32 ||
+    config.storage.s3AccessKey === DEFAULT_CONFIG.storage.s3AccessKey ||
+    config.storage.s3SecretKey === DEFAULT_CONFIG.storage.s3SecretKey ||
+    config.search.meiliMasterKey === DEFAULT_CONFIG.search.meiliMasterKey
+  const explicitlyLocal = ["development", "dev", "test"].includes(process.env.NODE_ENV ?? "")
+  if (usesDefaultSecrets && !explicitlyLocal) {
+    throw new Error(
+      "Default or short secrets (AUTH_SECRET, S3_*_KEY, MEILI_MASTER_KEY) are only allowed when NODE_ENV is development or test",
+    )
   }
 
   cachedConfig = config
