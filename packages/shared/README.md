@@ -1,4 +1,4 @@
-# `@dash/shared`
+# `@better-npm/shared`
 
 Shared utility functions and event emitter.
 
@@ -9,7 +9,7 @@ Collection of general-purpose utilities: `sleep()`, `randomId()`, `omit()`, `pic
 ## Usage
 
 ```ts
-import { retry, deepMerge, EventEmitter } from "@dash/shared";
+import { retry, deepMerge, EventEmitter } from "@better-npm/shared";
 
 const result = await retry(() => fetchData(), { retries: 3, delay: 1000 });
 const merged = deepMerge({ a: 1 }, { b: 2 });

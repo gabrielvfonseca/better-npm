@@ -1,5 +1,5 @@
 {
-  "name": "@dash/workers-indexing",
+  "name": "@better-npm/workers-indexing",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -13,9 +13,9 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@dash/config": "workspace:*",
-    "@dash/logger": "workspace:*",
-    "@dash/telemetry": "workspace:*"
+    "@better-npm/config": "workspace:*",
+    "@better-npm/logger": "workspace:*",
+    "@better-npm/telemetry": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.19.0",

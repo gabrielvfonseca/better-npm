@@ -1,7 +1,7 @@
 networks:
-  dash-net:
+  bnpm-net:
     internal: true
-  dash-public:
+  bnpm-public:
     internal: false
 
 volumes:
@@ -11,11 +11,11 @@ volumes:
 
 x-app-env: &app-env
   NODE_ENV: production
-  DATABASE_URL: postgresql://dash:${DB_PASSWORD:-dash_password}@postgres:5432/dash
-  REDIS_URL: redis://:${REDIS_PASSWORD:-dash_redis}@redis:6379
+  DATABASE_URL: postgresql://bnpm:${DB_PASSWORD:-bnpm_password}@postgres:5432/bnpm
+  REDIS_URL: redis://:${REDIS_PASSWORD:-bnpm_redis}@redis:6379
   MINIO_ENDPOINT: minio:9000
-  MINIO_ACCESS_KEY: ${MINIO_USER:-dash}
-  MINIO_SECRET_KEY: ${MINIO_PASSWORD:-dash_minio}
+  MINIO_ACCESS_KEY: ${MINIO_USER:-bnpm}
+  MINIO_SECRET_KEY: ${MINIO_PASSWORD:-bnpm_minio}
 
 x-infra-depends: &infra-depends
   depends_on:
@@ -31,45 +31,45 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: dash
-      POSTGRES_USER: dash
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-dash_password}
+      POSTGRES_DB: bnpm
+      POSTGRES_USER: bnpm
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-bnpm_password}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/migrations:/docker-entrypoint-initdb.d
+      - ../database/migrations:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dash"]
+      test: ["CMD-SHELL", "pg_isready -U bnpm"]
       interval: 5s
       timeout: 5s
       retries: 5
     ports:
       - "${DB_PORT:-5432}:5432"
     networks:
-      - dash-net
+      - bnpm-net
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-dash_redis}
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-bnpm_redis}
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-dash_redis}", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-bnpm_redis}", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5
     ports:
       - "${REDIS_PORT:-6379}:6379"
     networks:
-      - dash-net
+      - bnpm-net
 
   minio:
     image: minio/minio:latest
     restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: ${MINIO_USER:-dash}
-      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD:-dash_minio}
+      MINIO_ROOT_USER: ${MINIO_USER:-bnpm}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD:-bnpm_minio}
     volumes:
       - minio_data:/data
     healthcheck:
@@ -81,12 +81,12 @@ services:
       - "${MINIO_PORT:-9000}:9000"
       - "${MINIO_CONSOLE_PORT:-9001}:9001"
     networks:
-      - dash-net
+      - bnpm-net
 
   api:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: ./Dockerfile
       args:
         APP: api
         PACKAGE: app-api
@@ -98,13 +98,13 @@ services:
       <<: *app-env
     <<: *infra-depends
     networks:
-      - dash-net
-      - dash-public
+      - bnpm-net
+      - bnpm-public
 
   registry:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: ./Dockerfile
       args:
         APP: registry
         PACKAGE: registry
@@ -116,13 +116,13 @@ services:
       <<: *app-env
     <<: *infra-depends
     networks:
-      - dash-net
-      - dash-public
+      - bnpm-net
+      - bnpm-public
 
   worker-downloads:
     build:
-      context: .
-      dockerfile: tools/docker/Dockerfile.worker
+      context: ..
+      dockerfile: ./Dockerfile.worker
       args:
         WORKER_NAME: downloads
     restart: unless-stopped
@@ -131,12 +131,12 @@ services:
       WORKER_TYPE: downloads
     <<: *infra-depends
     networks:
-      - dash-net
+      - bnpm-net
 
   worker-indexing:
     build:
-      context: .
-      dockerfile: tools/docker/Dockerfile.worker
+      context: ..
+      dockerfile: ./Dockerfile.worker
       args:
         WORKER_NAME: indexing
     restart: unless-stopped
@@ -145,12 +145,12 @@ services:
       WORKER_TYPE: indexing
     <<: *infra-depends
     networks:
-      - dash-net
+      - bnpm-net
 
   worker-metadata:
     build:
-      context: .
-      dockerfile: tools/docker/Dockerfile.worker
+      context: ..
+      dockerfile: ./Dockerfile.worker
       args:
         WORKER_NAME: metadata
     restart: unless-stopped
@@ -159,12 +159,12 @@ services:
       WORKER_TYPE: metadata
     <<: *infra-depends
     networks:
-      - dash-net
+      - bnpm-net
 
   worker-scanning:
     build:
-      context: .
-      dockerfile: tools/docker/Dockerfile.worker
+      context: ..
+      dockerfile: ./Dockerfile.worker
       args:
         WORKER_NAME: scanning
     restart: unless-stopped
@@ -173,12 +173,12 @@ services:
       WORKER_TYPE: scanning
     <<: *infra-depends
     networks:
-      - dash-net
+      - bnpm-net
 
   worker-signatures:
     build:
-      context: .
-      dockerfile: tools/docker/Dockerfile.worker
+      context: ..
+      dockerfile: ./Dockerfile.worker
       args:
         WORKER_NAME: signatures
     restart: unless-stopped
@@ -187,12 +187,12 @@ services:
       WORKER_TYPE: signatures
     <<: *infra-depends
     networks:
-      - dash-net
+      - bnpm-net
 
   worker-analytics:
     build:
-      context: .
-      dockerfile: tools/docker/Dockerfile.worker
+      context: ..
+      dockerfile: ./Dockerfile.worker
       args:
         WORKER_NAME: analytics
     restart: unless-stopped
@@ -201,12 +201,12 @@ services:
       WORKER_TYPE: analytics
     <<: *infra-depends
     networks:
-      - dash-net
+      - bnpm-net
 
   worker-cleanup:
     build:
-      context: .
-      dockerfile: tools/docker/Dockerfile.worker
+      context: ..
+      dockerfile: ./Dockerfile.worker
       args:
         WORKER_NAME: cleanup
     restart: unless-stopped
@@ -215,4 +215,4 @@ services:
       WORKER_TYPE: cleanup
     <<: *infra-depends
     networks:
-      - dash-net
+      - bnpm-net

@@ -1,15 +1,15 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://dash.dev/schemas/dash.toml.json",
-  "title": "Dash Manifest",
-  "description": "Schema for dash.toml — the Dash package manifest file. Defines package identity, typed conditional exports, dependency declarations with capability grants, runtime capabilities, declarative build steps, AI-native metadata, and workspace configuration.",
+  "$id": "https://bnpm.dev/schemas/bnpm.toml.json",
+  "title": "Bnpm Manifest",
+  "description": "Schema for bnpm.toml — the Bnpm package manifest file. Defines package identity, typed conditional exports, dependency declarations with capability grants, runtime capabilities, declarative build steps, AI-native metadata, and workspace configuration.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
     "package": {
       "type": "object",
       "title": "Package Identity",
-      "description": "Core package metadata block. Every dash.toml must have this section.",
+      "description": "Core package metadata block. Every bnpm.toml must have this section.",
       "additionalProperties": false,
       "properties": {
         "name": {
@@ -61,7 +61,7 @@
         "type": {
           "type": "string",
           "enum": ["module"],
-          "description": "Module system type. Dash is exclusively ESM; 'module' is the only valid value. CJS is supported only through the npm compat bridge.",
+          "description": "Module system type. Bnpm is exclusively ESM; 'module' is the only valid value. CJS is supported only through the npm compat bridge.",
           "default": "module"
         },
         "private": {
@@ -349,7 +349,7 @@
             "scripts": {
               "type": "boolean",
               "const": false,
-              "description": "Arbitrary lifecycle scripts at build time. Always false in Dash. Replaced by declarative [build] steps.",
+              "description": "Arbitrary lifecycle scripts at build time. Always false in Bnpm. Replaced by declarative [build] steps.",
               "default": false
             }
           }
@@ -365,8 +365,8 @@
       "properties": {
         "tool": {
           "type": "string",
-          "description": "Pinned builder tool reference. Can be a built-in (dash:tsc, dash:wasm, dash:node-gyp) or a third-party builder capsule CID. The builder itself is content-addressed and capability-gated.",
-          "examples": ["dash:tsc", "dash:wasm", "dash:node-gyp@2.1.0"]
+          "description": "Pinned builder tool reference. Can be a built-in (bnpm:tsc, bnpm:wasm, bnpm:node-gyp) or a third-party builder capsule CID. The builder itself is content-addressed and capability-gated.",
+          "examples": ["bnpm:tsc", "bnpm:wasm", "bnpm:node-gyp@2.1.0"]
         },
         "inputs": {
           "type": "array",
@@ -403,7 +403,7 @@
     "workspace": {
       "type": "object",
       "title": "Workspace Configuration",
-      "description": "Workspace root configuration for monorepos. Present only in a workspace root dash.toml. The resolver treats the whole repo as one graph with one lockfile and one store view.",
+      "description": "Workspace root configuration for monorepos. Present only in a workspace root bnpm.toml. The resolver treats the whole repo as one graph with one lockfile and one store view.",
       "additionalProperties": false,
       "properties": {
         "members": {
@@ -422,8 +422,8 @@
     },
 
     "policy": {
-      "$ref": "dash.policy.toml.json",
-      "description": "Inline policy configuration. Equivalent to a separate dash.policy.toml. Overrides any external policy file for this project."
+      "$ref": "bnpm.policy.toml.json",
+      "description": "Inline policy configuration. Equivalent to a separate bnpm.policy.toml. Overrides any external policy file for this project."
     }
   }
 }

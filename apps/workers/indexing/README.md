@@ -1,4 +1,4 @@
-# `@dash/workers-indexing`
+# `@better-npm/workers-indexing`
 
 Search indexing worker.
 
@@ -9,7 +9,7 @@ Handles `IndexPayload` documents to index, reindex, or remove package documents 
 ## Usage
 
 ```ts
-import { handler } from "@dash/workers-indexing";
+import { handler } from "@better-npm/workers-indexing";
 
 await handler({ action: "index", name: "react", version: "18.2.0", metadata: { description: "A JavaScript library" } });
 ```

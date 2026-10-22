@@ -1,5 +1,5 @@
 {
-  "name": "@dash/example-nextjs",
+  "name": "@better-npm/example-nextjs",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@dash/sdk": "workspace:*",
+    "@better-npm/sdk": "workspace:*",
     "next": "^15.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

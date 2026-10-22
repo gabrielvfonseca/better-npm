@@ -3,7 +3,7 @@ import { existsSync } from "node:fs"
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 
-const BINARY_NAME = "dash-conformance-runner"
+const BINARY_NAME = "bnpm-conformance-runner"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 function findBinary(): string {
@@ -15,7 +15,7 @@ function findBinary(): string {
     if (existsSync(p)) return p
   }
   throw new Error(
-    `dash-conformance-runner binary not found. Build it first:\n  cargo build -p dash-conference-runner\nSUCCESS: \${candidates.join(", ")}`,
+    `bnpm-conformance-runner binary not found. Build it first:\n  cargo build -p bnpm-conformance-runner\nSUCCESS: \${candidates.join(", ")}`,
   )
 }
 

@@ -1,5 +1,5 @@
 {
-  "name": "@dash/example-web",
+  "name": "@better-npm/example-web",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -8,7 +8,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@dash/example-shared": "workspace:*"
+    "@better-npm/example-shared": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.0.0",

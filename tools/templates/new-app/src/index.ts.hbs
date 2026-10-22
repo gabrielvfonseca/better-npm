@@ -28,7 +28,7 @@ app.use("*", logger())
 
 app.get("/", (c) => {
   return c.json({
-    name: "@dash/{{dashCase name}}",
+    name: "@better-npm/{{dashCase name}}",
     version: "0.0.1",
     status: "ok",
   })
@@ -48,7 +48,7 @@ const app = Fastify({ logger: true })
 
 app.get("/", async (_request, _reply) => {
   return {
-    name: "@dash/{{dashCase name}}",
+    name: "@better-npm/{{dashCase name}}",
     version: "0.0.1",
     status: "ok",
   }
@@ -80,7 +80,7 @@ app.use(express.json())
 
 app.get("/", (_req, res) => {
   res.json({
-    name: "@dash/{{dashCase name}}",
+    name: "@better-npm/{{dashCase name}}",
     version: "0.0.1",
     status: "ok",
   })
@@ -91,7 +91,7 @@ app.get("/health", (_req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`@dash/{{dashCase name}} running on http://localhost:${port}`)
+  console.log(`@better-npm/{{dashCase name}} running on http://localhost:${port}`)
 })
 {{/ifEquals}}
 
@@ -113,13 +113,13 @@ export async function handle(payload: WorkerPayload): Promise<WorkerResult> {
     const result = await processPayload(payload)
     return {
       status: "ok",
-      worker: "@dash/{{dashCase name}}",
+      worker: "@better-npm/{{dashCase name}}",
       result,
     }
   } catch (error) {
     return {
       status: "error",
-      worker: "@dash/{{dashCase name}}",
+      worker: "@better-npm/{{dashCase name}}",
       error: error instanceof Error ? error.message : "Unknown error",
     }
   }

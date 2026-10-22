@@ -1,4 +1,4 @@
-# Dash — FAQ
+# Bnpm — FAQ
 > **Status:** planned · **Owner:** WS-DOC · **Design refs:** DESIGN §0.3 · **Implements:** — · **Conformance:** n/a
 
 **Audience:** humans
@@ -11,7 +11,7 @@ Objection-handling for adopters: why not just pnpm/Bun/JSR, what breaks, is it n
 
 ## Key points (from the design)
 
-- Why not pnpm/Bun/JSR? — Dash reforms the *substrate* (identity, security, machine-legibility), not just the client (DESIGN §1).
+- Why not pnpm/Bun/JSR? — Bnpm reforms the *substrate* (identity, security, machine-legibility), not just the client (DESIGN §1).
 - Is it npm-compatible? — Yes, incrementally and per-project via the bridge (§20).
 - What breaks? — Lifecycle scripts, mutable versions, deep imports, hoisting (§21).
 

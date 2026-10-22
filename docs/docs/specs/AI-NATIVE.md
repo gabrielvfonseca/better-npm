@@ -1,4 +1,4 @@
-# Dash — AI-Native Surface
+# Bnpm — AI-Native Surface
 > **Status:** scoped · **Owner:** WS-AI · **Design refs:** DESIGN §18 · **Implements:** AI-M601..609 · **Conformance:** conformance/ai
 
 **Audience:** agents, platform

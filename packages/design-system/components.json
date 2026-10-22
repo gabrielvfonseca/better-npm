@@ -13,11 +13,11 @@
   },
   "iconLibrary": "lucide-react",
   "aliases": {
-    "components": "@dash/design-system",
-    "utils": "@dash/design-system/lib",
-    "ui": "@dash/design-system",
-    "lib": "@dash/design-system/lib",
-    "hooks": "@dash/design-system/hooks"
+    "components": "@better-npm/design-system",
+    "utils": "@better-npm/design-system/lib",
+    "ui": "@better-npm/design-system",
+    "lib": "@better-npm/design-system/lib",
+    "hooks": "@better-npm/design-system/hooks"
   },
   "resolvedPaths": {
     "components": "packages/design-system/src",

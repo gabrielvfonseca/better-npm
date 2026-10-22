@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package dash.registry.v1;
+package bnpm.registry.v1;
 
-option go_package = "github.com/dash-io/dash/proto/registry/v1;registryv1";
+option go_package = "github.com/bnpm-io/bnpm/proto/registry/v1;registryv1";
 
 import "common/v1/common.proto";
 import "packages/v1/package.proto";
@@ -27,12 +27,12 @@ message GetPackageRequest {
 }
 
 message GetPackageResponse {
-  dash.packages.v1.Package package = 1;
-  dash.packages.v1.PackageVersion latest_version = 2;
+  bnpm.packages.v1.Package package = 1;
+  bnpm.packages.v1.PackageVersion latest_version = 2;
 }
 
 message ListPackagesRequest {
-  dash.common.v1.Pagination pagination = 1;
+  bnpm.common.v1.Pagination pagination = 1;
   string query = 2;
   repeated string keywords = 3;
   string scope = 4;
@@ -47,8 +47,8 @@ message ListPackagesRequest {
 }
 
 message ListPackagesResponse {
-  repeated dash.packages.v1.Package packages = 1;
-  dash.common.v1.Pagination pagination = 2;
+  repeated bnpm.packages.v1.Package packages = 1;
+  bnpm.common.v1.Pagination pagination = 2;
 }
 
 message PublishPackageRequest {
@@ -61,14 +61,14 @@ message PublishPackageRequest {
   string repository = 7;
   repeated string keywords = 8;
   bytes tarball = 9;
-  dash.packages.v1.PackageManifest manifest = 10;
+  bnpm.packages.v1.PackageManifest manifest = 10;
   string scope = 11;
   string access_token = 12;
 }
 
 message PublishPackageResponse {
-  dash.packages.v1.Package package = 1;
-  dash.packages.v1.PackageVersion version = 2;
+  bnpm.packages.v1.Package package = 1;
+  bnpm.packages.v1.PackageVersion version = 2;
 }
 
 message UnpublishPackageRequest {
@@ -78,7 +78,7 @@ message UnpublishPackageRequest {
 }
 
 message UnpublishPackageResponse {
-  dash.common.v1.Empty empty = 1;
+  bnpm.common.v1.Empty empty = 1;
 }
 
 message DeprecatePackageRequest {
@@ -89,7 +89,7 @@ message DeprecatePackageRequest {
 }
 
 message DeprecatePackageResponse {
-  dash.packages.v1.Package package = 1;
+  bnpm.packages.v1.Package package = 1;
 }
 
 message SearchPackagesRequest {
@@ -110,12 +110,12 @@ message SearchPackagesResponse {
   repeated SearchPackageResult results = 1;
   int32 total = 2;
   double took_ms = 3;
-  dash.common.v1.Pagination pagination = 4;
+  bnpm.common.v1.Pagination pagination = 4;
 }
 
 message SearchPackageResult {
-  dash.packages.v1.Package package = 1;
-  dash.packages.v1.PackageVersion latest_version = 2;
+  bnpm.packages.v1.Package package = 1;
+  bnpm.packages.v1.PackageVersion latest_version = 2;
   int64 download_count = 3;
   double score = 4;
   repeated string highlights = 5;
@@ -128,17 +128,17 @@ message GetPackageVersionRequest {
 }
 
 message GetPackageVersionResponse {
-  dash.packages.v1.PackageVersion version = 1;
+  bnpm.packages.v1.PackageVersion version = 1;
 }
 
 message ListPackageVersionsRequest {
   string package_name = 1;
-  dash.common.v1.Pagination pagination = 2;
+  bnpm.common.v1.Pagination pagination = 2;
 }
 
 message ListPackageVersionsResponse {
-  repeated dash.packages.v1.PackageVersion versions = 1;
-  dash.common.v1.Pagination pagination = 2;
+  repeated bnpm.packages.v1.PackageVersion versions = 1;
+  bnpm.common.v1.Pagination pagination = 2;
 }
 
 message DeprecateVersionRequest {
@@ -148,7 +148,7 @@ message DeprecateVersionRequest {
 }
 
 message DeprecateVersionResponse {
-  dash.packages.v1.PackageVersion version = 1;
+  bnpm.packages.v1.PackageVersion version = 1;
 }
 
 message AddDistTagRequest {
@@ -158,7 +158,7 @@ message AddDistTagRequest {
 }
 
 message AddDistTagResponse {
-  dash.packages.v1.PackageVersion version = 1;
+  bnpm.packages.v1.PackageVersion version = 1;
 }
 
 message RemoveDistTagRequest {
@@ -167,5 +167,5 @@ message RemoveDistTagRequest {
 }
 
 message RemoveDistTagResponse {
-  dash.packages.v1.PackageVersion version = 1;
+  bnpm.packages.v1.PackageVersion version = 1;
 }

@@ -1,8 +1,8 @@
-; DASHCAP1 Capsule Container — CBOR Data Definition Language (CDDL) Schema
+; BNPMCAP1 Capsule Container — CBOR Data Definition Language (CDDL) Schema
 ; RFC 8610 · DESIGN §7, §5 · Implements ARCH-M003
 ;
 ; This schema defines the binary framing and CBOR-encoded sections of the
-; DASHCAP1 capsule, the atomic content-addressed distribution unit for Dash.
+; BNPMCAP1 capsule, the atomic content-addressed distribution unit for Bnpm.
 ;
 ; A capsule is a framed binary container:
 ;   1. Header (magic + version + flags)
@@ -20,7 +20,7 @@
 ; In practice the capsule is read as: [header] [manifest_cbor] [file_table_cbor]
 ; [zstd_objects] [attestations_cbor].
 ; =============================================================================
-DASHCAP1-Capsule = [
+BNPMCAP1-Capsule = [
     header:        CapsuleHeader,
     manifest:      Manifest,              ; canonical CBOR — see manifest.cddl
     file-table:    FileTable,             ; CBOR array, sorted by path
@@ -33,17 +33,17 @@ DASHCAP1-Capsule = [
 ; Fixed-size binary header that identifies the container format.
 ; =============================================================================
 CapsuleHeader = [
-    magic:    DASHCAP1-Magic,             ; 8 bytes: "DASHCAP1"
+    magic:    BNPMCAP1-Magic,             ; 8 bytes: "BNPMCAP1"
     version:  uint .size 1,              ; format version (currently 1)
     flags:    CapsuleFlags .size 4,      ; bitmask of capability/feature flags
 ]
 
-DASHCAP1-Magic = h'4441534843415031'    ; "DASHCAP1" in US-ASCII hex
+BNPMCAP1-Magic = h'4441534843415031'    ; "BNPMCAP1" in US-ASCII hex
 
 CapsuleFlags = uint .bits CapsuleFlagBits
 CapsuleFlagBits = &(
     none:               0,               ; no special flags
-    compressed-objects: 1,               ; file objects are zstd-compressed (always set for DASHCAP1)
+    compressed-objects: 1,               ; file objects are zstd-compressed (always set for BNPMCAP1)
     has-attestations:   2,               ; attestations section is present
     signed:             3,               ; capsule has an embedded signature attestation
     range-index:        4,               ; includes range index for byte-level fetch

@@ -1,4 +1,4 @@
-# `@dash/workers-metadata`
+# `@better-npm/workers-metadata`
 
 Metadata enrichment worker.
 
@@ -9,7 +9,7 @@ Extracts and enriches package metadata: parses GitHub repository URLs, resolves 
 ## Usage
 
 ```ts
-import { handler } from "@dash/workers-metadata";
+import { handler } from "@better-npm/workers-metadata";
 
 const result = await handler({ name: "react", version: "18.2.0", repository: { url: "https://github.com/facebook/react" } });
 ```

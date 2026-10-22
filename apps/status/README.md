@@ -1,4 +1,4 @@
-# `@dash/status`
+# `@better-npm/status`
 
 System status and monitoring service — Hono-based health dashboard.
 
@@ -16,8 +16,8 @@ Hono-based monitoring service that checks component health (API, Auth, Registry,
 ## Usage
 
 ```ts
-import { createStatusService } from "@dash/status";
-import { createTelemetryClient } from "@dash/telemetry";
+import { createStatusService } from "@better-npm/status";
+import { createTelemetryClient } from "@better-npm/telemetry";
 
 const telemetry = createTelemetryClient({ endpoint: "http://localhost:4318" });
 const app = createStatusService(telemetry);

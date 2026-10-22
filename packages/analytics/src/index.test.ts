@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { AnalyticsClient, createAnalyticsClient } from "./index.js"
 
-describe("@dash/analytics", () => {
+describe("@better-npm/analytics", () => {
   it("should create a client", () => {
     const client = createAnalyticsClient({ enabled: false })
     expect(client).toBeInstanceOf(AnalyticsClient)

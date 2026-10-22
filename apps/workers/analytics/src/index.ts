@@ -1,6 +1,6 @@
-import { loadConfig } from "@dash/config"
-import { createLogger } from "@dash/logger"
-import { createTelemetryClient } from "@dash/telemetry"
+import { loadConfig } from "@better-npm/config"
+import { createLogger } from "@better-npm/logger"
+import { createTelemetryClient } from "@better-npm/telemetry"
 
 const logger = createLogger("workers-analytics")
 const config = loadConfig()
@@ -33,10 +33,10 @@ export async function handleAnalytics(payload: Record<string, unknown>): Promise
 
   try {
     const result = await processAnalytics(analyticsPayload)
-    return { status: "success", worker: "@dash/workers-analytics", result }
+    return { status: "success", worker: "@better-npm/workers-analytics", result }
   } catch (error) {
     logger.error("Failed to process analytics job", { error: String(error) })
-    return { status: "failure", worker: "@dash/workers-analytics", error: String(error) }
+    return { status: "failure", worker: "@better-npm/workers-analytics", error: String(error) }
   }
 }
 
@@ -62,7 +62,7 @@ async function processAnalytics(payload: AnalyticsPayload): Promise<{
         ...event,
         timestamp: event.timestamp ?? new Date().toISOString(),
         processedAt: new Date().toISOString(),
-        processor: "@dash/workers-analytics",
+        processor: "@better-npm/workers-analytics",
       }
 
       if (batch) {
@@ -87,7 +87,7 @@ async function processAnalytics(payload: AnalyticsPayload): Promise<{
         value: count,
         type: "counter",
         timestamp: new Date().toISOString(),
-        tags: { batch: "true", processor: "@dash/workers-analytics" },
+        tags: { batch: "true", processor: "@better-npm/workers-analytics" },
       })),
     )
 

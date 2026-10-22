@@ -1,5 +1,5 @@
 {
-  "name": "@dash/app-telemetry",
+  "name": "@better-npm/app-telemetry",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -14,9 +14,9 @@
   },
   "dependencies": {
     "hono": "^4.7.0",
-    "@dash/config": "workspace:*",
-    "@dash/logger": "workspace:*",
-    "@dash/telemetry": "workspace:*"
+    "@better-npm/config": "workspace:*",
+    "@better-npm/logger": "workspace:*",
+    "@better-npm/telemetry": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.19.0",

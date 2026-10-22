@@ -18,7 +18,7 @@ case "$MODE" in
 
         if [ ! -f "$TARGET" ]; then
             echo "ERROR: Target not found: $TARGET"
-            echo "Build the project first: bun run build --filter=@dash/api"
+            echo "Build the project first: bun run build --filter=@better-npm/api"
             exit 1
         fi
 
@@ -80,7 +80,7 @@ case "$MODE" in
 
     trace)
         echo "==> Tracing API requests..."
-        BASE_URL="${DASH_BASE_URL:-http://localhost:3000}"
+        BASE_URL="${BNPM_BASE_URL:-http://localhost:3000}"
         echo ""
 
         endpoints=(
@@ -180,7 +180,7 @@ case "$MODE" in
         echo "  cargo <crate>     Generate Rust flamegraph for a crate"
         echo ""
         echo "Environment variables:"
-        echo "  DASH_BASE_URL     Base URL for API requests (default: http://localhost:3000)"
+        echo "  BNPM_BASE_URL     Base URL for API requests (default: http://localhost:3000)"
         echo "  DURATION          Profiling duration in seconds (default: 30)"
         echo ""
         echo "Examples:"

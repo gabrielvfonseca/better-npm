@@ -1,4 +1,4 @@
-# Dash — DPR Wire Protocol
+# Bnpm — DPR Wire Protocol
 > **Status:** scoped · **Owner:** WS-REGISTRY · **Design refs:** DESIGN §11, App. D · **Implements:** REG-M301..303 · **Conformance:** conformance/dpr
 
 **Audience:** platform, contributors

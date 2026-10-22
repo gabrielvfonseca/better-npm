@@ -1,4 +1,4 @@
-# Dash — Observability & Analytics
+# Bnpm — Observability & Analytics
 > **Status:** scoped · **Owner:** WS-PLATFORM · **Design refs:** DESIGN §19.6 · **Implements:** PLAT-M704 · **Conformance:** conformance/observability
 
 **Audience:** platform

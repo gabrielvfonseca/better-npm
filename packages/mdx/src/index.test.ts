@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 import { compileMdx, extractFrontmatter, extractToc } from "./index.js"
 
-describe("@dash/mdx", () => {
+describe("@better-npm/mdx", () => {
   describe("extractFrontmatter", () => {
     it("should extract frontmatter", () => {
       const source = `---
@@ -12,8 +12,8 @@ tags: [react, mdx]
 
 # Hello`
       const meta = extractFrontmatter(source)
-      expect(meta["title"]).toBe("My Post")
-      expect(meta["tags"]).toEqual(["react", "mdx"])
+      expect(meta.title).toBe("My Post")
+      expect(meta.tags).toEqual(["react", "mdx"])
     })
 
     it("should return empty object for no frontmatter", () => {

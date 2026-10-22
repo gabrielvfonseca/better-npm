@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package dash.packages.v1;
+package bnpm.packages.v1;
 
-option go_package = "github.com/dash-io/dash/proto/packages/v1;packagesv1";
+option go_package = "github.com/bnpm-io/bnpm/proto/packages/v1;packagesv1";
 
 import "common/v1/common.proto";
 
@@ -22,7 +22,7 @@ message Package {
   bool is_deprecated = 13;
   string deprecation_message = 14;
   string owner_id = 15;
-  dash.common.v1.Metadata metadata = 16;
+  bnpm.common.v1.Metadata metadata = 16;
 }
 
 message PackageVersion {
@@ -45,7 +45,7 @@ message PackageVersion {
   bool has_install_script = 17;
   bool deprecated = 18;
   string deprecation_reason = 19;
-  dash.common.v1.Metadata metadata = 20;
+  bnpm.common.v1.Metadata metadata = 20;
 }
 
 message Dependency {
@@ -66,7 +66,7 @@ message Dist {
 
 message PackageList {
   repeated Package packages = 1;
-  dash.common.v1.Pagination pagination = 2;
+  bnpm.common.v1.Pagination pagination = 2;
 }
 
 message PackageManifest {

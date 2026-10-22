@@ -1,6 +1,6 @@
 # Changesets
 
-This directory manages versioning and changelogs for the Dash monorepo.
+This directory manages versioning and changelogs for the Bnpm monorepo.
 
 ## How to add a changeset
 

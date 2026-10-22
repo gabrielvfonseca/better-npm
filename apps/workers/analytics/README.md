@@ -1,4 +1,4 @@
-# `@dash/workers-analytics`
+# `@better-npm/workers-analytics`
 
 Analytics event processing worker.
 
@@ -9,7 +9,7 @@ Processes `AnalyticsPayload` events by enriching them with metadata and ingestin
 ## Usage
 
 ```ts
-import { handler } from "@dash/workers-analytics";
+import { handler } from "@better-npm/workers-analytics";
 
 await handler({ events: [{ type: "page_view", properties: { path: "/" } }] });
 ```

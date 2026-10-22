@@ -1,4 +1,4 @@
-export interface DashClientConfig {
+export interface BnpmClientConfig {
   baseUrl: string
   token?: string
   timeout?: number
@@ -16,25 +16,25 @@ export interface ApiErrorResponse {
   details?: unknown
 }
 
-export class DashClientError extends Error {
+export class BnpmClientError extends Error {
   code: string
   status: number
   details?: unknown
 
   constructor(status: number, code: string, message: string, details?: unknown) {
     super(message)
-    this.name = "DashClientError"
+    this.name = "BnpmClientError"
     this.status = status
     this.code = code
     this.details = details
   }
 }
 
-export class DashClient {
-  private config: DashClientConfig
+export class BnpmClient {
+  private config: BnpmClientConfig
   private token: string | undefined
 
-  constructor(config: DashClientConfig) {
+  constructor(config: BnpmClientConfig) {
     this.config = config
     this.token = config.token
   }
@@ -61,7 +61,7 @@ export class DashClient {
     }
 
     if (this.token) {
-      headers["Authorization"] = `Bearer ${this.token}`
+      headers.Authorization = `Bearer ${this.token}`
     }
 
     let lastError: Error | undefined
@@ -82,8 +82,8 @@ export class DashClient {
         clearTimeout(timeoutId)
 
         if (!response.ok) {
-          const errorBody = await response.json().catch(() => ({})) as Partial<ApiErrorResponse>
-          throw new DashClientError(
+          const errorBody = (await response.json().catch(() => ({}))) as Partial<ApiErrorResponse>
+          throw new BnpmClientError(
             response.status,
             errorBody.code ?? "UNKNOWN_ERROR",
             errorBody.message ?? response.statusText,
@@ -98,7 +98,7 @@ export class DashClient {
         return (await response.json()) as T
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error))
-        if (error instanceof DashClientError) throw error
+        if (error instanceof BnpmClientError) throw error
         if (attempt < (options.retries ?? 0)) {
           const delay = 1000 * 2 ** attempt
           await new Promise((resolve) => setTimeout(resolve, delay))
@@ -130,6 +130,6 @@ export class DashClient {
   }
 }
 
-export function createClient(config: DashClientConfig): DashClient {
-  return new DashClient(config)
+export function createClient(config: BnpmClientConfig): BnpmClient {
+  return new BnpmClient(config)
 }

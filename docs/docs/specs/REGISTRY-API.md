@@ -1,4 +1,4 @@
-# Dash — Registry API
+# Bnpm — Registry API
 > **Status:** scoped · **Owner:** WS-REGISTRY · **Design refs:** DESIGN §12 · **Implements:** REG-M304..310 · **Conformance:** conformance/registry-api
 
 **Audience:** platform, agents
@@ -12,7 +12,7 @@ REST/GraphQL/SDK surface for every registry capability; pagination, versioning, 
 ## Key points (from the design)
 
 - Every capability is a documented, versioned API; the API is the product (§12.2).
-- A machine surface at /.well-known/dash/ serves agents (§12.2, §18.6).
+- A machine surface at /.well-known/bnpm/ serves agents (§12.2, §18.6).
 
 ## What this doc will contain when authored
 

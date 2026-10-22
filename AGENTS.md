@@ -1,4 +1,4 @@
-# Dash Monorepo — AI Agent Instructions
+# Bnpm Monorepo — AI Agent Instructions
 
 ## Repository Structure
 

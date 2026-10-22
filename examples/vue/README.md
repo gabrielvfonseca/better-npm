@@ -1,10 +1,10 @@
 # Vue Example
 
-A [Vue 3](https://vuejs.org/) + [Vite](https://vite.dev/) application that demonstrates using `@dash/sdk` with the Composition API and `<script setup>`.
+A [Vue 3](https://vuejs.org/) + [Vite](https://vite.dev/) application that demonstrates using `@better-npm/sdk` with the Composition API and `<script setup>`.
 
 ## What This Demonstrates
 
-- Using `@dash/sdk` in a Vue 3 + Vite app
+- Using `@better-npm/sdk` in a Vue 3 + Vite app
 - Vue Composition API with `<script setup lang="ts">`
 - Async data fetching with `onMounted` and reactive state via `ref`
 - TypeScript interfaces for package metadata
@@ -41,4 +41,4 @@ vue/
 - `ref<Package | null>(null)` holds the reactive package state
 - Data is fetched inside `onMounted` and assigned to `pkg.value`
 - The template conditionally renders with `v-if="pkg"`
-- The API call is proxied through Vite to the Dash registry at `http://localhost:3000`
+- The API call is proxied through Vite to the Bnpm registry at `http://localhost:3000`

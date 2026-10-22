@@ -1,4 +1,4 @@
-# `@dash/playground`
+# `@better-npm/playground`
 
 Code playground service — Hono-based sandboxed JavaScript execution.
 
@@ -15,7 +15,7 @@ Hono-based web service that hosts an HTML UI for writing and executing JavaScrip
 ## Usage
 
 ```ts
-import { createApp } from "@dash/playground";
+import { createApp } from "@better-npm/playground";
 
 const app = createApp({ port: 3002 });
 ```

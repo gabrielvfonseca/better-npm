@@ -1,8 +1,8 @@
-//! `dash-{{dashCase name}}` — {{description}}
+//! `bnpm-{{dashCase name}}` — {{description}}
 
 /// Returns a greeting message for this crate.
 pub fn hello() -> &'static str {
-    "hello from dash-{{dashCase name}}"
+    "hello from bnpm-{{dashCase name}}"
 }
 
 #[cfg(test)]
@@ -11,6 +11,6 @@ mod tests {
 
     #[test]
     fn test_hello() {
-        assert_eq!(hello(), "hello from dash-{{dashCase name}}");
+        assert_eq!(hello(), "hello from bnpm-{{dashCase name}}");
     }
 }

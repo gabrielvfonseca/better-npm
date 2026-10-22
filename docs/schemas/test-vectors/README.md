@@ -1,4 +1,4 @@
-# Dash — Test Vectors
+# Bnpm — Test Vectors
 
 > **Status:** normative · **Design refs:** ARCH-M004, CONTENT-ADDRESSING.md · **Conformance:** `conformance/cid/`
 
@@ -6,7 +6,7 @@
 
 ---
 
-Test vectors are the **executable specification** of Dash's core algorithms. An implementation passes a conformance gate when it produces the expected output for every vector in this directory.
+Test vectors are the **executable specification** of Bnpm's core algorithms. An implementation passes a conformance gate when it produces the expected output for every vector in this directory.
 
 ## Directory layout
 

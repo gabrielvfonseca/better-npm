@@ -1,4 +1,4 @@
-# Dash — Code of Conduct
+# Bnpm — Code of Conduct
 > **Status:** planned · **Owner:** WS-DOC · **Design refs:** DESIGN — · **Implements:** — · **Conformance:** n/a
 
 **Audience:** contributors
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-Community standards for the Dash project.
+Community standards for the Bnpm project.
 
 ## Key points (from the design)
 

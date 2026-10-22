@@ -1,4 +1,4 @@
-# Dash — Identity & Auth
+# Bnpm — Identity & Auth
 > **Status:** scoped · **Owner:** WS-SECURITY · **Design refs:** DESIGN §14 · **Implements:** AI-M608, PLAT-M702 · **Conformance:** conformance/auth
 
 **Audience:** platform, humans, agents
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-did:dash identities, human/CI/agent auth, mandatory 2FA, fine-grained scoped grants, permission ACL.
+did:bnpm identities, human/CI/agent auth, mandatory 2FA, fine-grained scoped grants, permission ACL.
 
 ## Key points (from the design)
 

@@ -1,19 +1,19 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import {
-  sleep,
-  randomId,
-  omit,
-  pick,
-  deepMerge,
-  retry,
-  timeout,
+  EventEmitter,
   chunk,
   debounce,
+  deepMerge,
+  omit,
+  pick,
+  randomId,
+  retry,
+  sleep,
   throttle,
-  EventEmitter,
+  timeout,
 } from "./index.js"
 
-describe("@dash/shared", () => {
+describe("@better-npm/shared", () => {
   describe("randomId", () => {
     it("should generate a string of the specified length", () => {
       expect(randomId(8)).toHaveLength(8)

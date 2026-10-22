@@ -70,9 +70,9 @@ jobs:
         with:
           push: true
           files: |
-            docker-compose.yml
-            tools/docker/docker-bake.hcl
+            docker/docker-compose.yml
+            docker/docker-bake.hcl
           set: |
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
-            *.tags=ghcr.io/dash-io/dash-{target}:${{ steps.version.outputs.tag }}
+            *.tags=ghcr.io/bnpm-io/bnpm-{target}:${{ steps.version.outputs.tag }}

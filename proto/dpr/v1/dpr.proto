@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package dash.dpr.v1;
+package bnpm.dpr.v1;
 
-option go_package = "github.com/dash-io/dash/proto/dpr/v1;dprv1";
+option go_package = "github.com/bnpm-io/bnpm/proto/dpr/v1;dprv1";
 
 import "common/v1/common.proto";
 
@@ -57,7 +57,7 @@ message Provenance {
   string source_repository = 4;
   string source_commit = 5;
   string slsa_level = 6;
-  dash.common.v1.Metadata metadata = 7;
+  bnpm.common.v1.Metadata metadata = 7;
 }
 
 message FetchRequest {
@@ -126,7 +126,7 @@ message PublishResponse {
 message Error {
   DprErrorCode code = 1;
   string message = 2;
-  repeated dash.common.v1.ErrorDetail details = 3;
+  repeated bnpm.common.v1.ErrorDetail details = 3;
 }
 
 enum DprErrorCode {

@@ -1,6 +1,6 @@
-import { loadConfig } from "@dash/config"
-import { createLogger } from "@dash/logger"
-import { createStorageClient } from "@dash/storage"
+import { loadConfig } from "@better-npm/config"
+import { createLogger } from "@better-npm/logger"
+import { createStorageClient } from "@better-npm/storage"
 
 const logger = createLogger("workers-metadata")
 const _config = loadConfig()
@@ -25,13 +25,13 @@ export async function handleMetadata(payload: Record<string, unknown>): Promise<
 
   try {
     const result = await processMetadata(metadataPayload)
-    return { status: "success", worker: "@dash/workers-metadata", result }
+    return { status: "success", worker: "@better-npm/workers-metadata", result }
   } catch (error) {
     logger.error("Failed to process metadata job", {
       packageName: metadataPayload.packageName,
       error: String(error),
     })
-    return { status: "failure", worker: "@dash/workers-metadata", error: String(error) }
+    return { status: "failure", worker: "@better-npm/workers-metadata", error: String(error) }
   }
 }
 
@@ -53,7 +53,7 @@ async function processMetadata(payload: MetadataPayload): Promise<{
   const enriched: Record<string, unknown> = {
     ...rawMetadata,
     extractedAt: new Date().toISOString(),
-    extractor: "@dash/workers-metadata",
+    extractor: "@better-npm/workers-metadata",
   }
 
   if (rawMetadata.repository) {

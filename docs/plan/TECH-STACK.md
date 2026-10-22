@@ -1,6 +1,6 @@
-# Dash — Technology Choices
+# Bnpm — Technology Choices
 
-Rationale for the implementation stack. The governing rule is **"boring by default"**: choose the most proven, least surprising technology that meets the requirement, and spend the novelty budget only where Dash's thesis actually demands it (content addressing, capabilities, provenance). Every choice below is justified against a requirement, not a preference.
+Rationale for the implementation stack. The governing rule is **"boring by default"**: choose the most proven, least surprising technology that meets the requirement, and spend the novelty budget only where Bnpm's thesis actually demands it (content addressing, capabilities, provenance). Every choice below is justified against a requirement, not a preference.
 
 ## 1. The one rule
 
@@ -10,13 +10,13 @@ This is also a plan‑for‑agents rule: agents build more reliably on well‑do
 
 ## 2. Core client & performance‑critical crates — **Rust**
 
-**Where:** `dash-cid`, `dash-capsule`, `dash-store`, `dash-resolver`, `dash-lock`, `dash-manifest`, `dash-proto`, `dash-sandbox`, `dash-provenance`, `dash-cli`.
+**Where:** `bnpm-cid`, `bnpm-capsule`, `bnpm-store`, `bnpm-resolver`, `bnpm-lock`, `bnpm-manifest`, `bnpm-proto`, `bnpm-sandbox`, `bnpm-provenance`, `bnpm-cli`.
 
 **Why:**
 - **Determinism & control.** Content addressing demands byte‑exact, allocation‑controlled, no‑hidden‑nondeterminism code. Rust gives explicit control without a GC's timing variability.
 - **Performance is a feature** (Bun's lesson, DESIGN §1.1): a single fast native binary makes every command feel instant. Rust delivers native speed with fearless parallelism for the many‑small‑files access pattern.
 - **Memory safety** in the most security‑critical software a developer runs. No buffer‑overflow class in the installer that touches every project.
-- **First‑class WASM** so the same core powers the TS SDK (`@dash/core`) via WASM bindings — one implementation of the hard logic, consumed everywhere.
+- **First‑class WASM** so the same core powers the TS SDK (`@better-npm/core`) via WASM bindings — one implementation of the hard logic, consumed everywhere.
 - **Cross‑platform single binary** — trivial distribution, no runtime dependency.
 
 **Key libraries:** `blake3` (hashing), `zstd` (capsule compression), `serde`/`ciborium` (canonical CBOR), a QUIC/HTTP3 stack (`quinn`/`h3`), `sigstore`‑rs + `in‑toto` for provenance. Determinism lint is a custom `clippy`‑style rule banning nondeterministic sources in core paths.
@@ -26,7 +26,7 @@ This is also a plan‑for‑agents rule: agents build more reliably on well‑do
 **Where:** `name-service`, `log-service`, `content-service`, `index-service`, `policy-service`, `gateway`.
 
 **Why:**
-- **Rust services** keep one language across client and server, share the `dash-*` crates (no protocol drift between what the client speaks and what the server implements), and meet the throughput SLOs.
+- **Rust services** keep one language across client and server, share the `bnpm-*` crates (no protocol drift between what the client speaks and what the server implements), and meet the throughput SLOs.
 - **Postgres** for the small, authoritative control‑plane state (name→version→CID pointers, orgs/policy). It's the boring, correct choice: transactions, mature ops, nothing exotic. The control plane is deliberately *small* (DESIGN §4), so it does not need a fancy datastore.
 - **Object storage (S3‑compatible) + CDN** for the data plane (capsule blobs). Content is immutable and addressed by hash, so it's a perfect fit for cheap, cacheable, mirror‑friendly object storage. The data plane is *untrusted by construction* (verified locally), so it can live anywhere.
 - **Append‑only Merkle log** (`log-service`) follows the Go `sumdb`/Sigstore Rekor lineage — a proven design for tamper‑evident transparency logs — with independent **witness cosigners** for split‑view resistance.
@@ -34,9 +34,9 @@ This is also a plan‑for‑agents rule: agents build more reliably on well‑do
 
 ## 4. SDKs & AI surface — **TypeScript**
 
-**Where:** `@dash/core` (WASM bindings), `@dash/registry`, `@dash/sbom`, `@dash/agent`.
+**Where:** `@better-npm/core` (WASM bindings), `@better-npm/registry`, `@better-npm/sbom`, `@better-npm/agent`.
 
-**Why:** these are consumed by JS/TS developers, build tools, and agents — they must live natively in that ecosystem. `@dash/core` wraps the Rust core via WASM so the hard logic isn't reimplemented. `@dash/agent` exposes the typed `select`/`plan-upgrade`/`apply` surface (DESIGN §18) in the language its callers use, with MCP‑compatible tool definitions so it drops into existing agent tooling.
+**Why:** these are consumed by JS/TS developers, build tools, and agents — they must live natively in that ecosystem. `@better-npm/core` wraps the Rust core via WASM so the hard logic isn't reimplemented. `@better-npm/agent` exposes the typed `select`/`plan-upgrade`/`apply` surface (DESIGN §18) in the language its callers use, with MCP‑compatible tool definitions so it drops into existing agent tooling.
 
 ## 5. Transport — **HTTP/3 (QUIC), with graceful fallback**
 
@@ -46,19 +46,19 @@ Justified in DESIGN §11: multiplexing without head‑of‑line blocking fits th
 
 - **BLAKE3** for content addressing (throughput + built‑in Merkle tree for range proofs, DESIGN §5.1).
 - **Sigstore / keyless OIDC** for provenance signing — the same technology npm's provenance and JSR adopted, so it interoperates with the existing supply‑chain‑security world rather than forking it.
-- **in‑toto / SLSA** for build attestations — the industry standard, so Dash provenance is consumable by existing verifiers (e.g., `cosign`).
+- **in‑toto / SLSA** for build attestations — the industry standard, so Bnpm provenance is consumable by existing verifiers (e.g., `cosign`).
 - **No home‑grown crypto.** The novelty is in *what* we sign and log (mandatory, capability‑aware, witnessed), not in new primitives.
 
 ## 7. Manifest & lockfile formats
 
-- **TOML** for `dash.toml` (human‑authored) — Cargo's proven choice: unambiguous, comment‑friendly, diff‑friendly, resistant to the deep nesting that ruined `package.json` (DESIGN §6).
+- **TOML** for `bnpm.toml` (human‑authored) — Cargo's proven choice: unambiguous, comment‑friendly, diff‑friendly, resistant to the deep nesting that ruined `package.json` (DESIGN §6).
 - **Canonical CBOR** for the on‑the‑wire/in‑capsule manifest and for the capsule container — compact, deterministic, schema‑checked.
-- **Deterministic text** for `dash.lock` — sorted, keyed, merge‑friendly (DESIGN §8), so humans can review diffs and merges don't conflict positionally.
+- **Deterministic text** for `bnpm.lock` — sorted, keyed, merge‑friendly (DESIGN §8), so humans can review diffs and merges don't conflict positionally.
 - **JSON Schema** for every human‑facing schema and **CBOR schema** for binary formats, shipped as files so agents validate rather than parse prose.
 
 ## 8. Build, CI & repo
 
-- **Monorepo**, dogfooding Dash workspaces once M2 lands (the project uses itself — the strongest possible compatibility test).
+- **Monorepo**, dogfooding Bnpm workspaces once M2 lands (the project uses itself — the strongest possible compatibility test).
 - **CI lanes** (Testing Strategy §1) run on a **multi‑OS matrix** because reproducibility is cross‑platform or it's nothing.
 - **Sandboxing** for hermetic builds uses OS primitives (namespaces/seccomp on Linux, the sandbox facilities on macOS, job objects on Windows) plus WASM for portable builders — no ambient authority, by construction (DESIGN §7.3, §13.3).
 

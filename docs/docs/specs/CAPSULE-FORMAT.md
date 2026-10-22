@@ -1,4 +1,4 @@
-# Dash — Capsule Format (DASHCAP1)
+# Bnpm — Capsule Format (BNPMCAP1)
 > **Status:** scoped · **Owner:** WS-CORE · **Design refs:** DESIGN §7 · **Implements:** CORE-M104..107 · **Conformance:** conformance/capsule
 
 **Audience:** platform, contributors
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-The DASHCAP1 container, determinism guarantees, range-fetch layout, detached attestations.
+The BNPMCAP1 container, determinism guarantees, range-fetch layout, detached attestations.
 
 ## Key points (from the design)
 

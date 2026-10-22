@@ -4,13 +4,13 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT_DIR"
 
-echo "==> Initializing Dash monorepo..."
+echo "==> Initializing Bnpm monorepo..."
 
 # Create required directories
 echo "==> Creating directory structure..."
 mkdir -p proto/registry/v1 proto/packages/v1 proto/search/v1 proto/auth/v1 proto/telemetry/v1 proto/common/v1
 mkdir -p database/migrations database/seeds database/schema
-mkdir -p tools/scripts tools/generators/package/templates tools/release tools/docker tools/dev tools/ci tools/benchmarks tools/profiling tools/fixtures/test-packages tools/templates/new-app
+mkdir -p docker tools/scripts tools/generators/package/templates tools/release tools/dev tools/ci tools/benchmarks tools/profiling tools/fixtures/test-packages tools/templates/new-app
 mkdir -p examples/react/src examples/vue/src examples/svelte/src examples/node/src examples/hono/src examples/nextjs/app examples/library/src examples/monorepo
 mkdir -p docs benchmarks
 
@@ -55,10 +55,10 @@ fi
 # Initialize database
 if command -v docker &> /dev/null; then
     echo "==> Starting development database..."
-    docker compose -f docker-compose.yml -f tools/dev/docker-compose.dev.yml up -d postgres redis 2>/dev/null || echo "  (Docker compose failed, skipping)"
+    docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d postgres redis 2>/dev/null || echo "  (Docker compose failed, skipping)"
 fi
 
-echo "==> Done! Dash monorepo initialized."
+echo "==> Done! Bnpm monorepo initialized."
 echo ""
 echo "Next steps:"
 echo "  tools/scripts/dev.sh    Start development environment"

@@ -1,4 +1,4 @@
-# Dash — Content Addressing & Store
+# Bnpm — Content Addressing & Store
 > **Status:** scoped · **Owner:** WS-CORE · **Design refs:** DESIGN §5 · **Implements:** CORE-M101..110 · **Conformance:** conformance/cid, conformance/store
 
 **Audience:** platform, contributors

@@ -1,4 +1,4 @@
--- Dash Registry - Full Database Schema
+-- Bnpm Registry - Full Database Schema
 -- This file consolidates all migrations into a single authoritative schema.
 
 -- Extensions

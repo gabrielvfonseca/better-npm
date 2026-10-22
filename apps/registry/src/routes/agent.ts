@@ -67,7 +67,7 @@ agent.post("/select", async (c) => {
         score: 0.95,
         rationale: [`Matches intent taxonomy: ${intent}`, "License: MIT (satisfies constraints)"],
         cid: "b3:qm7fabc123",
-        publisher: "did:dash:colinhacks",
+        publisher: "did:bnpm:colinhacks",
         logIndex: 88123441,
       },
       {
@@ -76,7 +76,7 @@ agent.post("/select", async (c) => {
         score: 0.82,
         rationale: ["Related intent: serialization", "Verified examples pass against v1.0.5"],
         cid: "b3:qm7fdef456",
-        publisher: "did:dash:std",
+        publisher: "did:bnpm:std",
         logIndex: 88123442,
       },
     ]
@@ -109,7 +109,7 @@ agent.get("/explain", async (c) => {
       description: "TypeScript-first schema validation with static type inference",
       license: "MIT",
       provenance: {
-        publisher: "did:dash:colinhacks",
+        publisher: "did:bnpm:colinhacks",
         logIndex: 88123441,
         slsaLevel: 3,
       },

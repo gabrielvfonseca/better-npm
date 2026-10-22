@@ -1,4 +1,4 @@
-# `@dash/storage`
+# `@better-npm/storage`
 
 Storage abstraction with local filesystem and S3-compatible backends.
 
@@ -9,9 +9,9 @@ Defines a `StorageBackend` interface with `LocalStorage` (filesystem-based, dire
 ## Usage
 
 ```ts
-import { getStorage } from "@dash/storage";
+import { getStorage } from "@better-npm/storage";
 
-const storage = getStorage({ type: "local", basePath: "/data/dash" });
+const storage = getStorage({ type: "local", basePath: "/data/bnpm" });
 await storage.write("packages/react.tgz", buffer);
 const data = await storage.read("packages/react.tgz");
 ```

@@ -1,6 +1,6 @@
-# `@dash/workers`
+# `@better-npm/workers`
 
-Background worker collection for Dash registry operations.
+Background worker collection for Bnpm registry operations.
 
 ## Overview
 

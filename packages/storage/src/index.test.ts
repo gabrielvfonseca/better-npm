@@ -1,14 +1,14 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest"
-import { LocalStorage, StorageFactory } from "./index.js"
-import { mkdirSync, rmSync, existsSync } from "node:fs"
-import { join } from "node:path"
+import { mkdirSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
+import { join } from "node:path"
+import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { LocalStorage, StorageFactory } from "./index.js"
 
-describe("@dash/storage", () => {
+describe("@better-npm/storage", () => {
   let testDir: string
 
   beforeEach(() => {
-    testDir = join(tmpdir(), `dash-storage-test-${Date.now()}`)
+    testDir = join(tmpdir(), `bnpm-storage-test-${Date.now()}`)
     mkdirSync(testDir, { recursive: true })
   })
 
@@ -56,9 +56,7 @@ describe("@dash/storage", () => {
     })
 
     it("should throw for unknown type", () => {
-      expect(() =>
-        StorageFactory.create({ type: "invalid" as never }),
-      ).toThrow()
+      expect(() => StorageFactory.create({ type: "invalid" as never })).toThrow()
     })
   })
 })

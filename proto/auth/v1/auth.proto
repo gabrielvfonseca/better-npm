@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package dash.auth.v1;
+package bnpm.auth.v1;
 
-option go_package = "github.com/dash-io/dash/proto/auth/v1;authv1";
+option go_package = "github.com/bnpm-io/bnpm/proto/auth/v1;authv1";
 
 import "common/v1/common.proto";
 
@@ -71,7 +71,7 @@ message LogoutRequest {
 }
 
 message LogoutResponse {
-  dash.common.v1.Empty empty = 1;
+  bnpm.common.v1.Empty empty = 1;
 }
 
 message AuthenticateRequest {
@@ -125,7 +125,7 @@ message RevokeRequest {
 }
 
 message RevokeResponse {
-  dash.common.v1.Empty empty = 1;
+  bnpm.common.v1.Empty empty = 1;
 }
 
 message User {
@@ -136,7 +136,7 @@ message User {
   string avatar_url = 5;
   repeated string roles = 6;
   bool email_verified = 7;
-  dash.common.v1.Metadata metadata = 8;
+  bnpm.common.v1.Metadata metadata = 8;
 }
 
 message Token {

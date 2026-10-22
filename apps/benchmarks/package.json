@@ -1,5 +1,5 @@
 {
-  "name": "@dash/benchmarks",
+  "name": "@better-npm/benchmarks",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -13,8 +13,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@dash/config": "workspace:*",
-    "@dash/logger": "workspace:*"
+    "@better-npm/config": "workspace:*",
+    "@better-npm/logger": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.19.0",

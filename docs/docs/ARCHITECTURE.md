@@ -1,4 +1,4 @@
-# Dash — Architecture
+# Bnpm — Architecture
 > **Status:** scoped · **Owner:** WS-DOC · **Design refs:** DESIGN §4, §22 · **Implements:** — · **Conformance:** conformance/architecture
 
 **Audience:** platform, contributors

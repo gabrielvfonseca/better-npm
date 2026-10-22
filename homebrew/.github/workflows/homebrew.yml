@@ -40,8 +40,8 @@ jobs:
 
       - name: Build binary
         run: |
-          cargo build --release --package dash-cli --bin dash
-          echo "BINARY_PATH=$(pwd)/target/release/dash" >> $GITHUB_ENV
+          cargo build --release --package bnpm-cli --bin bnpm
+          echo "BINARY_PATH=$(pwd)/target/release/bnpm" >> $GITHUB_ENV
 
       - name: Generate metadata
         id: meta
@@ -73,9 +73,9 @@ jobs:
         run: |
           VERSION="${{ steps.meta.outputs.version }}"
           TAG="${{ steps.meta.outputs.tag }}"
-          BOTTLE_DIR="dash-${VERSION}.${TAG}.bottle"
+          BOTTLE_DIR="bnpm-${VERSION}.${TAG}.bottle"
           mkdir -p "${BOTTLE_DIR}/bin"
-          cp "$BINARY_PATH" "${BOTTLE_DIR}/bin/dash"
+          cp "$BINARY_PATH" "${BOTTLE_DIR}/bin/bnpm"
           tar czf "${BOTTLE_DIR}.tar.gz" "${BOTTLE_DIR}"
           echo "BOTTLE_PATH=${BOTTLE_DIR}.tar.gz" >> $GITHUB_ENV
           echo "BOTTLE_SHA=$(sha256sum ${BOTTLE_DIR}.tar.gz | cut -d' ' -f1)" >> $GITHUB_OUTPUT
@@ -95,7 +95,7 @@ jobs:
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ${{ env.BOTTLE_PATH }}
-          asset_name: dash-${{ steps.meta.outputs.version }}.${{ steps.meta.outputs.tag }}.bottle.tar.gz
+          asset_name: bnpm-${{ steps.meta.outputs.version }}.${{ steps.meta.outputs.tag }}.bottle.tar.gz
           asset_content_type: application/gzip
 
   update-formula:
@@ -106,7 +106,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: org/homebrew-dash
+          repository: org/homebrew-bnpm
           token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
 
       - name: Download all bottles
@@ -122,7 +122,7 @@ jobs:
           VERSION="${VERSION#v}"
 
           # Compute source tarball hash
-          echo "SOURCE_SHA=$(curl -sL "https://github.com/org/dash/archive/refs/tags/v${VERSION}.tar.gz" | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUT
+          echo "SOURCE_SHA=$(curl -sL "https://github.com/org/bnpm/archive/refs/tags/v${VERSION}.tar.gz" | sha256sum | cut -d' ' -f1)" >> $GITHUB_OUTPUT
 
           # Compute bottle hashes
           for bottle in *.bottle.tar.gz; do
@@ -135,7 +135,7 @@ jobs:
         run: |
           VERSION="${{ github.event.release.tag_name }}"
           VERSION="${VERSION#v}"
-          FORMULA="Formula/dash.rb"
+          FORMULA="Formula/bnpm.rb"
 
           # Update version
           sed -i "s/version \"[0-9.]*\"/version \"$VERSION\"/" "$FORMULA"
@@ -159,10 +159,10 @@ jobs:
       - name: Commit and push
         run: |
           VERSION="${{ github.event.release.tag_name }}"
-          git config user.name "Dash Bot"
-          git config user.email "bot@dash.dev"
-          git add Formula/dash.rb
-          git commit -m "dash ${VERSION}"
+          git config user.name "Bnpm Bot"
+          git config user.email "bot@bnpm.dev"
+          git add Formula/bnpm.rb
+          git commit -m "bnpm ${VERSION}"
           git push
 
   deploy-tap:
@@ -177,4 +177,4 @@ jobs:
           script: |
             const { execSync } = require('child_process');
             const version = process.env.GITHUB_REF_NAME.replace('v', '');
-            execSync(`brew bump-formula-pr --version=${version} dash`, { stdio: 'inherit' });
+            execSync(`brew bump-formula-pr --version=${version} bnpm`, { stdio: 'inherit' });

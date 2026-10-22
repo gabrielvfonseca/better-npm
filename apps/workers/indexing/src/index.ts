@@ -1,7 +1,7 @@
-import { loadConfig } from "@dash/config"
-import { createLogger } from "@dash/logger"
-import { createSearchClient } from "@dash/search"
-import { createStorageClient } from "@dash/storage"
+import { loadConfig } from "@better-npm/config"
+import { createLogger } from "@better-npm/logger"
+import { createSearchClient } from "@better-npm/search"
+import { createStorageClient } from "@better-npm/storage"
 
 const logger = createLogger("workers-indexing")
 const config = loadConfig()
@@ -27,14 +27,14 @@ export async function handleIndexing(payload: Record<string, unknown>): Promise<
 
   try {
     const result = await processIndexing(indexPayload)
-    return { status: "success", worker: "@dash/workers-indexing", result }
+    return { status: "success", worker: "@better-npm/workers-indexing", result }
   } catch (error) {
     logger.error("Failed to process indexing job", {
       packageName: indexPayload.packageName,
       action: indexPayload.action,
       error: String(error),
     })
-    return { status: "failure", worker: "@dash/workers-indexing", error: String(error) }
+    return { status: "failure", worker: "@better-npm/workers-indexing", error: String(error) }
   }
 }
 

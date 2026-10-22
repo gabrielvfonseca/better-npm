@@ -1,5 +1,5 @@
 {
-  "name": "@dash/example-library",
+  "name": "@better-npm/example-library",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -18,7 +18,7 @@
     "dev": "tsup src/index.ts --format esm,cjs --dts --watch"
   },
   "dependencies": {
-    "@dash/sdk": "workspace:*"
+    "@better-npm/sdk": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.0.0",

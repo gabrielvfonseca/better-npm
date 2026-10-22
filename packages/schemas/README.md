@@ -1,6 +1,6 @@
-# `@dash/schemas`
+# `@better-npm/schemas`
 
-Zod validation schemas for Dash data models.
+Zod validation schemas for Bnpm data models.
 
 ## Overview
 
@@ -9,7 +9,7 @@ Zod schemas for package names, semver, manifests, publish requests, search queri
 ## Usage
 
 ```ts
-import { packageNameSchema, semVerSchema, publishPackageSchema } from "@dash/schemas";
+import { packageNameSchema, semVerSchema, publishPackageSchema } from "@better-npm/schemas";
 
 const name = packageNameSchema.parse("my-package");
 const version = semVerSchema.parse("1.0.0");

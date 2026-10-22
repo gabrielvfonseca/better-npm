@@ -19,7 +19,7 @@ export default defineConfig({
     outDir: "dist",
     sourcemap: true,
     rollupOptions: {
-      external: [/^@dash\//, /^node:.*/, /^react/, /^react-dom/],
+      external: [/^@bnpm\//, /^node:.*/, /^react/, /^react-dom/],
     },
   },
 })

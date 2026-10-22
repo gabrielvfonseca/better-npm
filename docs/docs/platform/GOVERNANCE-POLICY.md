@@ -1,4 +1,4 @@
-# Dash — Governance & Policy
+# Bnpm — Governance & Policy
 > **Status:** scoped · **Owner:** WS-PLATFORM · **Design refs:** DESIGN §13.5, §14, §19.5 · **Implements:** PLAT-M702, SEC-M408 · **Conformance:** conformance/policy
 
 **Audience:** platform, humans
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-Orgs, teams, roles, dash.policy.toml, policy-as-code enforcement points.
+Orgs, teams, roles, bnpm.policy.toml, policy-as-code enforcement points.
 
 ## Key points (from the design)
 

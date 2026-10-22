@@ -1,5 +1,5 @@
-import { loadConfig } from "@dash/config"
-import { createLogger } from "@dash/logger"
+import { loadConfig } from "@better-npm/config"
+import { createLogger } from "@better-npm/logger"
 import { serve } from "@hono/node-server"
 import { swaggerUI } from "@hono/swagger-ui"
 import { Hono } from "hono"
@@ -32,7 +32,7 @@ app.onError((err, c) => {
 })
 
 app.get("/health", (c) =>
-  c.json({ status: "healthy", service: "@dash/api", timestamp: new Date().toISOString() }),
+  c.json({ status: "healthy", service: "@better-npm/api", timestamp: new Date().toISOString() }),
 )
 
 app.get("/docs", swaggerUI({ url: "/openapi.json" }))
@@ -40,7 +40,7 @@ app.get("/docs", swaggerUI({ url: "/openapi.json" }))
 app.get("/openapi.json", (c) => {
   return c.json({
     openapi: "3.1.0",
-    info: { title: "@dash/api", version: "1.0.0", description: "Dash API Gateway" },
+    info: { title: "@better-npm/api", version: "1.0.0", description: "Bnpm API Gateway" },
     servers: [{ url: config.api?.url ?? "http://localhost:3000" }],
     paths: {
       "/health": { get: { summary: "Health check", responses: { "200": { description: "OK" } } } },
@@ -49,7 +49,7 @@ app.get("/openapi.json", (c) => {
 })
 
 const apiV1 = new Hono()
-apiV1.get("/health", (c) => c.json({ status: "healthy", service: "@dash/api/v1" }))
+apiV1.get("/health", (c) => c.json({ status: "healthy", service: "@better-npm/api/v1" }))
 app.route("/api/v1", apiV1)
 
 export function createApp() {

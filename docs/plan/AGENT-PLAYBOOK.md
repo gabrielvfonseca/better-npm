@@ -1,10 +1,10 @@
-# Dash — Agent Playbook
+# Bnpm — Agent Playbook
 
-**How a fleet of AI engineering agents (supervised by humans) actually builds Dash.**
+**How a fleet of AI engineering agents (supervised by humans) actually builds Bnpm.**
 
 Companion to [`BUILD-PLAN.md`](BUILD-PLAN.md) (what to build) and [`TASK-BACKLOG.md`](TASK-BACKLOG.md) (the units of work). This document is the *operating manual*: roles, the task lifecycle, coordination, guardrails, and the Definition of Done that lets work be accepted or rejected mechanically.
 
-The plan assumes agents are capable but fallible, run concurrently, and must not be trusted blindly — the same stance Dash itself takes toward packages. So the process is built on **isolation, explicit interfaces, and independent verification**, not on any single agent being right.
+The plan assumes agents are capable but fallible, run concurrently, and must not be trusted blindly — the same stance Bnpm itself takes toward packages. So the process is built on **isolation, explicit interfaces, and independent verification**, not on any single agent being right.
 
 ---
 
@@ -54,7 +54,7 @@ The four rules that make concurrency safe:
 1. **Single‑writer components.** At any moment, one component has at most one Implementer. Cross‑cutting changes are decomposed into per‑component tasks, each single‑writer.
 2. **Interfaces before implementations.** No agent may depend on another's *implementation*; it depends only on the *frozen interface* (M0 schema / signature). If the interface it needs doesn't exist, that's an interface RFC to the Architect, not a peek at someone's WIP.
 3. **Isolated worktrees + PR integration.** All mutation happens in per‑task worktrees. The only integration point is the PR/merge queue, which serializes conflicting merges. Agents never share a working directory.
-4. **The board is the single source of truth.** State lives on the task board and in CI, not in any agent's memory. An agent resuming work re‑reads the board; it never assumes prior context is still valid. (Mirrors Dash's own "verify, don't trust.")
+4. **The board is the single source of truth.** State lives on the task board and in CI, not in any agent's memory. An agent resuming work re‑reads the board; it never assumes prior context is still valid. (Mirrors Bnpm's own "verify, don't trust.")
 
 Communication is **asynchronous and artifact‑mediated**: agents coordinate through tasks, PRs, RFCs, and conformance results — durable artifacts a returning agent or a human can audit — rather than through ephemeral chatter.
 
@@ -89,7 +89,7 @@ If any box is unchecked, the task is **REJECTED** with the failing artifact atta
 **Must not:**
 - Self‑merge or self‑verify.
 - Introduce nondeterminism into core crates.
-- Add an install‑time script, a network call in a build, or any ambient authority — the system Dash is *building* forbids exactly what an agent might reflexively reach for.
+- Add an install‑time script, a network call in a build, or any ambient authority — the system Bnpm is *building* forbids exactly what an agent might reflexively reach for.
 - Weaken a security control to make a test pass (that's a blocker + a Security‑agent review, not a workaround).
 - Touch production credentials, the transparency‑log trust root, or external publishing — those are human‑gated (§7).
 - Fabricate a passing result. Acceptance is evidence‑based; a Verifier re‑runs, it does not take an implementer's word.
@@ -117,7 +117,7 @@ Agents run autonomously *within* a phase; humans gate *between* phases and on an
 - **Roots of trust** — the transparency‑log signing key, witness onboarding, Sigstore trust config, and production publish credentials are human‑held and never delegated to an agent identity.
 - **External releases** — tagging a public version, the security‑audit sign‑off (M7), and the 1.0 spec freeze are human decisions.
 
-Everything an agent does inside these bounds is auditable: every change is a PR, every acceptance is evidence, every merge is attributable to an identity — the same provenance discipline Dash applies to packages, applied to its own construction.
+Everything an agent does inside these bounds is auditable: every change is a PR, every acceptance is evidence, every merge is attributable to an identity — the same provenance discipline Bnpm applies to packages, applied to its own construction.
 
 ---
 
@@ -127,7 +127,7 @@ A concrete cold‑start sequence the Orchestrator runs to go from empty repo to 
 
 1. **Architect** lands M0: `DESIGN.md` ratified, all schemas + conformance skeleton committed (everything failing/`skip`). Steering group ratifies.
 2. **QA agent** wires CI: build + unit + conformance + repro + red‑team lanes, all required, all currently red on unimplemented slices.
-3. **Orchestrator** marks the two DAG roots — `dash-cid` and `dash-manifest` — `READY` and assigns Implementers.
+3. **Orchestrator** marks the two DAG roots — `bnpm-cid` and `bnpm-manifest` — `READY` and assigns Implementers.
 4. **Doc agent** publishes the `GLOSSARY` and the JSON/CBOR schema files so downstream agents code against them.
 5. Work flows: as each component goes green, the Orchestrator advances the wave table in [BUILD-PLAN §6](BUILD-PLAN.md) and fans out newly‑unblocked leaves.
 6. **Verifier** and **Security** agents shadow every completion; nothing merges without independent sign‑off.

@@ -1,5 +1,5 @@
 {
-  "name": "@dash/{{dashCase name}}",
+  "name": "@better-npm/{{dashCase name}}",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -30,8 +30,8 @@
     "next": "^15.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@dash/design-system": "workspace:*",
-    "@dash/hooks": "workspace:*"
+    "@better-npm/design-system": "workspace:*",
+    "@better-npm/hooks": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -44,7 +44,7 @@
   {{else ifEquals framework 'hono'}}
   "dependencies": {
     "hono": "^4.7.0",
-    "@dash/shared": "workspace:*"
+    "@better-npm/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -57,7 +57,7 @@
   {{else ifEquals framework 'fastify'}}
   "dependencies": {
     "fastify": "^5.2.0",
-    "@dash/shared": "workspace:*"
+    "@better-npm/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -70,7 +70,7 @@
   {{else ifEquals framework 'express'}}
   "dependencies": {
     "express": "^5.1.0",
-    "@dash/shared": "workspace:*"
+    "@better-npm/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
@@ -83,7 +83,7 @@
   }
   {{else ifEquals framework 'worker'}}
   "dependencies": {
-    "@dash/shared": "workspace:*"
+    "@better-npm/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

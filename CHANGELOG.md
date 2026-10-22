@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-For previous versions, see the [GitHub Releases](https://github.com/dashapp/dash/releases).
+For previous versions, see the [GitHub Releases](https://github.com/bnpm-io/bnpm/releases).
 
 ---
 
@@ -45,5 +45,5 @@ For previous versions, see the [GitHub Releases](https://github.com/dashapp/dash
 - Base TypeScript configuration with strict mode
 - Base Rust workspace configuration (edition 2024)
 
-[Unreleased]: https://github.com/dashapp/dash/compare/v0.0.0...HEAD
-[0.0.0]: https://github.com/dashapp/dash/releases/tag/v0.0.0
+[Unreleased]: https://github.com/bnpm-io/bnpm/compare/v0.0.0...HEAD
+[0.0.0]: https://github.com/bnpm-io/bnpm/releases/tag/v0.0.0

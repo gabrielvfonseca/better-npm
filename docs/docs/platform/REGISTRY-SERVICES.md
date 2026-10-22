@@ -1,4 +1,4 @@
-# Dash — Registry Services
+# Bnpm — Registry Services
 > **Status:** scoped · **Owner:** WS-REGISTRY · **Design refs:** DESIGN §12.1 · **Implements:** REG-* · **Conformance:** conformance/registry
 
 **Audience:** platform

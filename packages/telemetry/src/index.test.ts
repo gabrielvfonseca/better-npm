@@ -10,7 +10,7 @@ import {
   wrapWithSpan,
 } from "./index.js"
 
-describe("@dash/telemetry", () => {
+describe("@better-npm/telemetry", () => {
   afterEach(async () => {
     await shutdownTracing()
   })

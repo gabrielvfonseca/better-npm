@@ -1,5 +1,5 @@
 {
-  "name": "@dash/example-node",
+  "name": "@better-npm/example-node",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@dash/sdk": "workspace:*",
+    "@better-npm/sdk": "workspace:*",
     "express": "^5.0.0"
   },
   "devDependencies": {

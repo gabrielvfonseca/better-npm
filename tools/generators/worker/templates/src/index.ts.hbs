@@ -1,6 +1,6 @@
 {{> auto-generated}}
 
-import { createClient } from "@dash/shared"
+import { createClient } from "@better-npm/shared"
 
 {{#ifEquals queue_type 'pubsub'}}
 export interface PubSubMessage {
@@ -41,7 +41,7 @@ export async function handleCron(event: CronEvent): Promise<void> {
 {{/ifEquals}}
 
 export const workerMeta = {
-  name: "@dash/workers-{{dashCase name}}",
+  name: "@better-npm/workers-{{dashCase name}}",
   version: "0.1.0",
   queueType: "{{queue_type}}",
 }

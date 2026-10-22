@@ -1,8 +1,8 @@
 ; Canonical Manifest (TOML → CBOR) — CBOR Data Definition Language Schema
 ; RFC 8610 · DESIGN §6, §9, App. C · Implements ARCH-M003
 ;
-; This schema defines the canonical CBOR encoding of the Dash manifest
-; (dash.toml) as it appears inside the DASHCAP1 capsule. The manifest is
+; This schema defines the canonical CBOR encoding of the Bnpm manifest
+; (bnpm.toml) as it appears inside the BNPMCAP1 capsule. The manifest is
 ; authored in TOML by humans and agents, then canonically encoded as CBOR
 ; (RFC 8949) with deterministic encoding rules (RFC 8949 §4.2.1):
 ;
@@ -110,7 +110,7 @@ BuildCapabilities = {
 ; A build is a pure function: source + toolchain → deterministic outputs.
 ; =============================================================================
 BuildDeclaration = {
-    tool:         tstr,                   ; pinned builder identifier (e.g. "dash:tsc@2.1.0")
+    tool:         tstr,                   ; pinned builder identifier (e.g. "bnpm:tsc@2.1.0")
     ? inputs:     [ * tstr ],             ; glob patterns for build inputs
     ? outputs:    [ * tstr ],             ; glob patterns for build outputs
     ? target:     tstr,                   ; build target (e.g. "node", "deno", "browser")

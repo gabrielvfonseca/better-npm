@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT_DIR"
 
-echo "==> Setting up Dash development environment..."
+echo "==> Setting up Bnpm development environment..."
 
 # Check prerequisites
 echo "==> Checking prerequisites..."
@@ -67,7 +67,7 @@ fi
 
 # Pull Docker images
 echo "==> Pulling Docker images..."
-docker compose -f docker-compose.yml -f tools/dev/docker-compose.dev.yml pull postgres redis minio 2>/dev/null || true
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml pull postgres redis minio 2>/dev/null || true
 
 # Run typecheck
 echo "==> Checking TypeScript..."
@@ -79,6 +79,6 @@ echo ""
 echo "Quick start:"
 echo "  tools/scripts/dev.sh               Start full dev environment"
 echo "  bun run dev                         Start all turborepo dev servers"
-echo "  bun run dev --filter=@dash/api      Start API only"
+echo "  bun run dev --filter=@better-npm/api      Start API only"
 echo "  bun run db:migrate                  Run database migrations"
 echo "  bun run db:seed                     Seed database"

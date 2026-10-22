@@ -19,7 +19,7 @@ export type {
   WorkerPayload,
   WorkerResult,
   EventType,
-} from "@dash/types"
+} from "@better-npm/types"
 
 export interface ApiHandler<TInput, TOutput> {
   handle(input: TInput): Promise<TOutput>
@@ -60,7 +60,11 @@ export interface ApiResponse<T = unknown> {
   headers?: Record<string, string>
 }
 
-export function createApiResponse<T>(status: number, body: T, headers?: Record<string, string>): ApiResponse<T> {
+export function createApiResponse<T>(
+  status: number,
+  body: T,
+  headers?: Record<string, string>,
+): ApiResponse<T> {
   return { status, body, headers }
 }
 
@@ -80,18 +84,24 @@ export function badRequest(message: string): ApiResponse<{ code: string; message
   return createApiResponse(400, { code: "BAD_REQUEST", message })
 }
 
-export function notFound(message: string = "Resource not found"): ApiResponse<{ code: string; message: string }> {
+export function notFound(
+  message = "Resource not found",
+): ApiResponse<{ code: string; message: string }> {
   return createApiResponse(404, { code: "NOT_FOUND", message })
 }
 
-export function unauthorized(message: string = "Unauthorized"): ApiResponse<{ code: string; message: string }> {
+export function unauthorized(
+  message = "Unauthorized",
+): ApiResponse<{ code: string; message: string }> {
   return createApiResponse(401, { code: "UNAUTHORIZED", message })
 }
 
-export function forbidden(message: string = "Forbidden"): ApiResponse<{ code: string; message: string }> {
+export function forbidden(message = "Forbidden"): ApiResponse<{ code: string; message: string }> {
   return createApiResponse(403, { code: "FORBIDDEN", message })
 }
 
-export function serverError(message: string = "Internal server error"): ApiResponse<{ code: string; message: string }> {
+export function serverError(
+  message = "Internal server error",
+): ApiResponse<{ code: string; message: string }> {
   return createApiResponse(500, { code: "INTERNAL_ERROR", message })
 }

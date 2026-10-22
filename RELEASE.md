@@ -1,10 +1,10 @@
 # Release Process
 
-This document describes the process for releasing new versions of Dash.
+This document describes the process for releasing new versions of Bnpm.
 
 ## Versioning Scheme
 
-Dash follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
+Bnpm follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 (`MAJOR.MINOR.PATCH`):
 
 - **MAJOR** — Breaking changes (incompatible API changes)
@@ -74,13 +74,13 @@ When the Version Packages PR is merged to `main`, CI automatically:
 CI creates a Git tag for each published package:
 
 ```
-@dash/cli@0.2.0
-dash-core@0.1.3
+@better-npm/cli@0.2.0
+bnpm-core@0.1.3
 ```
 
 ### Step 5: GitHub Release Is Created
 
-CI creates a [GitHub Release](https://github.com/dashapp/dash/releases) with:
+CI creates a [GitHub Release](https://github.com/bnpm-io/bnpm/releases) with:
 
 - Auto-generated release notes from the changelog
 - Links to the relevant commits and PRs
@@ -91,9 +91,9 @@ CI creates a [GitHub Release](https://github.com/dashapp/dash/releases) with:
 CI builds and pushes Docker images:
 
 ```
-ghcr.io/dashapp/api:0.2.0
-ghcr.io/dashapp/web:0.2.0
-ghcr.io/dashapp/cli:0.2.0
+ghcr.io/bnpm-io/api:0.2.0
+ghcr.io/bnpm-io/web:0.2.0
+ghcr.io/bnpm-io/cli:0.2.0
 ```
 
 Each image is also tagged with `latest`.
@@ -101,7 +101,7 @@ Each image is also tagged with `latest`.
 ### Step 7: Homebrew Formula Is Updated
 
 CI updates the Homebrew formula in the
-[dash-homebrew](https://github.com/dashapp/homebrew-dash) tap with the new
+[bnpm-homebrew](https://github.com/bnpm-io/homebrew-bnpm) tap with the new
 binary checksums.
 
 ## Hotfix Process
@@ -171,9 +171,9 @@ Published with the `next` dist-tag on npm.
 ### Installing Pre-Release Versions
 
 ```bash
-npm install @dash/cli@next
+npm install @better-npm/cli@next
 # or
-dash add @dash/cli@beta
+bnpm add @better-npm/cli@beta
 ```
 
 ## Manual Release (if CI is unavailable)

@@ -17,7 +17,7 @@ export default defineConfig({
     outDir: "dist",
     sourcemap: true,
     rollupOptions: {
-      external: [/^@dash\//, /^node:.*/],
+      external: [/^@bnpm\//, /^node:.*/],
     },
   },
 })

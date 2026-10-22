@@ -1,5 +1,5 @@
 [package]
-name = "dash-{{dashCase name}}"
+name = "bnpm-{{dashCase name}}"
 description = "{{description}}"
 edition.workspace = true
 version.workspace = true
@@ -8,7 +8,7 @@ publish = false
 
 {{#ifEquals type 'binary'}}
 [[bin]]
-name = "dash-{{dashCase name}}"
+name = "bnpm-{{dashCase name}}"
 path = "src/main.rs"
 {{/ifEquals}}
 

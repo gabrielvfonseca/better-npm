@@ -1,10 +1,10 @@
 # Library Example
 
-A reusable library package built with [tsup](https://tsup.egoist.dev/) that wraps `@dash/sdk` utilities for distribution via npm.
+A reusable library package built with [tsup](https://tsup.egoist.dev/) that wraps `@better-npm/sdk` utilities for distribution via npm.
 
 ## What This Demonstrates
 
-- Building a library that depends on `@dash/sdk`
+- Building a library that depends on `@better-npm/sdk`
 - Dual-format bundling (ESM + CJS) with TypeScript declaration generation
 - Structuring a publishable npm package with `main`, `types`, and `exports` fields
 

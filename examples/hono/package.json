@@ -1,5 +1,5 @@
 {
-  "name": "@dash/example-hono",
+  "name": "@better-npm/example-hono",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@dash/config": "workspace:*",
+    "@better-npm/config": "workspace:*",
     "hono": "^4.0.0"
   },
   "devDependencies": {

@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package dash.telemetry.v1;
+package bnpm.telemetry.v1;
 
-option go_package = "github.com/dash-io/dash/proto/telemetry/v1;telemetryv1";
+option go_package = "github.com/bnpm-io/bnpm/proto/telemetry/v1;telemetryv1";
 
 import "common/v1/common.proto";
 
@@ -11,7 +11,7 @@ service TelemetryService {
   rpc IngestMetrics(IngestMetricsRequest) returns (IngestMetricsResponse);
   rpc QueryEvents(QueryEventsRequest) returns (QueryEventsResponse);
   rpc QueryMetrics(QueryMetricsRequest) returns (QueryMetricsResponse);
-  rpc Health(dash.common.v1.Empty) returns (HealthResponse);
+  rpc Health(bnpm.common.v1.Empty) returns (HealthResponse);
   rpc Ingest(IngestRequest) returns (IngestResponse);
   rpc IngestStream(stream TelemetryEvent) returns (IngestResponse);
   rpc Query(QueryRequest) returns (QueryResponse);
@@ -77,7 +77,7 @@ message QueryEventsRequest {
   int64 start_time = 2;
   int64 end_time = 3;
   map<string, string> filters = 4;
-  dash.common.v1.Pagination pagination = 5;
+  bnpm.common.v1.Pagination pagination = 5;
   repeated string event_types = 6;
   string source = 7;
 }
@@ -86,7 +86,7 @@ message QueryEventsResponse {
   repeated TelemetryEvent events = 1;
   int32 total = 2;
   double took_ms = 3;
-  dash.common.v1.Pagination pagination = 4;
+  bnpm.common.v1.Pagination pagination = 4;
 }
 
 message QueryMetricsRequest {
@@ -118,7 +118,7 @@ message QueryRequest {
   int64 start_time = 2;
   int64 end_time = 3;
   map<string, string> filters = 4;
-  dash.common.v1.Pagination pagination = 5;
+  bnpm.common.v1.Pagination pagination = 5;
   repeated string group_by = 6;
 }
 
@@ -131,7 +131,7 @@ message QueryResult {
 
 message QueryResponse {
   repeated QueryResult results = 1;
-  dash.common.v1.Pagination pagination = 2;
+  bnpm.common.v1.Pagination pagination = 2;
   double took_ms = 3;
 }
 

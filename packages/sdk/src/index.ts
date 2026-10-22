@@ -1,12 +1,49 @@
-import { DashClient, createClient, type DashClientConfig } from "@dash/client"
-import type { PackageManifest, PackageLock, RegistryPackage, User, PaginatedResponse, PaginationParams, WorkerPayload, WorkerResult, EventType, Result, ApiError } from "@dash/types"
-import { createLogger, type Logger } from "@dash/logger"
-import { loadConfig, getConfig, getEnvVar, isDevelopment, isProduction, type DashConfig } from "@dash/config"
-import { verifyToken, createToken, hashPassword, verifyPassword, parseAuthHeader, type AuthToken, type AuthSession } from "@dash/auth"
-import { packageNameSchema, semVerSchema, packageManifestSchema, publishPackageSchema, searchQuerySchema, paginationParamsSchema, createUserSchema, loginSchema, updateUserSchema } from "@dash/schemas"
+import {
+  type AuthSession,
+  type AuthToken,
+  createToken,
+  hashPassword,
+  parseAuthHeader,
+  verifyPassword,
+  verifyToken,
+} from "@better-npm/auth"
+import { type BnpmClient, type BnpmClientConfig, createClient } from "@better-npm/client"
+import {
+  type BnpmConfig,
+  getConfig,
+  getEnvVar,
+  isDevelopment,
+  isProduction,
+  loadConfig,
+} from "@better-npm/config"
+import { type Logger, createLogger } from "@better-npm/logger"
+import {
+  createUserSchema,
+  loginSchema,
+  packageManifestSchema,
+  packageNameSchema,
+  paginationParamsSchema,
+  publishPackageSchema,
+  searchQuerySchema,
+  semVerSchema,
+  updateUserSchema,
+} from "@better-npm/schemas"
+import type {
+  ApiError,
+  EventType,
+  PackageLock,
+  PackageManifest,
+  PaginatedResponse,
+  PaginationParams,
+  RegistryPackage,
+  Result,
+  User,
+  WorkerPayload,
+  WorkerResult,
+} from "@better-npm/types"
 
 export type {
-  DashClientConfig,
+  BnpmClientConfig,
   PackageManifest,
   PackageLock,
   RegistryPackage,
@@ -19,21 +56,21 @@ export type {
   Result,
   ApiError,
   Logger,
-  DashConfig,
+  BnpmConfig,
   AuthToken,
   AuthSession,
 }
 
-export interface DashOptions {
+export interface BnpmOptions {
   baseUrl?: string
   token?: string
-  config?: Partial<DashConfig>
+  config?: Partial<BnpmConfig>
 }
 
-export class Dash {
-  client: DashClient
+export class Bnpm {
+  client: BnpmClient
   logger: Logger
-  config: DashConfig
+  config: BnpmConfig
 
   schemas = {
     packageName: packageNameSchema,
@@ -61,12 +98,12 @@ export class Dash {
     isProd: isProduction,
   }
 
-  constructor(options?: DashOptions) {
+  constructor(options?: BnpmOptions) {
     const baseUrl = options?.baseUrl ?? getEnvVar("API_URL", "http://localhost:3000")
     const token = options?.token ?? getEnvVar("AUTH_TOKEN", "")
 
     this.config = getConfig()
-    this.logger = createLogger("dash:sdk")
+    this.logger = createLogger("bnpm:sdk")
 
     this.client = createClient({
       baseUrl,
@@ -75,14 +112,8 @@ export class Dash {
   }
 }
 
-export function createDash(options?: DashOptions): Dash {
-  return new Dash(options)
+export function createBnpm(options?: BnpmOptions): Bnpm {
+  return new Bnpm(options)
 }
 
-export {
-  loadConfig,
-  getConfig,
-  getEnvVar,
-  isDevelopment,
-  isProduction,
-}
+export { loadConfig, getConfig, getEnvVar, isDevelopment, isProduction }

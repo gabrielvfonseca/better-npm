@@ -1,10 +1,10 @@
 # Hono Example
 
-A [Hono](https://hono.dev/) server application that demonstrates using `@dash/config` to serve a lightweight API.
+A [Hono](https://hono.dev/) server application that demonstrates using `@better-npm/config` to serve a lightweight API.
 
 ## What This Demonstrates
 
-- Using `@dash/config` in a Hono framework server
+- Using `@better-npm/config` in a Hono framework server
 - Hono's routing, JSON responses, and dynamic path parameters
 - Watch-mode development with `tsx`
 

@@ -1,4 +1,4 @@
-export { DashAgentClient } from "./client.js"
+export { BnpmAgentClient } from "./client.js"
 export { createAgentClient } from "./factory.js"
 export type {
   AgentClient,

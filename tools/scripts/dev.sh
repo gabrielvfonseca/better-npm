@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT_DIR"
 
-echo "==> Starting Dash development environment..."
+echo "==> Starting Bnpm development environment..."
 
 # Check prerequisites
 command -v docker &> /dev/null || { echo "docker is required"; exit 1; }
@@ -12,12 +12,12 @@ command -v node &> /dev/null || { echo "node is required"; exit 1; }
 
 # Start infrastructure
 echo "==> Starting infrastructure (Postgres, Redis, Minio)..."
-docker compose -f docker-compose.yml -f tools/dev/docker-compose.dev.yml up -d postgres redis minio
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d postgres redis minio
 
 # Wait for services to be ready
 echo "==> Waiting for services..."
 for i in $(seq 1 30); do
-    if docker compose -f docker-compose.yml -f tools/dev/docker-compose.dev.yml exec postgres pg_isready -U dash 2>/dev/null; then
+    if docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml exec postgres pg_isready -U bnpm 2>/dev/null; then
         echo "  Postgres is ready."
         break
     fi
@@ -38,9 +38,9 @@ else
 fi
 
 # Seed database if requested
-if [ "${DASH_SEED:-0}" = "1" ]; then
+if [ "${BNPM_SEED:-0}" = "1" ]; then
     echo "==> Seeding database..."
-    psql "${DATABASE_URL:-postgresql://dash:dash_dev_password@localhost:5432/dash_dev}" -f database/seeds/seed.sql 2>/dev/null || echo "  (seeding skipped)"
+    psql "${DATABASE_URL:-postgresql://bnpm:bnpm_dev_password@localhost:5432/bnpm_dev}" -f database/seeds/seed.sql 2>/dev/null || echo "  (seeding skipped)"
 fi
 
 # Start dev servers
@@ -51,9 +51,9 @@ elif command -v npx &> /dev/null && command -v turbo &> /dev/null; then
     npx turbo dev --parallel
 else
     echo "WARNING: turbo not found. Run individual apps manually."
-    echo "  bun run dev --filter=@dash/api"
-    echo "  bun run dev --filter=@dash/registry"
-    echo "  bun run dev --filter=@dash/website"
+    echo "  bun run dev --filter=@better-npm/api"
+    echo "  bun run dev --filter=@better-npm/registry"
+    echo "  bun run dev --filter=@better-npm/website"
 fi
 
 echo "==> Development environment ready."

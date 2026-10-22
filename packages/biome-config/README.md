@@ -1,6 +1,6 @@
-# `@dash/biome-config`
+# `@better-npm/biome-config`
 
-Shared Biome configuration for the Dash monorepo.
+Shared Biome configuration for the Bnpm monorepo.
 
 ## Overview
 
@@ -12,6 +12,6 @@ In `biome.json`:
 
 ```json
 {
-  "extends": ["@dash/biome-config/biome.json"]
+  "extends": ["@better-npm/biome-config/biome.json"]
 }
 ```

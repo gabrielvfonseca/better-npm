@@ -7,7 +7,7 @@ production = false
 auto-install = true
 
 [install.scopes]
-"@dash" = { registry = "https://npm.pkg.github.com" }
+"@better-npm" = { registry = "https://npm.pkg.github.com" }
 
 [test]
 preload = "./packages/testing/src/setup.ts"

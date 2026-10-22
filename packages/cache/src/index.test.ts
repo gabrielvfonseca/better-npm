@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { MemoryCache, createCache, memoize } from "./index.js"
 
-describe("@dash/cache", () => {
+describe("@better-npm/cache", () => {
   describe("MemoryCache", () => {
     it("should store and retrieve values", async () => {
       const cache = new MemoryCache()

@@ -1,4 +1,4 @@
-# `@dash/logger`
+# `@better-npm/logger`
 
 Structured logging with levels, JSON/text output, and child loggers.
 
@@ -9,7 +9,7 @@ Module-scoped logger with `debug`/`info`/`warn`/`error`/`fatal` levels, configur
 ## Usage
 
 ```ts
-import { createLogger } from "@dash/logger";
+import { createLogger } from "@better-npm/logger";
 
 const log = createLogger({ name: "registry", level: "info" });
 log.info("Server starting", { port: 3000 });

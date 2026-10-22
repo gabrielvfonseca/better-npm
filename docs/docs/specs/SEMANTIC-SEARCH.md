@@ -1,4 +1,4 @@
-# Dash — Semantic Search
+# Bnpm — Semantic Search
 > **Status:** scoped · **Owner:** WS-AI · **Design refs:** DESIGN §19.2 · **Implements:** AI-M605 · **Conformance:** conformance/search
 
 **Audience:** platform, agents
@@ -12,7 +12,7 @@ Lexical + structural + vector index design, ranking, the query grammar shared by
 ## Key points (from the design)
 
 - Three indexes over one corpus (lexical, structural/API-shape, semantic/vector) with explainable ranking (§19.2).
-- Same endpoint serves `dash search` and the agent `select` call (§19.2).
+- Same endpoint serves `bnpm search` and the agent `select` call (§19.2).
 
 ## What this doc will contain when authored
 

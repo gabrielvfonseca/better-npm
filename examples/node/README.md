@@ -1,10 +1,10 @@
 # Node.js Example
 
-A command-line / server script that demonstrates using `@dash/sdk` in a plain [Node.js](https://nodejs.org/) environment with [Express](https://expressjs.com/).
+A command-line / server script that demonstrates using `@better-npm/sdk` in a plain [Node.js](https://nodejs.org/) environment with [Express](https://expressjs.com/).
 
 ## What This Demonstrates
 
-- Using `@dash/sdk` in a Node.js runtime (not a browser)
+- Using `@better-npm/sdk` in a Node.js runtime (not a browser)
 - Building a lightweight HTTP server with Express
 - Watch-mode development with `tsx`
 

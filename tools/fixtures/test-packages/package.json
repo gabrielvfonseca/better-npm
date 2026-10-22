@@ -1,5 +1,5 @@
 {
-  "name": "@dash/test-package",
+  "name": "@better-npm/test-package",
   "version": "1.0.0",
   "description": "Fixture package for testing",
   "main": "index.js",

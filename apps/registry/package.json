@@ -1,5 +1,5 @@
 {
-  "name": "@dash/registry",
+  "name": "@better-npm/registry",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -15,10 +15,10 @@
   "dependencies": {
     "hono": "^4.7.0",
     "@hono/zod-openapi": "^0.18.0",
-    "@dash/config": "workspace:*",
-    "@dash/logger": "workspace:*",
-    "@dash/validation": "workspace:*",
-    "@dash/storage": "workspace:*"
+    "@better-npm/config": "workspace:*",
+    "@better-npm/logger": "workspace:*",
+    "@better-npm/validation": "workspace:*",
+    "@better-npm/storage": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.19.0",

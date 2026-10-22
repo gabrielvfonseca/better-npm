@@ -1,13 +1,18 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { SearchClient, createSearchClient } from "./index.js"
 
-describe("@dash/search", () => {
+describe("@better-npm/search", () => {
   beforeEach(() => {
     vi.spyOn(globalThis, "fetch").mockImplementation(async (url: RequestInfo | URL) => {
       const urlStr = url.toString()
       if (urlStr.includes("search")) {
         return new Response(
-          JSON.stringify({ hits: [{ id: "1", name: "test-pkg", _score: 1 }], total: 1, page: 1, hitsPerPage: 20 }),
+          JSON.stringify({
+            hits: [{ id: "1", name: "test-pkg", _score: 1 }],
+            total: 1,
+            page: 1,
+            hitsPerPage: 20,
+          }),
           { status: 200 },
         )
       }
@@ -48,7 +53,9 @@ describe("@dash/search", () => {
 
   it("should reject on error responses", async () => {
     vi.restoreAllMocks()
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 500, statusText: "Internal Error" }))
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(null, { status: 500, statusText: "Internal Error" }),
+    )
     const client = new SearchClient({ endpoint: "http://localhost:7700" })
     await expect(client.search({ q: "test" })).rejects.toThrow()
   })

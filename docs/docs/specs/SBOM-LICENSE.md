@@ -1,4 +1,4 @@
-# Dash — SBOM & License Intelligence
+# Bnpm — SBOM & License Intelligence
 > **Status:** scoped · **Owner:** WS-SECURITY · **Design refs:** DESIGN §13.6 · **Implements:** SEC-M407 · **Conformance:** conformance/sbom
 
 **Audience:** platform, humans

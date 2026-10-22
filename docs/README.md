@@ -1,6 +1,6 @@
-# Dash — Documentation Set
+# Bnpm — Documentation Set
 
-**Dash** is a content‑addressed, cryptographically verifiable, ESM‑first package ecosystem for JavaScript and TypeScript — a clean‑sheet successor to npm designed for reproducible builds, capability‑based security, and AI agents as first‑class users.
+**Bnpm** is a content‑addressed, cryptographically verifiable, ESM‑first package ecosystem for JavaScript and TypeScript — a clean‑sheet successor to npm designed for reproducible builds, capability‑based security, and AI agents as first‑class users.
 
 This repository holds the complete documentation set: the canonical design, the layered specifications extracted from it, the platform docs, the migration story, and — the focus of this bundle — the **agentic implementation and build plan** that a fleet of AI engineering agents (supervised by humans) can execute end‑to‑end.
 
@@ -33,9 +33,9 @@ Legend — **Status:** ✅ authored in this bundle · ✍️ scoped, extract fro
 | # | Document | Purpose | Status | Audience |
 |---|---|---|---|---|
 | 2.1 | [`docs/specs/CONTENT-ADDRESSING.md`](docs/specs/CONTENT-ADDRESSING.md) | CID construction (BLAKE3 multihash), canonicalization rules, capsule‑ and file‑level dedup, the store layout. DESIGN §5. | ✍️ | 🏛️🧭 |
-| 2.2 | [`docs/specs/CAPSULE-FORMAT.md`](docs/specs/CAPSULE-FORMAT.md) | The `DASHCAP1` container: header, file table, objects, detached attestations; determinism guarantees; range‑fetch layout. DESIGN §7. | ✍️ | 🏛️🧭 |
-| 2.3 | [`docs/specs/MANIFEST.md`](docs/specs/MANIFEST.md) | `dash.toml` schema — identity, exports, deps, capabilities, build, `[ai]`, workspace. Field‑by‑field, with validation rules. DESIGN §6. | ✍️ | 👤🤖 |
-| 2.4 | [`docs/specs/LOCKFILE.md`](docs/specs/LOCKFILE.md) | `dash.lock` grammar, determinism, content‑pinning, inclusion proofs, merge semantics. DESIGN §8, App. B. | ✍️ | 👤🤖 |
+| 2.2 | [`docs/specs/CAPSULE-FORMAT.md`](docs/specs/CAPSULE-FORMAT.md) | The `BNPMCAP1` container: header, file table, objects, detached attestations; determinism guarantees; range‑fetch layout. DESIGN §7. | ✍️ | 🏛️🧭 |
+| 2.3 | [`docs/specs/MANIFEST.md`](docs/specs/MANIFEST.md) | `bnpm.toml` schema — identity, exports, deps, capabilities, build, `[ai]`, workspace. Field‑by‑field, with validation rules. DESIGN §6. | ✍️ | 👤🤖 |
+| 2.4 | [`docs/specs/LOCKFILE.md`](docs/specs/LOCKFILE.md) | `bnpm.lock` grammar, determinism, content‑pinning, inclusion proofs, merge semantics. DESIGN §8, App. B. | ✍️ | 👤🤖 |
 | 2.5 | [`docs/specs/RESOLVER.md`](docs/specs/RESOLVER.md) | MVS algorithm, singleton unification, PubGrub fallback, semver‑honesty verification, complexity. DESIGN §9, App. C. | ✍️ | 🏛️🧭 |
 | 2.6 | [`docs/specs/STORAGE-AND-CACHE.md`](docs/specs/STORAGE-AND-CACHE.md) | Global store, L0–L4 cache hierarchy, reflink/hardlink materialization, offline mode, vendoring. DESIGN §5.3, §10. | ✍️ | 🏛️🧭 |
 
@@ -47,7 +47,7 @@ Legend — **Status:** ✅ authored in this bundle · ✍️ scoped, extract fro
 | 3.2 | [`docs/specs/REGISTRY-API.md`](docs/specs/REGISTRY-API.md) | REST/GraphQL/SDK surface for every registry capability; pagination, versioning, error model. DESIGN §12. | ✍️ | 🏛️🤖 |
 | 3.3 | [`docs/platform/REGISTRY-SERVICES.md`](docs/platform/REGISTRY-SERVICES.md) | Service decomposition: name/version, transparency log, content, provenance, index, policy, reputation, analytics. DESIGN §12.1. | ✍️ | 🏛️ |
 | 3.4 | [`docs/platform/FEDERATION.md`](docs/platform/FEDERATION.md) | Federated registries, upstream delegation, private + public boundary, the npm bridge as an upstream. DESIGN §12.3. | ✍️ | 🏛️ |
-| 3.5 | [`docs/platform/GOVERNANCE-POLICY.md`](docs/platform/GOVERNANCE-POLICY.md) | Orgs, teams, roles, `dash.policy.toml`, policy‑as‑code enforcement points. DESIGN §13.5, §14, §19.5. | ✍️ | 🏛️👤 |
+| 3.5 | [`docs/platform/GOVERNANCE-POLICY.md`](docs/platform/GOVERNANCE-POLICY.md) | Orgs, teams, roles, `bnpm.policy.toml`, policy‑as‑code enforcement points. DESIGN §13.5, §14, §19.5. | ✍️ | 🏛️👤 |
 | 3.6 | [`docs/platform/REPUTATION.md`](docs/platform/REPUTATION.md) | Multi‑signal scoring model, Sybil/manipulation resistance, inputs and weights. DESIGN §19.4. | ✍️ | 🏛️ |
 | 3.7 | [`docs/platform/OBSERVABILITY.md`](docs/platform/OBSERVABILITY.md) | Analytics, dependency‑health dashboards, telemetry privacy model. DESIGN §19.6. | ✍️ | 🏛️ |
 
@@ -57,16 +57,16 @@ Legend — **Status:** ✅ authored in this bundle · ✍️ scoped, extract fro
 |---|---|---|---|---|
 | 4.1 | [`docs/specs/SECURITY-MODEL.md`](docs/specs/SECURITY-MODEL.md) | The five defense layers, capability model, hermetic builds, capability‑diff gating, threat model & attack walkthroughs (incl. worm class). DESIGN §13. | ✍️ | 🏛️🧭 |
 | 4.2 | [`docs/specs/PROVENANCE.md`](docs/specs/PROVENANCE.md) | Sigstore/OIDC keyless signing, in‑toto/SLSA attestations, the witnessed transparency log, inclusion proofs. DESIGN §13.2–§13.4. | ✍️ | 🏛️🧭 |
-| 4.3 | [`docs/specs/IDENTITY-AUTH.md`](docs/specs/IDENTITY-AUTH.md) | `did:dash` identities, human/CI/agent auth, mandatory 2FA, fine‑grained scoped grants, permission ACL. DESIGN §14. | ✍️ | 🏛️👤🤖 |
+| 4.3 | [`docs/specs/IDENTITY-AUTH.md`](docs/specs/IDENTITY-AUTH.md) | `did:bnpm` identities, human/CI/agent auth, mandatory 2FA, fine‑grained scoped grants, permission ACL. DESIGN §14. | ✍️ | 🏛️👤🤖 |
 | 4.4 | [`docs/specs/SBOM-LICENSE.md`](docs/specs/SBOM-LICENSE.md) | SPDX/CycloneDX generation from the lock, SPDX expression resolution, license‑change detection. DESIGN §13.6. | ✍️ | 🏛️👤 |
 
 ### 5. Clients, SDKs, and the AI‑native surface
 
 | # | Document | Purpose | Status | Audience |
 |---|---|---|---|---|
-| 5.1 | [`docs/specs/CLI.md`](docs/specs/CLI.md) | `dash` command surface, flags, exit codes, `--json` output contracts, zero‑config behavior. DESIGN §16. | ✍️ | 👤🤖 |
-| 5.2 | [`docs/specs/SDK.md`](docs/specs/SDK.md) | `@dash/core`, `@dash/registry`, `@dash/sbom`, `@dash/agent` — package boundaries and public APIs. DESIGN §17. | ✍️ | 👤🤖 |
-| 5.3 | [`docs/specs/AI-NATIVE.md`](docs/specs/AI-NATIVE.md) | `[ai]` block, extracted API surface, verified examples, tool interfaces, `/.well-known/dash/` agent endpoints (`select`/`explain`/`plan-upgrade`/`audit`/`compose`). DESIGN §18. | ✍️ | 🤖🏛️ |
+| 5.1 | [`docs/specs/CLI.md`](docs/specs/CLI.md) | `bnpm` command surface, flags, exit codes, `--json` output contracts, zero‑config behavior. DESIGN §16. | ✍️ | 👤🤖 |
+| 5.2 | [`docs/specs/SDK.md`](docs/specs/SDK.md) | `@better-npm/core`, `@better-npm/registry`, `@better-npm/sbom`, `@better-npm/agent` — package boundaries and public APIs. DESIGN §17. | ✍️ | 👤🤖 |
+| 5.3 | [`docs/specs/AI-NATIVE.md`](docs/specs/AI-NATIVE.md) | `[ai]` block, extracted API surface, verified examples, tool interfaces, `/.well-known/bnpm/` agent endpoints (`select`/`explain`/`plan-upgrade`/`audit`/`compose`). DESIGN §18. | ✍️ | 🤖🏛️ |
 | 5.4 | [`docs/specs/SEMANTIC-SEARCH.md`](docs/specs/SEMANTIC-SEARCH.md) | Lexical + structural + vector index design, ranking, the query grammar shared by humans and agents. DESIGN §19.2. | ✍️ | 🏛️🤖 |
 
 ### 6. Extensibility & migration
@@ -101,7 +101,7 @@ Legend — **Status:** ✅ authored in this bundle · ✍️ scoped, extract fro
 ## Repository layout
 
 ```
-dash-docs/
+bnpm-docs/
 ├── README.md                     ← you are here (the comprehensive doc list)
 ├── docs/
 │   ├── DESIGN.md                 ← canonical design (source of truth)

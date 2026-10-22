@@ -1,4 +1,4 @@
-# Dash — Vision
+# Bnpm — Vision
 > **Status:** scoped · **Owner:** WS-DOC · **Design refs:** DESIGN §2 · **Implements:** — · **Conformance:** n/a
 
 **Audience:** humans, platform

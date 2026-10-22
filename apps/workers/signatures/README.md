@@ -1,4 +1,4 @@
-# `@dash/workers-signatures`
+# `@better-npm/workers-signatures`
 
 Signature verification worker.
 
@@ -9,7 +9,7 @@ Verifies package cryptographic signatures using Node.js `crypto.verify()` with R
 ## Usage
 
 ```ts
-import { handler } from "@dash/workers-signatures";
+import { handler } from "@better-npm/workers-signatures";
 
 const result = await handler({
   name: "react",

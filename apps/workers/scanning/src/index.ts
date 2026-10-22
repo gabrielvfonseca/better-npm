@@ -1,6 +1,6 @@
-import { loadConfig } from "@dash/config"
-import { createLogger } from "@dash/logger"
-import { createStorageClient } from "@dash/storage"
+import { loadConfig } from "@better-npm/config"
+import { createLogger } from "@better-npm/logger"
+import { createStorageClient } from "@better-npm/storage"
 
 const logger = createLogger("workers-scanning")
 const _config = loadConfig()
@@ -34,13 +34,13 @@ export async function handleScanning(payload: Record<string, unknown>): Promise<
 
   try {
     const result = await processScanning(scanPayload)
-    return { status: "success", worker: "@dash/workers-scanning", result }
+    return { status: "success", worker: "@better-npm/workers-scanning", result }
   } catch (error) {
     logger.error("Failed to process scanning job", {
       packageName: scanPayload.packageName,
       error: String(error),
     })
-    return { status: "failure", worker: "@dash/workers-scanning", error: String(error) }
+    return { status: "failure", worker: "@better-npm/workers-scanning", error: String(error) }
   }
 }
 
@@ -77,7 +77,7 @@ async function processScanning(payload: ScanPayload): Promise<{
     vulnerabilities,
     summary,
     scannedAt: new Date().toISOString(),
-    scanner: "@dash/workers-scanning",
+    scanner: "@better-npm/workers-scanning",
   })
 
   logger.info("Package scan completed", {

@@ -1,4 +1,4 @@
-# Dash — Guiding Principles
+# Bnpm — Guiding Principles
 > **Status:** scoped · **Owner:** WS-DOC · **Design refs:** DESIGN §3 · **Implements:** — · **Conformance:** n/a
 
 **Audience:** humans, contributors

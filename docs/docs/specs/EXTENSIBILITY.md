@@ -1,4 +1,4 @@
-# Dash — Extensibility
+# Bnpm — Extensibility
 > **Status:** scoped · **Owner:** WS-PLATFORM · **Design refs:** DESIGN §19.7 · **Implements:** PLAT-M705 · **Conformance:** conformance/plugins
 
 **Audience:** platform, contributors

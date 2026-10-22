@@ -1,5 +1,5 @@
 -- Migration: 000001_initial_schema
--- Description: Initial database schema for Dash registry
+-- Description: Initial database schema for Bnpm registry
 
 BEGIN;
 

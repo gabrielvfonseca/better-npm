@@ -1,4 +1,4 @@
-# Dash — Lockfile (dash.lock)
+# Bnpm — Lockfile (bnpm.lock)
 > **Status:** scoped · **Owner:** WS-RESOLVE · **Design refs:** DESIGN §8, App. B · **Implements:** RES-M208 · **Conformance:** conformance/lock
 
 **Audience:** humans, agents
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-dash.lock grammar, determinism, content-pinning, inclusion proofs, merge semantics.
+bnpm.lock grammar, determinism, content-pinning, inclusion proofs, merge semantics.
 
 ## Key points (from the design)
 

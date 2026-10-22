@@ -1,4 +1,4 @@
-# `@dash/analytics`
+# `@better-npm/analytics`
 
 Client-side analytics event tracking with batched flushing.
 
@@ -9,10 +9,10 @@ Queues analytics events (page views, identify, track) and flushes them in batche
 ## Usage
 
 ```ts
-import { createAnalyticsClient } from "@dash/analytics";
+import { createAnalyticsClient } from "@better-npm/analytics";
 
 const analytics = createAnalyticsClient({
-  endpoint: "https://analytics.dash.sh/events",
+  endpoint: "https://analytics.bnpm.sh/events",
   flushInterval: 5000,
 });
 

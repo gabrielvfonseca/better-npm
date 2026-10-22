@@ -1,4 +1,4 @@
-# Dash — Security Model
+# Bnpm — Security Model
 > **Status:** scoped · **Owner:** WS-SECURITY · **Design refs:** DESIGN §13 · **Implements:** SEC-M401..409 · **Conformance:** conformance/security, red-team
 
 **Audience:** platform, contributors

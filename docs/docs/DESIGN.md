@@ -1,4 +1,4 @@
-# Dash
+# Bnpm
 
 ### A next-generation package ecosystem for JavaScript and the AI era
 
@@ -13,7 +13,7 @@
 
 ## 0. How to read this document
 
-This is a full technical design for **Dash**, a package management platform intended as a *successor* to npm rather than a faster clone of it. It is organized so that each layer can be read independently:
+This is a full technical design for **Bnpm**, a package management platform intended as a *successor* to npm rather than a faster clone of it. It is organized so that each layer can be read independently:
 
 - **Part I — Why** (§1–§3) analyzes the state of the art and states the theses that justify a clean‑sheet design.
 - **Part II — The model** (§4–§11) defines the data plane: content‑addressable storage, the package format, manifest, lockfile, resolver, cache, and wire protocol.
@@ -22,7 +22,7 @@ This is a full technical design for **Dash**, a package management platform inte
 - **Part V — Adoption** (§20–§23) covers extensibility, migration, npm compatibility, and a phased rollout, ending with the risks that could sink the project.
 - **Appendices** (§A–§F) contain concrete schemas, wire formats, and pseudocode.
 
-A one‑line summary: **Dash is a content‑addressed, cryptographically verifiable, ESM‑first package graph with an immutable registry, a capability‑based security model, and a machine‑readable surface designed so that both humans and autonomous agents can select, compose, audit, and upgrade software deterministically.**
+A one‑line summary: **Bnpm is a content‑addressed, cryptographically verifiable, ESM‑first package graph with an immutable registry, a capability‑based security model, and a machine‑readable surface designed so that both humans and autonomous agents can select, compose, audit, and upgrade software deterministically.**
 
 ---
 
@@ -36,17 +36,17 @@ Any credible successor has to begin by respecting the enormous amount that the i
 
 **npm (the CLI + registry).** npm's genius was frictionless publishing: `npm publish` with no gatekeeper produced network effects nothing has matched. But its foundational choices are the source of most modern pain. Package identity is a *mutable name + semver range*, not a fixed artifact, so "the same install" can differ across machines and time. Lifecycle scripts (`preinstall`/`postinstall`) run arbitrary code with full user privileges at install time — the single largest supply‑chain attack surface in the ecosystem. Tarballs are opaque blobs with weak integrity guarantees historically bolted on (`integrity` in the lockfile arrived late). The dependency tree is duplicated per‑project in `node_modules`, wasting enormous disk and I/O. Provenance and signing were absent for a decade and are still opt‑in.
 
-**pnpm.** pnpm is, in the words of one widely‑shared 2025 analysis, *"correct."* Its content‑addressable global store with hardlinks into a strict, symlinked `node_modules` fixes duplication and enforces that code can only import what it declares. This is the single best idea in the current generation and Dash adopts its spirit wholesale. pnpm's limits are that it still sits on top of npm's registry, manifest, tarball format, and mutable‑version semantics — it is a superior *client* over an unreformed *substrate*.
+**pnpm.** pnpm is, in the words of one widely‑shared 2025 analysis, *"correct."* Its content‑addressable global store with hardlinks into a strict, symlinked `node_modules` fixes duplication and enforces that code can only import what it declares. This is the single best idea in the current generation and Bnpm adopts its spirit wholesale. pnpm's limits are that it still sits on top of npm's registry, manifest, tarball format, and mutable‑version semantics — it is a superior *client* over an unreformed *substrate*.
 
 **Yarn (Berry) + Plug'n'Play.** Yarn PnP eliminated `node_modules` entirely by shipping a resolver map and serving packages from zips, proving that the `node_modules` convention is not sacred. It also pioneered constraints, workspaces, and offline mirrors. Its cost was ecosystem friction: PnP breaks tools that `fs.stat` their way through `node_modules`, so adoption stalled behind a long tail of compatibility shims.
 
 **Bun.** Bun proved how *fast* installation can be — a native, parallel, syscall‑optimized installer that makes npm feel broken. It demonstrated that performance is a feature users feel on every command. Bun optimizes the existing model rather than changing it; it inherits npm's security and identity model.
 
-**Deno + JSR.** JSR is the most important recent rethink. It is ESM‑only, TypeScript‑native (publish source, transpile server‑side, generate `.d.ts` and docs automatically), immutable (uploads never change or disappear), provenance‑aware (OIDC tokenless publishing from CI), cross‑runtime, and it serves *only the modules you import* rather than whole tarballs. JSR is deliberately "not another package manager" — it is a better *registry* that still federates to npm. Dash treats JSR as the closest philosophical ancestor and extends it into a full client+platform.
+**Deno + JSR.** JSR is the most important recent rethink. It is ESM‑only, TypeScript‑native (publish source, transpile server‑side, generate `.d.ts` and docs automatically), immutable (uploads never change or disappear), provenance‑aware (OIDC tokenless publishing from CI), cross‑runtime, and it serves *only the modules you import* rather than whole tarballs. JSR is deliberately "not another package manager" — it is a better *registry* that still federates to npm. Bnpm treats JSR as the closest philosophical ancestor and extends it into a full client+platform.
 
 **Cargo (Rust).** Cargo is the gold standard for developer experience: one manifest (`Cargo.toml`), one lockfile, first‑class workspaces, a build system and package manager unified, features/flags as a first‑class composition mechanism, and a registry (crates.io) with immutable versions (you can *yank* but never mutate or delete). Its resolver is principled. Cargo's lessons: immutability + a unified manifest + workspaces are non‑negotiable. Its limitation for our purposes is that it compiles a closed world; JS must interoperate with a live, dynamic, multi‑runtime ecosystem.
 
-**Go modules.** Go's contributions are profound and under‑appreciated in JS circles: the **minimal version selection (MVS)** algorithm (deterministic, no SAT solver, no lockfile churn), the **module proxy** (`GOPROXY`) as a caching/availability layer, and the **checksum database** (`sumdb`) — a global transparency log that makes every module version's hash publicly auditable and tamper‑evident. Go proved that a *transparency log for package hashes* is practical at ecosystem scale. Dash adopts a sumdb‑style log as a core primitive. Go's weakness is ergonomic rigidity (major versions in import paths) that JS should not copy.
+**Go modules.** Go's contributions are profound and under‑appreciated in JS circles: the **minimal version selection (MVS)** algorithm (deterministic, no SAT solver, no lockfile churn), the **module proxy** (`GOPROXY`) as a caching/availability layer, and the **checksum database** (`sumdb`) — a global transparency log that makes every module version's hash publicly auditable and tamper‑evident. Go proved that a *transparency log for package hashes* is practical at ecosystem scale. Bnpm adopts a sumdb‑style log as a core primitive. Go's weakness is ergonomic rigidity (major versions in import paths) that JS should not copy.
 
 **Swift Package Manager.** SwiftPM is git‑URL‑native and integrated with the language toolchain, with a clean manifest‑as‑code model. Its lesson is tight toolchain integration; its weakness is git‑as‑registry, which couples availability and performance to arbitrary hosting.
 
@@ -54,7 +54,7 @@ Any credible successor has to begin by respecting the enormous amount that the i
 
 ### 1.2 The comparison at a glance
 
-| Capability | npm | pnpm | Yarn PnP | Bun | Cargo | Go mod | JSR | **Dash** |
+| Capability | npm | pnpm | Yarn PnP | Bun | Cargo | Go mod | JSR | **Bnpm** |
 |---|---|---|---|---|---|---|---|---|
 | Immutable published versions | partial¹ | partial¹ | partial¹ | partial¹ | ✅ yank‑only | ✅ | ✅ | ✅ **content‑addressed** |
 | Content‑addressable store | ❌ | ✅ | ✅ (zips) | partial | ✅ | ✅ | n/a | ✅ **BLAKE3 CAS** |
@@ -68,7 +68,7 @@ Any credible successor has to begin by respecting the enormous amount that the i
 
 ¹ *"partial" = the registry discourages but has historically permitted republish/unpublish within windows, and version identity is a mutable name→tarball mapping rather than a content hash.*
 
-### 1.3 The five structural problems Dash exists to solve
+### 1.3 The five structural problems Bnpm exists to solve
 
 Cutting through the specifics, the incumbents share five root problems:
 
@@ -78,13 +78,13 @@ Cutting through the specifics, the incumbents share five root problems:
 4. **Opaque, human‑only metadata.** Package metadata is a loose `package.json` optimized for a 2010 human reading a README. Agents that now write most dependency changes have nothing structured to reason over: no capability declarations, no machine‑readable API surface, no standardized quality or compatibility signals.
 5. **Registry as a dumb file server.** npm's registry is fundamentally a blob store with a search box bolted on. Provenance, reputation, policy, license intelligence, and observability are aftermarket products sold by third parties because the substrate exposes none of it.
 
-Dash is the design that results from refusing all five.
+Bnpm is the design that results from refusing all five.
 
 ---
 
 ## 2. Vision
 
-> **Dash is a verifiable, content‑addressed package graph and a programmable registry, built so that a build is a pure function of a lockfile, code cannot run or reach the network without a declared capability, and every package presents a machine‑readable surface that lets agents and humans select, compose, audit, and upgrade software with equal confidence.**
+> **Bnpm is a verifiable, content‑addressed package graph and a programmable registry, built so that a build is a pure function of a lockfile, code cannot run or reach the network without a declared capability, and every package presents a machine‑readable surface that lets agents and humans select, compose, audit, and upgrade software with equal confidence.**
 
 Three constituencies are first‑class from day one:
 
@@ -103,7 +103,7 @@ The design goal is not "npm with features." It is **the smallest set of primitiv
 3. **No ambient authority.** Code gets zero privileges — no filesystem, network, environment, or subprocess — unless a capability is declared in the manifest and granted at install. Install‑time scripts are abolished in favor of sandboxed, declarative build steps.
 4. **Verify, don't trust.** Every artifact is signed, every publish is logged to a public transparency log, every install checks provenance against policy.
 5. **Simplify by removing.** Prefer deleting a concept over adding a flag. One manifest, one lockfile, one store, one resolution algorithm.
-6. **Compatible at the edges, clean at the core.** Speak npm's protocol and consume npm's packages, but store and reason about them in Dash's model.
+6. **Compatible at the edges, clean at the core.** Speak npm's protocol and consume npm's packages, but store and reason about them in Bnpm's model.
 7. **Machine‑readable is co‑equal with human‑readable.** Every artifact a human reads (docs, changelog, metadata) has a structured form an agent can consume, with the same authority.
 8. **Fast is correct.** Performance is a first‑class correctness property; a tool developers wait on is a tool they route around.
 9. **Offline‑first.** The network is an optimization, not a dependency. The global store is the source of truth locally.
@@ -115,15 +115,15 @@ The design goal is not "npm with features." It is **the smallest set of primitiv
 
 ## 4. Architecture overview
 
-Dash separates cleanly into a **data plane** (immutable content, addressed by hash, cached everywhere) and a **control plane** (mutable pointers: names, versions, tags, policy, reputation). This is the single most important architectural decision: it lets the heavy bytes be cached, mirrored, and served by anyone, while the small, security‑critical mappings stay authoritative and auditable.
+Bnpm separates cleanly into a **data plane** (immutable content, addressed by hash, cached everywhere) and a **control plane** (mutable pointers: names, versions, tags, policy, reputation). This is the single most important architectural decision: it lets the heavy bytes be cached, mirrored, and served by anyone, while the small, security‑critical mappings stay authoritative and auditable.
 
 ```mermaid
 flowchart TB
-  subgraph Client["Client (dash CLI / SDK / agent)"]
+  subgraph Client["Client (bnpm CLI / SDK / agent)"]
     R[Resolver<br/>MVS + constraints]
-    ST[Local CAS store<br/>~/.dash/store]
+    ST[Local CAS store<br/>~/.bnpm/store]
     SB[Build sandbox<br/>capability-gated]
-    LK[dash.lock]
+    LK[bnpm.lock]
   end
 
   subgraph Edge["Edge / CDN (data plane)"]
@@ -131,7 +131,7 @@ flowchart TB
     MIR["Mirrors / proxies"]
   end
 
-  subgraph Registry["Dash Registry (control plane)"]
+  subgraph Registry["Bnpm Registry (control plane)"]
     NS["Name to version<br/>pointer service"]
     TL[("Transparency log<br/>hashes + attestations")]
     PROV["Provenance and signing<br/>Sigstore / in-toto"]
@@ -189,10 +189,10 @@ Because the lockfile records CIDs, **the name service can be completely compromi
 
 ### 5.3 The global store
 
-Each machine has one store, `~/.dash/store`, laid out by CID:
+Each machine has one store, `~/.bnpm/store`, laid out by CID:
 
 ```
-~/.dash/store/
+~/.bnpm/store/
   cas/b3/<aa>/<bb>/<cid>.capsule      # immutable capsule blobs (compressed)
   files/b3/<aa>/<bb>/<filehash>       # individual file objects (for granular reuse)
   unpacked/<cid>/                     # materialized trees, ready to link
@@ -210,7 +210,7 @@ Materialization into a project uses, in order of preference: **reflink/CoW clone
 
 ## 6. Manifest schema
 
-Dash uses a single manifest, `dash.toml`, chosen as TOML for the same reasons Cargo did: unambiguous, comment‑friendly, diff‑friendly, and hostile to the deep nesting that made `package.json` a dumping ground. `package.json` remains fully supported (§22) and can be auto‑imported.
+Bnpm uses a single manifest, `bnpm.toml`, chosen as TOML for the same reasons Cargo did: unambiguous, comment‑friendly, diff‑friendly, and hostile to the deep nesting that made `package.json` a dumping ground. `package.json` remains fully supported (§22) and can be auto‑imported.
 
 A deliberately complete example, annotated:
 
@@ -263,7 +263,7 @@ scripts  = false                      # no arbitrary lifecycle scripts, ever
 # ---- Build (declarative, sandboxed — replaces npm lifecycle scripts) ------
 [build]
 # A build is a pure function: inputs (source + toolchain) -> outputs (dist).
-tool    = "dash:tsc"                   # a pinned, sandboxed builder plugin
+tool    = "bnpm:tsc"                   # a pinned, sandboxed builder plugin
 inputs  = ["src/**", "tsconfig.json"]
 outputs = ["dist/**"]
 
@@ -299,7 +299,7 @@ A capsule is a single framed file: a header, a canonical file table, the file ob
 
 ```
 ┌───────────────────────────────────────────────────────────┐
-│ MAGIC "DASHCAP1"  | version | flags                        │
+│ MAGIC "BNPMCAP1"  | version | flags                        │
 ├───────────────────────────────────────────────────────────┤
 │ MANIFEST  (canonical TOML→CBOR, the resolved manifest)     │
 ├───────────────────────────────────────────────────────────┤
@@ -326,7 +326,7 @@ There is no `preinstall`, `install`, or `postinstall` arbitrary‑code hook. Eve
 
 Packages that need a build step declare it in `[build]` with:
 
-- a **pinned builder** (`dash:tsc`, `dash:wasm`, `dash:node-gyp`, or a third‑party builder capsule, itself content‑addressed and reputation‑scored),
+- a **pinned builder** (`bnpm:tsc`, `bnpm:wasm`, `bnpm:node-gyp`, or a third‑party builder capsule, itself content‑addressed and reputation‑scored),
 - explicit **inputs and outputs** (so the build is a cacheable pure function),
 - a sandbox with **no network and no ambient filesystem** unless a `[capabilities.build]` grant is present and the consumer's policy allows it.
 
@@ -336,15 +336,15 @@ Build outputs are hashed and can be **shared globally**: if someone on the netwo
 
 ## 8. Lockfile design
 
-The lockfile, `dash.lock`, is the contract that makes a build a pure function. It is:
+The lockfile, `bnpm.lock`, is the contract that makes a build a pure function. It is:
 
 - **Text, sorted, and merge‑friendly.** Deterministic ordering means near‑zero spurious diffs and trivial conflict resolution (the perennial `package-lock.json` merge nightmare disappears because entries are keyed and sorted, not tree‑positional).
 - **Content‑pinned.** Every resolved package records its exact **CID**, not just a version and a legacy `integrity` string. The version is documentation; the CID is truth.
 - **Fully closed.** It records the complete resolved graph, the resolver inputs (the manifest ranges that produced it), the registry pointers used, transitive capability grants, and the toolchain identity for any build outputs. Nothing is left to "resolve at install time."
-- **Self‑verifying.** It carries a top‑level BLAKE3 digest over its own canonical content, and each entry references the transparency‑log inclusion proof for its publish event (§13), so `dash verify` can prove offline that every pinned artifact was legitimately published.
+- **Self‑verifying.** It carries a top‑level BLAKE3 digest over its own canonical content, and each entry references the transparency‑log inclusion proof for its publish event (§13), so `bnpm verify` can prove offline that every pinned artifact was legitimately published.
 
 ```toml
-# dash.lock  (excerpt) — generated, do not edit
+# bnpm.lock  (excerpt) — generated, do not edit
 version = 1
 root    = "@acme/app@0.0.0"
 
@@ -353,8 +353,8 @@ name    = "zod"
 version = "3.23.8"
 cid     = "b3:qm7f…z1"                  # the artifact identity
 resolved-from = "^3.23"                 # the range that selected it (MVS)
-registry = "dash:reg.dash.dev"
-provenance = { logIndex = 88123441, slsaLevel = 3, publisher = "did:dash:zod-org" }
+registry = "bnpm:reg.bnpm.dev"
+provenance = { logIndex = 88123441, slsaLevel = 3, publisher = "did:bnpm:zod-org" }
 capabilities = {}                        # grants this package received (none)
 
 [[package]]
@@ -362,16 +362,16 @@ name    = "native-tls"
 version = "0.4.2"
 cid     = "b3:pp02…9k"
 resolved-from = "^0.4"
-provenance = { logIndex = 88110002, slsaLevel = 3, publisher = "did:dash:tls" }
+provenance = { logIndex = 88110002, slsaLevel = 3, publisher = "did:bnpm:tls" }
 capabilities = { net = ["tls"] }         # explicitly granted, recorded here
-build   = { tool = "dash:node-gyp@2.1.0", outputCid = "b3:aa11…", hermetic = true }
+build   = { tool = "bnpm:node-gyp@2.1.0", outputCid = "b3:aa11…", hermetic = true }
 
 [graph]                                  # adjacency, sorted, for fast + reproducible install
 "@acme/app@0.0.0" = ["zod@3.23.8", "native-tls@0.4.2"]
 "native-tls@0.4.2" = []
 ```
 
-Two files, two audiences: `dash.toml` states *intent* for humans and agents; `dash.lock` states *facts* for machines. Agents that upgrade dependencies edit the manifest's intent and regenerate the lock; they never hand‑edit facts.
+Two files, two audiences: `bnpm.toml` states *intent* for humans and agents; `bnpm.lock` states *facts* for machines. Agents that upgrade dependencies edit the manifest's intent and regenerate the lock; they never hand‑edit facts.
 
 ---
 
@@ -379,19 +379,19 @@ Two files, two audiences: `dash.toml` states *intent* for humans and agents; `da
 
 ### 9.1 Algorithm: MVS as the base, SAT only when forced
 
-Dash's default resolver is **Minimal Version Selection (MVS)**, adapted from Go. For each module, given the set of version *requirements* transitively induced by the graph, MVS selects the **lowest version that satisfies all requirements** rather than the highest available. The consequences are exactly the properties npm lacks:
+Bnpm's default resolver is **Minimal Version Selection (MVS)**, adapted from Go. For each module, given the set of version *requirements* transitively induced by the graph, MVS selects the **lowest version that satisfies all requirements** rather than the highest available. The consequences are exactly the properties npm lacks:
 
 - **Deterministic without a solver.** MVS is a graph walk with a per‑module max‑of‑minimums, not a backtracking SAT search. It always terminates, always gives the same answer for the same inputs, and produces *minimal, explainable* diffs ("this upgraded because X now requires ≥1.4").
-- **High‑fidelity builds.** You get the versions maintainers actually tested against (their stated minimums), not whatever floated to the top of the range this morning. Upgrades are an explicit act (`dash up`), never a silent side effect of an unrelated install.
+- **High‑fidelity builds.** You get the versions maintainers actually tested against (their stated minimums), not whatever floated to the top of the range this morning. Upgrades are an explicit act (`bnpm up`), never a silent side effect of an unrelated install.
 - **No lockfile churn.** Because selection is a pure function of the manifests in the graph, the lock only changes when a manifest changes.
 
-MVS assumes packages follow **import compatibility** (no breaking changes within a major version). Dash can *verify* this rather than assume it: the registry computes the public API surface of each version (it has the types) and flags a minor/patch release that removes or changes an exported signature (§19.3). A version that breaks semver is quarantined from MVS auto‑selection.
+MVS assumes packages follow **import compatibility** (no breaking changes within a major version). Bnpm can *verify* this rather than assume it: the registry computes the public API surface of each version (it has the types) and flags a minor/patch release that removes or changes an exported signature (§19.3). A version that breaks semver is quarantined from MVS auto‑selection.
 
-**Where SAT is unavoidable** — genuine conflicts, `peerDependencies` that must unify on a single instance (React, the classic case) — Dash falls back to a bounded PubGrub‑style solver *scoped to the conflict cluster only*, and reports human/agent‑readable explanations for every decision ("cannot satisfy: A needs react@18, B needs react@17; no single version works"). PubGrub's great virtue is exactly this: excellent error messages instead of "unable to resolve dependency tree."
+**Where SAT is unavoidable** — genuine conflicts, `peerDependencies` that must unify on a single instance (React, the classic case) — Bnpm falls back to a bounded PubGrub‑style solver *scoped to the conflict cluster only*, and reports human/agent‑readable explanations for every decision ("cannot satisfy: A needs react@18, B needs react@17; no single version works"). PubGrub's great virtue is exactly this: excellent error messages instead of "unable to resolve dependency tree."
 
 ### 9.2 Multi-version coexistence, safely
 
-For libraries where multiple major versions can coexist (no shared singleton state), Dash permits **graph‑local versioning**: different parts of the graph resolve the same name to different versions, materialized as distinct CIDs and wired precisely by the resolver map — pnpm's strict, non‑hoisted linking taken to its logical end. For libraries that *must* be singletons (a peer dep like `react`), the manifest marks them `singleton = true` and the resolver enforces unification or fails loudly with an explanation. This directly fixes npm's "two copies of React" and "phantom dependency" classes of bug.
+For libraries where multiple major versions can coexist (no shared singleton state), Bnpm permits **graph‑local versioning**: different parts of the graph resolve the same name to different versions, materialized as distinct CIDs and wired precisely by the resolver map — pnpm's strict, non‑hoisted linking taken to its logical end. For libraries that *must* be singletons (a peer dep like `react`), the manifest marks them `singleton = true` and the resolver enforces unification or fails loudly with an explanation. This directly fixes npm's "two copies of React" and "phantom dependency" classes of bug.
 
 ### 9.3 Complexity and performance
 
@@ -405,7 +405,7 @@ Resolution reads only manifests (tiny CBOR blobs), which are cached content‑ad
 
 ```
 L0  In-process resolver memo (single command)
-L1  ~/.dash/store  — machine-global CAS (capsules, files, build outputs, manifests)
+L1  ~/.bnpm/store  — machine-global CAS (capsules, files, build outputs, manifests)
 L2  Team/CI shared cache — a CAS mirror on the LAN or in the cloud, addressed identically
 L3  Edge CDN / mirror — the public data plane
 L4  Origin registry — control plane; touched only for new name→version pointers
@@ -415,7 +415,7 @@ Because every layer is addressed by the *same* content hash, promotion between l
 
 ### 10.2 Offline-first
 
-The store is the source of truth. `dash install` with a lockfile whose CIDs are all present in L1 performs **zero network I/O** and is bit‑identical to an online install. `dash` ships an explicit **offline mode** and a **vendoring** command (`dash vendor`) that materializes every capsule a lockfile needs into a local directory for air‑gapped or long‑term‑archival builds (Go's vendor directory and Yarn's offline mirror, unified and content‑addressed).
+The store is the source of truth. `bnpm install` with a lockfile whose CIDs are all present in L1 performs **zero network I/O** and is bit‑identical to an online install. `bnpm` ships an explicit **offline mode** and a **vendoring** command (`bnpm vendor`) that materializes every capsule a lockfile needs into a local directory for air‑gapped or long‑term‑archival builds (Go's vendor directory and Yarn's offline mirror, unified and content‑addressed).
 
 ### 10.3 Monorepo / workspace native
 
@@ -427,7 +427,7 @@ Workspaces are not a plugin; they are the default shape. A `[workspace]` root en
 
 ### 11.1 Transport
 
-The wire protocol, **DPR** (Dash Package Registry protocol), runs over **HTTP/3 (QUIC)**. QUIC's multiplexing without head‑of‑line blocking is a natural fit for the access pattern — hundreds of small manifest/metadata requests followed by many parallel content‑range fetches — and its 0‑RTT resumption makes warm reconnects effectively free. The protocol degrades gracefully to HTTP/2 and plain HTTPS for restricted networks and proxies.
+The wire protocol, **DPR** (Bnpm Package Registry protocol), runs over **HTTP/3 (QUIC)**. QUIC's multiplexing without head‑of‑line blocking is a natural fit for the access pattern — hundreds of small manifest/metadata requests followed by many parallel content‑range fetches — and its 0‑RTT resumption makes warm reconnects effectively free. The protocol degrades gracefully to HTTP/2 and plain HTTPS for restricted networks and proxies.
 
 ### 11.2 Three verbs, content-addressed
 
@@ -451,7 +451,7 @@ The data plane's purity means mirrors need no trust and packages cannot silently
 
 ## 12. The registry as a programmable platform
 
-The Dash Registry is not a file server with search. It is a programmable system whose primitives are exposed by API and extensible by plugins. It is organized as a set of cooperating services over the control‑plane data model.
+The Bnpm Registry is not a file server with search. It is a programmable system whose primitives are exposed by API and extensible by plugins. It is organized as a set of cooperating services over the control‑plane data model.
 
 ### 12.1 Services
 
@@ -467,11 +467,11 @@ The Dash Registry is not a file server with search. It is a programmable system 
 
 ### 12.2 Everything is an API, and the API is the product
 
-Every registry capability is a documented, versioned API (REST + GraphQL for humans/tools, and a typed SDK; plus a machine surface at `/.well-known/dash/` for agents, §18.6). "Show me all packages my org depends on with a copyleft license and a CVE in the last 90 days" is one query. Private/enterprise registries run the same software (self‑hostable, federatable), so an org can operate a fully private control plane while still federating reads to the public data plane and to npm (§22).
+Every registry capability is a documented, versioned API (REST + GraphQL for humans/tools, and a typed SDK; plus a machine surface at `/.well-known/bnpm/` for agents, §18.6). "Show me all packages my org depends on with a copyleft license and a CVE in the last 90 days" is one query. Private/enterprise registries run the same software (self‑hostable, federatable), so an org can operate a fully private control plane while still federating reads to the public data plane and to npm (§22).
 
 ### 12.3 Federation
 
-A registry can **federate**: resolve names it doesn't own by delegating to upstreams (public Dash, a partner org, or the npm compatibility bridge), while caching results in its own transparency log with a note of provenance. This is how a company runs an internal registry that transparently proxies the public commons yet enforces local policy at the boundary — the "single front door" enterprises want, without a mutable, unauditable mirror.
+A registry can **federate**: resolve names it doesn't own by delegating to upstreams (public Bnpm, a partner org, or the npm compatibility bridge), while caching results in its own transparency log with a note of provenance. This is how a company runs an internal registry that transparently proxies the public commons yet enforces local policy at the boundary — the "single front door" enterprises want, without a mutable, unauditable mirror.
 
 ---
 
@@ -485,7 +485,7 @@ Covered in §5, but its security consequence bears restating: **a version is byt
 
 ### 13.2 Layer 2 — Mandatory provenance and a transparency log
 
-Every publish must carry **provenance**: a Sigstore‑backed signature tied to an OIDC identity (a human via keyless signing, or a CI workload via its OIDC token — GitHub Actions, GitLab, etc.), plus an **in‑toto/SLSA** attestation describing *how* the artifact was built (source repo, commit, builder, inputs). npm made this opt‑in in 2023–2025; Dash makes it **mandatory and logged**. Every publish appends to the public transparency log, so:
+Every publish must carry **provenance**: a Sigstore‑backed signature tied to an OIDC identity (a human via keyless signing, or a CI workload via its OIDC token — GitHub Actions, GitLab, etc.), plus an **in‑toto/SLSA** attestation describing *how* the artifact was built (source repo, commit, builder, inputs). npm made this opt‑in in 2023–2025; Bnpm makes it **mandatory and logged**. Every publish appends to the public transparency log, so:
 
 - Consumers verify, offline, that a pinned CID corresponds to a real, logged publish by the claimed identity (the lockfile carries the inclusion proof).
 - A maintainer can detect an unauthorized publish under their name by watching the log (monitors can alert automatically).
@@ -497,7 +497,7 @@ This is the layer that structurally defeats the Shai‑Hulud class of attack. Tw
 
 **Install/build time.** There are no arbitrary lifecycle scripts (§7.3). Builds run in a hermetic sandbox with **no network, no ambient filesystem, no environment, no subprocess** unless `[capabilities.build]` explicitly requests them *and* the consumer's policy grants them. A worm cannot execute on install because there is no install‑time execution to hijack; a build that suddenly requests network egress is a reviewable manifest diff, not a silent `curl | sh`.
 
-**Runtime.** Packages declare the capabilities they need (`net`, `fs-read`, `fs-write`, `env`, `subprocess`, each with allowlists). The manifest declares; the consumer's policy disposes. Grants are recorded in the lockfile. On modern runtimes that support permissions (Deno natively; Node via its permission model; workers by construction), Dash **enforces** these at runtime by generating the runtime's permission configuration from the granted capability set — so a logging library that declares no network genuinely *cannot* open a socket, even if compromised. Where a runtime can't enforce, Dash still uses the declarations for static policy and review gating.
+**Runtime.** Packages declare the capabilities they need (`net`, `fs-read`, `fs-write`, `env`, `subprocess`, each with allowlists). The manifest declares; the consumer's policy disposes. Grants are recorded in the lockfile. On modern runtimes that support permissions (Deno natively; Node via its permission model; workers by construction), Bnpm **enforces** these at runtime by generating the runtime's permission configuration from the granted capability set — so a logging library that declares no network genuinely *cannot* open a socket, even if compromised. Where a runtime can't enforce, Bnpm still uses the declarations for static policy and review gating.
 
 The key insight, learned directly from 2025's worms: **the attack isn't the malicious code, it's the ambient privilege the code inherits.** Remove the ambient privilege and most published‑package attacks have nowhere to land.
 
@@ -509,7 +509,7 @@ The key insight, learned directly from 2025's worms: **the attack isn't the mali
 
 ### 13.5 Layer 5 — Policy as code
 
-Orgs express policy declaratively and the registry + client enforce it uniformly: allowed licenses, minimum SLSA level, required provenance identities, banned packages/publishers, maximum acceptable CVE severity, capability allowlists, "no new maintainer without 2FA," "no version younger than 24h in production" (a cooldown that blunts fast‑moving worms). Policies live in `dash.policy.toml`, are versioned, and produce machine‑readable pass/fail with reasons — gate‑able in CI and consumable by agents (§18).
+Orgs express policy declaratively and the registry + client enforce it uniformly: allowed licenses, minimum SLSA level, required provenance identities, banned packages/publishers, maximum acceptable CVE severity, capability allowlists, "no new maintainer without 2FA," "no version younger than 24h in production" (a cooldown that blunts fast‑moving worms). Policies live in `bnpm.policy.toml`, are versioned, and produce machine‑readable pass/fail with reasons — gate‑able in CI and consumable by agents (§18).
 
 ### 13.6 SBOM and license intelligence
 
@@ -521,7 +521,7 @@ Every install can emit a standards‑compliant **SBOM** (SPDX / CycloneDX) direc
 
 ### 14.1 Identity
 
-Publishers, orgs, and machines are identified by **decentralized identifiers** (`did:dash:…`) bound to one or more authentication methods:
+Publishers, orgs, and machines are identified by **decentralized identifiers** (`did:bnpm:…`) bound to one or more authentication methods:
 
 - **Humans:** keyless OIDC (GitHub/GitLab/Google/SSO) via Sigstore, plus hardware‑backed passkeys/WebAuthn. **2FA is mandatory for publishing** — no exceptions, unlike npm's slow, partial rollout.
 - **CI/automation:** OIDC workload identity (tokenless publishing from a pipeline, as JSR pioneered) — no long‑lived tokens sitting in CI secrets to be exfiltrated by a worm.
@@ -540,7 +540,7 @@ A capability‑based ACL over three axes — *who* (identity/team/agent), *may d
 Publishing is designed to be **one command for the common case and provably safe for the paranoid case.**
 
 ```
-$ dash publish
+$ bnpm publish
 ```
 
 Under the hood:
@@ -558,27 +558,27 @@ Guardrails, on by default: a **publish cooldown** before a version is eligible f
 
 ## 16. Client / CLI
 
-The CLI is a single fast native binary (`dash`), designed so the common commands are obvious and the advanced ones compose.
+The CLI is a single fast native binary (`bnpm`), designed so the common commands are obvious and the advanced ones compose.
 
 ```
-dash init                 # scaffold dash.toml (imports package.json if present)
-dash add zod              # add a dep by intent; updates manifest + lock, installs
-dash add zod --why        # explain what will be selected and why (MVS trace)
-dash install | dash i      # materialize the locked graph (offline if store is warm)
-dash up [pkg]              # deliberate upgrade: raise minimums, show minimal diff
-dash remove zod
-dash run <task>           # run workspace tasks with content-hash-based skipping
-dash why zod              # full provenance: who published, when, log index, path in graph
-dash audit                # vulns, license conflicts, capability diffs, policy result
-dash verify               # prove every locked CID is legitimately published (offline)
-dash vendor               # materialize all capsules for air-gapped builds
-dash publish              # §15
-dash search "retrying http client, no native deps, permissive license"  # semantic (§19.2)
-dash policy check         # evaluate dash.policy.toml against the graph
-dash agent <subcommand>   # machine-facing surface (§18)
+bnpm init                 # scaffold bnpm.toml (imports package.json if present)
+bnpm add zod              # add a dep by intent; updates manifest + lock, installs
+bnpm add zod --why        # explain what will be selected and why (MVS trace)
+bnpm install | bnpm i      # materialize the locked graph (offline if store is warm)
+bnpm up [pkg]              # deliberate upgrade: raise minimums, show minimal diff
+bnpm remove zod
+bnpm run <task>           # run workspace tasks with content-hash-based skipping
+bnpm why zod              # full provenance: who published, when, log index, path in graph
+bnpm audit                # vulns, license conflicts, capability diffs, policy result
+bnpm verify               # prove every locked CID is legitimately published (offline)
+bnpm vendor               # materialize all capsules for air-gapped builds
+bnpm publish              # §15
+bnpm search "retrying http client, no native deps, permissive license"  # semantic (§19.2)
+bnpm policy check         # evaluate bnpm.policy.toml against the graph
+bnpm agent <subcommand>   # machine-facing surface (§18)
 ```
 
-Design commitments: **zero‑config** (sensible defaults; a bare `dash install` in an npm project just works via the compat bridge), **fast** (native, parallel, QUIC, warm‑cache installs in the tens of milliseconds), **explainable** (`--why` on everything; the resolver can always justify a choice — a direct answer to npm's inscrutable resolution errors), and **honest output** (structured `--json` on every command so tools and agents parse rather than scrape).
+Design commitments: **zero‑config** (sensible defaults; a bare `bnpm install` in an npm project just works via the compat bridge), **fast** (native, parallel, QUIC, warm‑cache installs in the tens of milliseconds), **explainable** (`--why` on everything; the resolver can always justify a choice — a direct answer to npm's inscrutable resolution errors), and **honest output** (structured `--json` on every command so tools and agents parse rather than scrape).
 
 ---
 
@@ -586,10 +586,10 @@ Design commitments: **zero‑config** (sensible defaults; a bare `dash install` 
 
 Everything the CLI does is available as a typed library, because agents and build tools should not shell out and parse text.
 
-- **`@dash/core`** — resolver, store, capsule read/write, lockfile, verification. Pure, embeddable, runtime‑agnostic (Node/Deno/Bun/workers/WASM).
-- **`@dash/registry`** — typed client for RESOLVE/FETCH/PUBLISH, search, provenance, policy.
-- **`@dash/sbom`** — SBOM/license extraction from a lockfile.
-- **`@dash/agent`** — the AI‑native SDK (§18): capability queries, semantic search, upgrade planning, audit, and a safe "apply" that edits manifests and regenerates locks transactionally.
+- **`@better-npm/core`** — resolver, store, capsule read/write, lockfile, verification. Pure, embeddable, runtime‑agnostic (Node/Deno/Bun/workers/WASM).
+- **`@better-npm/registry`** — typed client for RESOLVE/FETCH/PUBLISH, search, provenance, policy.
+- **`@better-npm/sbom`** — SBOM/license extraction from a lockfile.
+- **`@better-npm/agent`** — the AI‑native SDK (§18): capability queries, semantic search, upgrade planning, audit, and a safe "apply" that edits manifests and regenerates locks transactionally.
 
 The programmatic API is the substrate the CLI itself is built on (dogfooded), which guarantees parity: anything a human can do at the terminal, an agent can do through a typed, auditable call.
 
@@ -599,7 +599,7 @@ The programmatic API is the substrate the CLI itself is built on (dogfooded), wh
 
 ## 18. Designing for agents as first-class users
 
-Today, a large and growing share of dependency changes are authored by coding assistants and autonomous agents, and CI systems apply them unattended. Yet package metadata is still optimized for a human skimming a README. The result is that agents *guess*: they infer a package's purpose from its name, its API from scraping types, its safety from download counts. Dash's thesis is that **the ecosystem should present a structured surface that lets an agent reason instead of guess** — and that doing so also makes the human experience better, because the same structure powers real search, real audits, and real upgrade explanations.
+Today, a large and growing share of dependency changes are authored by coding assistants and autonomous agents, and CI systems apply them unattended. Yet package metadata is still optimized for a human skimming a README. The result is that agents *guess*: they infer a package's purpose from its name, its API from scraping types, its safety from download counts. Bnpm's thesis is that **the ecosystem should present a structured surface that lets an agent reason instead of guess** — and that doing so also makes the human experience better, because the same structure powers real search, real audits, and real upgrade explanations.
 
 Crucially, none of this is a separate "AI product." It is the *same* immutable, verifiable graph, exposed with machine‑readable projections. An agent's actions are as auditable and reproducible as a human's because they operate on the same lockfile, transparency log, and capability model.
 
@@ -623,15 +623,15 @@ Docs are published in a structured form (`./docs/agent.md` plus generated API do
 
 ### 18.4 Tool interfaces: packages as callable capabilities
 
-A package may expose a **typed tool interface** (`./ai/tools.json`) describing callable operations in a schema agents already understand (JSON‑Schema / MCP‑compatible tool definitions). This lets an agent discover not just "this is an HTTP client" but "here is the `request(spec) → Response` operation with this input/output schema and these side effects." The registry indexes these, so an agent can query the *capability space* directly ("what packages expose a `sendEmail`‑shaped tool with no filesystem side effects?") and compose software from typed building blocks. This is the bridge between the package ecosystem and the emerging MCP/agent‑tooling world: a Dash package can *be* a set of well‑described tools, discoverable in the same registry, with the same provenance and reputation guarantees.
+A package may expose a **typed tool interface** (`./ai/tools.json`) describing callable operations in a schema agents already understand (JSON‑Schema / MCP‑compatible tool definitions). This lets an agent discover not just "this is an HTTP client" but "here is the `request(spec) → Response` operation with this input/output schema and these side effects." The registry indexes these, so an agent can query the *capability space* directly ("what packages expose a `sendEmail`‑shaped tool with no filesystem side effects?") and compose software from typed building blocks. This is the bridge between the package ecosystem and the emerging MCP/agent‑tooling world: a Bnpm package can *be* a set of well‑described tools, discoverable in the same registry, with the same provenance and reputation guarantees.
 
 ### 18.5 Quality and trust signals, as data
 
-Every signal an agent needs to make a safe choice is a first‑class, queryable field rather than a vibe: provenance (SLSA level, publisher identity, log index), reputation (§19.4), maintenance signals (release cadence, responsiveness, bus‑factor), security posture (open CVEs, capability footprint, whether it requests `subprocess`/`net`), popularity *with context* (downloads, but weighted by verified production use, not raw counts that typosquatters game), and compatibility (verified semver honesty, runtime support matrix, API‑diff cleanliness). An agent's selection policy becomes an explicit, inspectable query over these fields — and so does a human's, via `dash search`.
+Every signal an agent needs to make a safe choice is a first‑class, queryable field rather than a vibe: provenance (SLSA level, publisher identity, log index), reputation (§19.4), maintenance signals (release cadence, responsiveness, bus‑factor), security posture (open CVEs, capability footprint, whether it requests `subprocess`/`net`), popularity *with context* (downloads, but weighted by verified production use, not raw counts that typosquatters game), and compatibility (verified semver honesty, runtime support matrix, API‑diff cleanliness). An agent's selection policy becomes an explicit, inspectable query over these fields — and so does a human's, via `bnpm search`.
 
 ### 18.6 The agent-facing endpoints
 
-The registry exposes a stable machine surface under `/.well-known/dash/` and via `@dash/agent`:
+The registry exposes a stable machine surface under `/.well-known/bnpm/` and via `@better-npm/agent`:
 
 - **`select`** — "give me candidates matching this intent + constraints (license, side‑effects, no native deps, min SLSA, runtime), ranked, with rationale."
 - **`explain`** — "why is package P in my graph, who published it, what does it request, what changed since the version I have."
@@ -643,7 +643,7 @@ Each returns typed, cited results (every claim links to the transparency log / p
 
 ### 18.7 Safe autonomy: agents act within the same guardrails
 
-Agent authority is scoped and auditable (§14.1). An agent can be granted, e.g., "propose dependency upgrades as PRs, subject to `dash.policy.toml`, may not publish, may not grant new capabilities without human approval." Because every mutation flows through the manifest→lock→verify pipeline, an agent that upgrades a dependency produces a diff a human (or a reviewing agent) can inspect, a lock that `dash verify` proves is legitimate, and a capability diff that surfaces any new privilege the change would introduce. **Autonomy is bounded by the same capability and provenance model that protects humans** — an agent cannot, for instance, silently accept a package that newly requests `subprocess`, because that requires a grant the agent doesn't hold.
+Agent authority is scoped and auditable (§14.1). An agent can be granted, e.g., "propose dependency upgrades as PRs, subject to `bnpm.policy.toml`, may not publish, may not grant new capabilities without human approval." Because every mutation flows through the manifest→lock→verify pipeline, an agent that upgrades a dependency produces a diff a human (or a reviewing agent) can inspect, a lock that `bnpm verify` proves is legitimate, and a capability diff that surfaces any new privilege the change would introduce. **Autonomy is bounded by the same capability and provenance model that protects humans** — an agent cannot, for instance, silently accept a package that newly requests `subprocess`, because that requires a grant the agent doesn't hold.
 
 ### 18.8 Generation and provenance of AI-authored packages
 
@@ -663,7 +663,7 @@ Covered in §13; the platform point is that these are **queryable primitives**. 
 
 ### 19.2 Discoverability and semantic search
 
-Search operates on three indexes over the same corpus: **lexical** (names, keywords), **structural** (API shape and tool interfaces — "packages exposing a function returning `Stream<T>`"), and **semantic** (vector embeddings of docs, `[ai].summary`, and intent). A query like *"a retrying HTTP client, ESM, no native deps, permissive license, actively maintained"* resolves against all three plus the policy/quality filters, ranked with explainable scoring. Same endpoint serves humans (`dash search`) and agents (`select`).
+Search operates on three indexes over the same corpus: **lexical** (names, keywords), **structural** (API shape and tool interfaces — "packages exposing a function returning `Stream<T>`"), and **semantic** (vector embeddings of docs, `[ai].summary`, and intent). A query like *"a retrying HTTP client, ESM, no native deps, permissive license, actively maintained"* resolves against all three plus the policy/quality filters, ranked with explainable scoring. Same endpoint serves humans (`bnpm search`) and agents (`select`).
 
 ### 19.3 Dependency and API visualization
 
@@ -694,29 +694,29 @@ The platform is extensible without forking it:
 
 ## 20. Migration and npm compatibility
 
-A superior design that requires a flag day is a research project, not a successor. Dash is built to be adopted **incrementally, per‑project, with an escape hatch at every step.**
+A superior design that requires a flag day is a research project, not a successor. Bnpm is built to be adopted **incrementally, per‑project, with an escape hatch at every step.**
 
 ### 20.1 Consume the npm ecosystem transparently
 
-- **The compat bridge** lets Dash resolve and install npm packages directly. On first encounter it fetches the npm tarball, **canonicalizes it into a capsule** (deterministic normalization → a stable CID), records it in the transparency log with a "sourced from npm" provenance note, and thereafter treats it as any other content‑addressed artifact. The npm registry becomes just another federated upstream (§12.3).
-- **`package.json` is a first‑class input.** `dash init` imports it; Dash can operate a project with no `dash.toml` at all, reading `package.json` + generating `dash.lock`. Teams adopt Dash as *just a faster, safer installer* with zero manifest changes, then opt into native features when ready.
-- **`node_modules` compatibility mode.** For tools that expect a real `node_modules`, Dash materializes a correct (strict, non‑hoisted, link‑based) tree — pnpm‑style — so the entire existing toolchain works unmodified. PnP‑style `node_modules`‑free mode is available for those who want it, but it is opt‑in, learning from Yarn PnP's adoption friction.
+- **The compat bridge** lets Bnpm resolve and install npm packages directly. On first encounter it fetches the npm tarball, **canonicalizes it into a capsule** (deterministic normalization → a stable CID), records it in the transparency log with a "sourced from npm" provenance note, and thereafter treats it as any other content‑addressed artifact. The npm registry becomes just another federated upstream (§12.3).
+- **`package.json` is a first‑class input.** `bnpm init` imports it; Bnpm can operate a project with no `bnpm.toml` at all, reading `package.json` + generating `bnpm.lock`. Teams adopt Bnpm as *just a faster, safer installer* with zero manifest changes, then opt into native features when ready.
+- **`node_modules` compatibility mode.** For tools that expect a real `node_modules`, Bnpm materializes a correct (strict, non‑hoisted, link‑based) tree — pnpm‑style — so the entire existing toolchain works unmodified. PnP‑style `node_modules`‑free mode is available for those who want it, but it is opt‑in, learning from Yarn PnP's adoption friction.
 
 ### 20.2 Publish to both worlds
 
-`dash publish` can **dual‑publish**: emit the native capsule to the Dash registry *and* a compatible tarball to npm, so a maintainer reaches Dash users and the entire installed base of npm users from one command. Early adopters lose no audience.
+`bnpm publish` can **dual‑publish**: emit the native capsule to the Bnpm registry *and* a compatible tarball to npm, so a maintainer reaches Bnpm users and the entire installed base of npm users from one command. Early adopters lose no audience.
 
 ### 20.3 Wrapping legacy risk
 
-Packages that still contain lifecycle scripts (imported via the bridge) don't get to run them ambiently. Dash quarantines them: either the script is unnecessary (most are, or can be replaced by a declarative build) and is dropped, or it is run in the hermetic build sandbox with no capabilities unless explicitly granted and policy‑approved — so importing the legacy ecosystem doesn't import its ambient‑execution risk.
+Packages that still contain lifecycle scripts (imported via the bridge) don't get to run them ambiently. Bnpm quarantines them: either the script is unnecessary (most are, or can be replaced by a declarative build) and is dropped, or it is run in the hermetic build sandbox with no capabilities unless explicitly granted and policy‑approved — so importing the legacy ecosystem doesn't import its ambient‑execution risk.
 
 ### 20.4 Migration path, staged
 
-1. **Drop‑in installer.** Use `dash install` on an unmodified npm project. Win: speed, dedup, offline, a real lockfile, and audit/provenance over your existing deps.
-2. **Adopt the manifest.** Import to `dash.toml`; gain capabilities, typed exports, the `[ai]` surface.
+1. **Drop‑in installer.** Use `bnpm install` on an unmodified npm project. Win: speed, dedup, offline, a real lockfile, and audit/provenance over your existing deps.
+2. **Adopt the manifest.** Import to `bnpm.toml`; gain capabilities, typed exports, the `[ai]` surface.
 3. **Turn on policy.** Enforce provenance, licenses, capability review, cooldowns in CI.
-4. **Native publish.** Dual‑publish, then Dash‑native as the ecosystem crosses over.
-5. **Drop the bridge.** For greenfield or fully‑migrated graphs, run pure Dash — no npm, no `node_modules`, no scripts.
+4. **Native publish.** Dual‑publish, then Bnpm‑native as the ecosystem crosses over.
+5. **Drop the bridge.** For greenfield or fully‑migrated graphs, run pure Bnpm — no npm, no `node_modules`, no scripts.
 
 Each step delivers value on its own; none requires the next.
 
@@ -724,7 +724,7 @@ Each step delivers value on its own; none requires the next.
 
 ## 21. What we deliberately remove
 
-Simplicity here means *fewer concepts*, not fewer features. Dash removes:
+Simplicity here means *fewer concepts*, not fewer features. Bnpm removes:
 
 - **Lifecycle scripts** (`pre/post*install`) — replaced by declarative, sandboxed builds. *(Removes the dominant attack vector.)*
 - **Mutable versions / unpublish windows** — replaced by immutable content + yank. *(Removes a whole class of reproducibility and trust bugs.)*
@@ -761,8 +761,8 @@ flowchart LR
     P6[Reputation / analytics]
   end
   subgraph Clients["CLIENTS — humans, CI, agents"]
-    H[dash CLI]
-    A[dash/agent SDK]
+    H[bnpm CLI]
+    A[bnpm/agent SDK]
     CI[CI / CD]
   end
   Clients -->|RESOLVE| P1
@@ -782,7 +782,7 @@ The whole system is this picture: **untrusted bytes verified against a small, au
 
 A design document that only lists strengths is marketing. The real obstacles:
 
-- **Ecosystem gravity.** npm's network effect is the deepest moat in software. Dash's answer is to be a *strictly better npm client first* (§20.1) so adoption costs nothing, and to earn the native surface later. This is a bet on gradualism; it could still stall in the "good enough" trough that Yarn PnP hit.
+- **Ecosystem gravity.** npm's network effect is the deepest moat in software. Bnpm's answer is to be a *strictly better npm client first* (§20.1) so adoption costs nothing, and to earn the native surface later. This is a bet on gradualism; it could still stall in the "good enough" trough that Yarn PnP hit.
 - **Runtime enforcement is uneven.** Capability enforcement at runtime is strong on Deno and workers, partial on Node, absent on old runtimes. Where enforcement is unavailable, capabilities degrade to *static policy + review gating* — still valuable (it stopped the worm at install), but not a runtime guarantee everywhere. This is a real, honest gap that closes as runtimes adopt permission models.
 - **MVS vs. ecosystem habits.** MVS is unfamiliar to JS developers used to "latest wins." The semver‑honesty verification (§9.1) is what makes it safe, but it depends on the registry's API‑diffing being accurate for dynamic, type‑fluid JS. Edge cases (types that lie, runtime behavior not captured by signatures) remain.
 - **Publish‑source transpilation** must be deterministic across a sprawling matrix of runtimes and TS versions; getting bit‑reproducibility here is genuine engineering, not a given.
@@ -796,7 +796,7 @@ None of these is fatal, but each is where the project would actually be won or l
 
 # Appendices
 
-## Appendix A — Example `dash.toml` (application, with workspace)
+## Appendix A — Example `bnpm.toml` (application, with workspace)
 
 ```toml
 [package]
@@ -822,7 +822,7 @@ fs-write   = ["./.cache"]
 env        = ["NODE_ENV", "ACME_API_KEY"]
 subprocess = false
 
-[policy]                       # inline policy (or reference dash.policy.toml)
+[policy]                       # inline policy (or reference bnpm.policy.toml)
 min-slsa-level      = 3
 allow-licenses      = ["MIT", "Apache-2.0", "BSD-3-Clause", "ISC"]
 require-provenance  = true
@@ -839,7 +839,7 @@ intent  = "app/web-frontend"
 side-effects = "network"
 ```
 
-## Appendix B — `dash.lock` grammar (informative)
+## Appendix B — `bnpm.lock` grammar (informative)
 
 ```
 lockfile   := header package* graph
@@ -895,31 +895,31 @@ PUBLISH  { capsule, attestations[], signature, identity(OIDC) }
 
 Transport: HTTP/3 (QUIC), fallback HTTP/2 → HTTPS. All content responses are self‑verifying; only RESOLVE/PUBLISH require a trusted control‑plane endpoint, and their results are auditable against the witnessed transparency log.
 
-## Appendix E — Agent API sketch (`@dash/agent`)
+## Appendix E — Agent API sketch (`@better-npm/agent`)
 
 ```ts
-const dash = createAgentClient({ registry, identity /* scoped, time-boxed */ });
+const bnpm = createAgentClient({ registry, identity /* scoped, time-boxed */ });
 
 // Select by intent + hard constraints; results are ranked and cited.
-const candidates = await dash.select({
+const candidates = await bnpm.select({
   intent: "networking/http-client",
   constraints: { license: ["MIT","Apache-2.0"], sideEffects: "none",
                  nativeDeps: false, minSlsa: 3, runtime: "node>=22" },
 });
 
 // Plan a safe upgrade; get API-diff impact and capability diffs BEFORE applying.
-const plan = await dash.planUpgrade({ goal: "security-patches" });
+const plan = await bnpm.planUpgrade({ goal: "security-patches" });
 //   -> { changes:[{pkg, from, to, apiDiff, capabilityDiff, breaking:false}], ... }
 
-// Apply transactionally: edits dash.toml, regenerates dash.lock, verifies.
-await dash.apply(plan, { policy: "./dash.policy.toml" }); // refuses if policy fails
+// Apply transactionally: edits bnpm.toml, regenerates bnpm.lock, verifies.
+await bnpm.apply(plan, { policy: "./bnpm.policy.toml" }); // refuses if policy fails
 
 // Everything is auditable: each result links to the transparency log + provenance.
 ```
 
-## Appendix F — Mapping Dash's decisions to their intellectual sources
+## Appendix F — Mapping Bnpm's decisions to their intellectual sources
 
-| Dash decision | Borrowed / adapted from | Improved by |
+| Bnpm decision | Borrowed / adapted from | Improved by |
 |---|---|---|
 | Content‑addressed store + hardlink/reflink | pnpm, Nix | file‑level dedup, BLAKE3 range fetch |
 | Immutable versions (yank, never mutate) | Cargo/crates.io, Go, JSR | content addressing makes it structural |
@@ -935,4 +935,4 @@ await dash.apply(plan, { policy: "./dash.policy.toml" }); // refuses if policy f
 
 ---
 
-*End of design. Dash is a proposal: the argument is that the next decade's default JavaScript distribution system will be content‑addressed, verifiable, capability‑secured, and machine‑legible — and that the cost of getting there can be made nearly zero by being a better npm client on the way to being a better ecosystem.*
+*End of design. Bnpm is a proposal: the argument is that the next decade's default JavaScript distribution system will be content‑addressed, verifiable, capability‑secured, and machine‑legible — and that the cost of getting there can be made nearly zero by being a better npm client on the way to being a better ecosystem.*

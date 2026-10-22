@@ -1,4 +1,4 @@
-# Dash — Provenance & Transparency Log
+# Bnpm — Provenance & Transparency Log
 > **Status:** scoped · **Owner:** WS-SECURITY · **Design refs:** DESIGN §13.2–§13.4 · **Implements:** REG-M305..307 · **Conformance:** conformance/provenance
 
 **Audience:** platform, contributors

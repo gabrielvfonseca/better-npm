@@ -1,6 +1,6 @@
-import { loadConfig } from "@dash/config"
-import { createLogger } from "@dash/logger"
-import { type TelemetryClient, createTelemetryClient } from "@dash/telemetry"
+import { loadConfig } from "@better-npm/config"
+import { createLogger } from "@better-npm/logger"
+import { type TelemetryClient, createTelemetryClient } from "@better-npm/telemetry"
 import { Hono } from "hono"
 import { HTTPException } from "hono/http-exception"
 import type { ContentfulStatusCode } from "hono/utils/http-status"
@@ -88,7 +88,7 @@ app.get("/health", (c) => {
   const connected = telemetry?.isConnected() ?? false
   return c.json({
     status: connected ? "healthy" : "degraded",
-    service: "@dash/telemetry",
+    service: "@better-npm/telemetry",
     client: connected ? "connected" : "disconnected",
   })
 })

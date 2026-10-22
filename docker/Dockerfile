@@ -13,7 +13,7 @@ COPY package.json bun.lock turbo.json ./
 COPY . .
 ARG APP
 ARG PACKAGE
-RUN turbo prune --docker @dash/${PACKAGE}
+RUN turbo prune --docker @better-npm/${PACKAGE}
 
 # Stage 2: Install dependencies
 FROM base AS deps
@@ -27,17 +27,17 @@ COPY --from=pruner /app/out/full/ .
 COPY --from=deps /app/node_modules ./node_modules
 ARG APP
 ARG PACKAGE
-RUN --mount=type=cache,target=/root/.turbo bun run build --filter=@dash/${PACKAGE}
+RUN --mount=type=cache,target=/root/.turbo bun run build --filter=@better-npm/${PACKAGE}
 
 # Stage 4: Runner
 FROM base AS runner
 ARG APP
 ARG PORT=3000
-RUN addgroup -S dash && adduser -S -G dash dash
-COPY --from=builder --chown=dash:dash /app/apps/${APP}/dist ./dist
-COPY --from=builder --chown=dash:dash /app/apps/${APP}/package.json ./
-COPY --from=builder --chown=dash:dash /app/node_modules ./node_modules
-USER dash
+RUN addgroup -S bnpm && adduser -S -G bnpm bnpm
+COPY --from=builder --chown=bnpm:bnpm /app/apps/${APP}/dist ./dist
+COPY --from=builder --chown=bnpm:bnpm /app/apps/${APP}/package.json ./
+COPY --from=builder --chown=bnpm:bnpm /app/node_modules ./node_modules
+USER bnpm
 ENV NODE_ENV=production
 ENV PORT=${PORT}
 EXPOSE ${PORT}

@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest"
-import { verifyToken, createToken, hashPassword, verifyPassword, parseAuthHeader } from "./index.js"
+import { describe, expect, it } from "vitest"
+import { createToken, hashPassword, parseAuthHeader, verifyPassword, verifyToken } from "./index.js"
 
-describe("@dash/auth", () => {
+describe("@better-npm/auth", () => {
   const secret = "test-secret-key"
 
   describe("createToken and verifyToken", () => {

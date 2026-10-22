@@ -1,16 +1,16 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 import {
   createContractRoute,
   getPackage,
-  listPackages,
-  publishPackage,
-  searchPackages,
-  login,
-  register,
   getStats,
+  listPackages,
+  login,
+  publishPackage,
+  register,
+  searchPackages,
 } from "./index.js"
 
-describe("@dash/contracts", () => {
+describe("@better-npm/contracts", () => {
   it("should create a contract route", () => {
     const route = createContractRoute({
       path: "/test",

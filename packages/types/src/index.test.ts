@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 import { UserRole } from "./index.js"
 
-describe("@dash/types", () => {
+describe("@better-npm/types", () => {
   it("should export UserRole enum with correct values", () => {
     expect(UserRole.Admin).toBe("admin")
     expect(UserRole.Moderator).toBe("moderator")

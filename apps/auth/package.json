@@ -1,5 +1,5 @@
 {
-  "name": "@dash/app-auth",
+  "name": "@better-npm/app-auth",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -14,9 +14,9 @@
   },
   "dependencies": {
     "hono": "^4.7.0",
-    "@dash/config": "workspace:*",
-    "@dash/logger": "workspace:*",
-    "@dash/auth": "workspace:*"
+    "@better-npm/config": "workspace:*",
+    "@better-npm/logger": "workspace:*",
+    "@better-npm/auth": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.19.0",

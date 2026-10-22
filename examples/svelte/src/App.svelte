@@ -10,8 +10,8 @@
 </script>
 
 <div>
-  <h1>Dash + Svelte</h1>
-  <p>Welcome to the Dash registry Svelte example.</p>
+  <h1>Bnpm + Svelte</h1>
+  <p>Welcome to the Bnpm registry Svelte example.</p>
   {#if pkg}
     <div>
       <h2>{pkg.name}</h2>

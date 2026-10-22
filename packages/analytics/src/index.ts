@@ -22,7 +22,7 @@ export class AnalyticsClient {
 
   constructor(config: AnalyticsConfig = {}) {
     this.config = {
-      endpoint: config.endpoint ?? "https://analytics.dash.dev/events",
+      endpoint: config.endpoint ?? "https://analytics.bnpm.dev/events",
       apiKey: config.apiKey ?? "",
       flushInterval: config.flushInterval ?? 30000,
       maxQueueSize: config.maxQueueSize ?? 100,
@@ -32,7 +32,7 @@ export class AnalyticsClient {
 
     if (this.config.enabled) {
       this.flushTimer = setInterval(() => {
-        void this.flush()
+        this.flush()
       }, this.config.flushInterval)
     }
   }
@@ -51,7 +51,7 @@ export class AnalyticsClient {
     })
 
     if (this.queue.length >= this.config.maxQueueSize) {
-      void this.flush()
+      this.flush()
     }
   }
 

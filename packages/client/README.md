@@ -1,4 +1,4 @@
-# `@dash/client`
+# `@better-npm/client`
 
 HTTP client with retry, timeout, and Bearer token authentication.
 
@@ -9,11 +9,11 @@ A configurable HTTP client with GET/POST/PUT/DELETE/PATCH methods, exponential b
 ## Usage
 
 ```ts
-import { createClient } from "@dash/client";
+import { createClient } from "@better-npm/client";
 
 const client = createClient({
-  baseUrl: "https://registry.dash.sh",
-  token: "dash_tkn_xxx",
+  baseUrl: "https://registry.bnpm.sh",
+  token: "bnpm_tkn_xxx",
 });
 
 const pkg = await client.get("/packages/react");

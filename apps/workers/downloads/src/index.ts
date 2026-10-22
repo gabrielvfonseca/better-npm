@@ -5,9 +5,9 @@ import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { Readable } from "node:stream"
 import { pipeline } from "node:stream/promises"
-import { loadConfig } from "@dash/config"
-import { createLogger } from "@dash/logger"
-import { createStorageClient } from "@dash/storage"
+import { loadConfig } from "@better-npm/config"
+import { createLogger } from "@better-npm/logger"
+import { createStorageClient } from "@better-npm/storage"
 
 const logger = createLogger("workers-downloads")
 const _config = loadConfig()
@@ -34,13 +34,13 @@ export async function handleDownload(payload: Record<string, unknown>): Promise<
 
   try {
     const result = await processDownload(downloadPayload)
-    return { status: "success", worker: "@dash/workers-downloads", result }
+    return { status: "success", worker: "@better-npm/workers-downloads", result }
   } catch (error) {
     logger.error("Failed to process download job", {
       packageName: downloadPayload.packageName,
       error: String(error),
     })
-    return { status: "failure", worker: "@dash/workers-downloads", error: String(error) }
+    return { status: "failure", worker: "@better-npm/workers-downloads", error: String(error) }
   }
 }
 
@@ -54,7 +54,7 @@ async function processDownload(payload: DownloadPayload): Promise<{
   const { packageName, packageVersion, url, integrity, destination } = payload
 
   const cacheDir = join(
-    destination || join(tmpdir(), "dash-cache", "packages"),
+    destination || join(tmpdir(), "bnpm-cache", "packages"),
     packageName,
     packageVersion,
   )

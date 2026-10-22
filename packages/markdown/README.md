@@ -1,4 +1,4 @@
-# `@dash/markdown`
+# `@better-npm/markdown`
 
 Lightweight markdown-to-HTML renderer.
 
@@ -9,7 +9,7 @@ Converts markdown to basic HTML supporting headings, bold, italic, code, unorder
 ## Usage
 
 ```ts
-import { renderMarkdown, extractHeadings, extractMetadata } from "@dash/markdown";
+import { renderMarkdown, extractHeadings, extractMetadata } from "@better-npm/markdown";
 
 const html = renderMarkdown("# Hello\nThis is **bold** text.");
 const headings = extractHeadings(markdown);

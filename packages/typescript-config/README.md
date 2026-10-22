@@ -1,6 +1,6 @@
-# `@dash/typescript-config`
+# `@better-npm/typescript-config`
 
-Shared TypeScript configuration for the Dash monorepo.
+Shared TypeScript configuration for the Bnpm monorepo.
 
 ## Overview
 
@@ -12,6 +12,6 @@ In `tsconfig.json`:
 
 ```json
 {
-  "extends": "@dash/typescript-config/tsconfig.base.json"
+  "extends": "@better-npm/typescript-config/tsconfig.base.json"
 }
 ```

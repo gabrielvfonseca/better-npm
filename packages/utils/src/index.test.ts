@@ -1,7 +1,17 @@
-import { describe, it, expect } from "vitest"
-import { cn, formatBytes, formatDate, formatRelativeTime, truncate, capitalize, pluralize, range, clamp, isObject } from "./index.js"
+import { describe, expect, it } from "vitest"
+import {
+  capitalize,
+  clamp,
+  cn,
+  formatBytes,
+  formatDate,
+  isObject,
+  pluralize,
+  range,
+  truncate,
+} from "./index.js"
 
-describe("@dash/utils", () => {
+describe("@better-npm/utils", () => {
   describe("cn", () => {
     it("should join class names", () => {
       expect(cn("a", "b")).toBe("a b")

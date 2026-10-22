@@ -1,4 +1,4 @@
-# Dash — Reputation Scoring
+# Bnpm — Reputation Scoring
 > **Status:** scoped · **Owner:** WS-PLATFORM · **Design refs:** DESIGN §19.4 · **Implements:** PLAT-M703 · **Conformance:** conformance/reputation
 
 **Audience:** platform

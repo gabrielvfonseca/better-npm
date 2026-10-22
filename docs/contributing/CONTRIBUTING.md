@@ -1,4 +1,4 @@
-# Dash — Contributing
+# Bnpm — Contributing
 > **Status:** planned · **Owner:** WS-DOC · **Design refs:** DESIGN — · **Implements:** — · **Conformance:** n/a
 
 **Audience:** contributors, agents

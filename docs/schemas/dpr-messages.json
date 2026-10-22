@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Dash DPR Protocol — HTTP/REST Fallback Message Schemas",
+  "title": "Bnpm DPR Protocol — HTTP/REST Fallback Message Schemas",
   "description": "JSON Schema definitions for the three DPR protocol verbs: RESOLVE, FETCH, and PUBLISH. Used when the gRPC/protobuf transport is unavailable and the protocol degrades to HTTP/2 JSON.",
   "definitions": {
     "cid": {

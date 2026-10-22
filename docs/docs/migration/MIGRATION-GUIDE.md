@@ -1,4 +1,4 @@
-# Dash — Migration Guide
+# Bnpm — Migration Guide
 > **Status:** planned · **Owner:** WS-BRIDGE · **Design refs:** DESIGN §20.4 · **Implements:** BRIDGE-M508 · **Conformance:** n/a
 
 **Audience:** humans

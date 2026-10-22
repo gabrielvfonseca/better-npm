@@ -1,5 +1,5 @@
 variable "REGISTRY" {
-  default = "ghcr.io/dash-io"
+  default = "ghcr.io/bnpm-io"
 }
 
 variable "TAG" {
@@ -15,9 +15,9 @@ variable "CACHE_TO" {
 }
 
 target "api" {
-  context    = "."
-  dockerfile = "Dockerfile"
-  tags       = ["${REGISTRY}/dash-api:${TAG}"]
+  context    = ".."
+  dockerfile = "./Dockerfile"
+  tags       = ["${REGISTRY}/bnpm-api:${TAG}"]
   args = {
     APP     = "api"
     PACKAGE = "app-api"
@@ -28,9 +28,9 @@ target "api" {
 }
 
 target "registry" {
-  context    = "."
-  dockerfile = "Dockerfile"
-  tags       = ["${REGISTRY}/dash-registry:${TAG}"]
+  context    = ".."
+  dockerfile = "./Dockerfile"
+  tags       = ["${REGISTRY}/bnpm-registry:${TAG}"]
   args = {
     APP     = "registry"
     PACKAGE = "registry"
@@ -41,9 +41,9 @@ target "registry" {
 }
 
 target "worker-downloads" {
-  context    = "."
-  dockerfile = "tools/docker/Dockerfile.worker"
-  tags       = ["${REGISTRY}/dash-worker-downloads:${TAG}"]
+  context    = ".."
+  dockerfile = "./Dockerfile.worker"
+  tags       = ["${REGISTRY}/bnpm-worker-downloads:${TAG}"]
   args = {
     WORKER_NAME = "downloads"
   }
@@ -52,9 +52,9 @@ target "worker-downloads" {
 }
 
 target "worker-indexing" {
-  context    = "."
-  dockerfile = "tools/docker/Dockerfile.worker"
-  tags       = ["${REGISTRY}/dash-worker-indexing:${TAG}"]
+  context    = ".."
+  dockerfile = "./Dockerfile.worker"
+  tags       = ["${REGISTRY}/bnpm-worker-indexing:${TAG}"]
   args = {
     WORKER_NAME = "indexing"
   }
@@ -63,9 +63,9 @@ target "worker-indexing" {
 }
 
 target "worker-metadata" {
-  context    = "."
-  dockerfile = "tools/docker/Dockerfile.worker"
-  tags       = ["${REGISTRY}/dash-worker-metadata:${TAG}"]
+  context    = ".."
+  dockerfile = "./Dockerfile.worker"
+  tags       = ["${REGISTRY}/bnpm-worker-metadata:${TAG}"]
   args = {
     WORKER_NAME = "metadata"
   }
@@ -74,9 +74,9 @@ target "worker-metadata" {
 }
 
 target "worker-scanning" {
-  context    = "."
-  dockerfile = "tools/docker/Dockerfile.worker"
-  tags       = ["${REGISTRY}/dash-worker-scanning:${TAG}"]
+  context    = ".."
+  dockerfile = "./Dockerfile.worker"
+  tags       = ["${REGISTRY}/bnpm-worker-scanning:${TAG}"]
   args = {
     WORKER_NAME = "scanning"
   }
@@ -85,9 +85,9 @@ target "worker-scanning" {
 }
 
 target "worker-signatures" {
-  context    = "."
-  dockerfile = "tools/docker/Dockerfile.worker"
-  tags       = ["${REGISTRY}/dash-worker-signatures:${TAG}"]
+  context    = ".."
+  dockerfile = "./Dockerfile.worker"
+  tags       = ["${REGISTRY}/bnpm-worker-signatures:${TAG}"]
   args = {
     WORKER_NAME = "signatures"
   }
@@ -96,9 +96,9 @@ target "worker-signatures" {
 }
 
 target "worker-analytics" {
-  context    = "."
-  dockerfile = "tools/docker/Dockerfile.worker"
-  tags       = ["${REGISTRY}/dash-worker-analytics:${TAG}"]
+  context    = ".."
+  dockerfile = "./Dockerfile.worker"
+  tags       = ["${REGISTRY}/bnpm-worker-analytics:${TAG}"]
   args = {
     WORKER_NAME = "analytics"
   }
@@ -107,9 +107,9 @@ target "worker-analytics" {
 }
 
 target "worker-cleanup" {
-  context    = "."
-  dockerfile = "tools/docker/Dockerfile.worker"
-  tags       = ["${REGISTRY}/dash-worker-cleanup:${TAG}"]
+  context    = ".."
+  dockerfile = "./Dockerfile.worker"
+  tags       = ["${REGISTRY}/bnpm-worker-cleanup:${TAG}"]
   args = {
     WORKER_NAME = "cleanup"
   }

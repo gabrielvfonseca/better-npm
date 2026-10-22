@@ -1,10 +1,10 @@
 # Svelte Example
 
-A [Svelte 5](https://svelte.dev/) + [Vite](https://vite.dev/) application that demonstrates using `@dash/sdk` with Svelte 5 runes (`$state`, `$effect`).
+A [Svelte 5](https://svelte.dev/) + [Vite](https://vite.dev/) application that demonstrates using `@better-npm/sdk` with Svelte 5 runes (`$state`, `$effect`).
 
 ## What This Demonstrates
 
-- Using `@dash/sdk` in a Svelte 5 + Vite browser app
+- Using `@better-npm/sdk` in a Svelte 5 + Vite browser app
 - Svelte 5 runes: `$state` for reactive declarations, `$effect` for side effects
 - The new Svelte 5 `mount` API in `main.ts`
 
@@ -39,4 +39,4 @@ svelte/
 - `$state` replaces `let` for reactive variables
 - `$effect` replaces `onMount` / `$:` for reactive side effects
 - The Svelte 5 `mount()` function in `main.ts` replaces the legacy `new App()` constructor
-- API calls are proxied through Vite to the Dash registry at `http://localhost:3000`
+- API calls are proxied through Vite to the Bnpm registry at `http://localhost:3000`

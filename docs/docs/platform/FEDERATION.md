@@ -1,4 +1,4 @@
-# Dash — Federation
+# Bnpm — Federation
 > **Status:** scoped · **Owner:** WS-PLATFORM · **Design refs:** DESIGN §12.3 · **Implements:** PLAT-M701 · **Conformance:** conformance/federation
 
 **Audience:** platform

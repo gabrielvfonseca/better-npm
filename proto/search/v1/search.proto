@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package dash.search.v1;
+package bnpm.search.v1;
 
-option go_package = "github.com/dash-io/dash/proto/search/v1;searchv1";
+option go_package = "github.com/bnpm-io/bnpm/proto/search/v1;searchv1";
 
 import "common/v1/common.proto";
 import "packages/v1/package.proto";
@@ -34,12 +34,12 @@ message SearchResponse {
   repeated SearchResult results = 1;
   int32 total = 2;
   double took_ms = 3;
-  dash.common.v1.Pagination pagination = 4;
+  bnpm.common.v1.Pagination pagination = 4;
 }
 
 message SearchResult {
-  dash.packages.v1.Package package = 1;
-  dash.packages.v1.PackageVersion latest_version = 2;
+  bnpm.packages.v1.Package package = 1;
+  bnpm.packages.v1.PackageVersion latest_version = 2;
   int64 download_count = 3;
   double score = 4;
   repeated string highlights = 5;

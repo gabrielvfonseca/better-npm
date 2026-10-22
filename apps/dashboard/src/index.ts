@@ -1,1 +1,1 @@
-export const metadata = { name: "@dash/dashboard" }
+export const metadata = { name: "@better-npm/dashboard" }

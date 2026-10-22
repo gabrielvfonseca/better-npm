@@ -1,6 +1,6 @@
-# `@dash/icons`
+# `@better-npm/icons`
 
-Icon name types and metadata for the Dash design system.
+Icon name types and metadata for the Bnpm design system.
 
 ## Overview
 
@@ -9,6 +9,6 @@ Exports `IconName` union type covering 48 icon names (search, chevron, x, check,
 ## Usage
 
 ```ts
-import type { IconName, IconProps } from "@dash/icons";
-import { ICON_NAMES } from "@dash/icons";
+import type { IconName, IconProps } from "@better-npm/icons";
+import { ICON_NAMES } from "@better-npm/icons";
 ```

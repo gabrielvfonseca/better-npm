@@ -1,11 +1,11 @@
-# Dash
+# Better-npm
 
 A comprehensive package management platform — registry, CLI, SDK, and tooling for the modern ecosystem.
 
 ## Structure
 
 ```
-dash/
+better-npm/
 ├── apps/          # Application services (API, registry, website, workers, etc.)
 ├── crates/        # Rust crates (CLI, resolver, installer, graph, crypto, etc.)
 ├── packages/      # TypeScript packages (SDK, client, UI, schemas, configs, etc.)

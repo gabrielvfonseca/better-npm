@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://dash.dev/schemas/dash.lock.json",
-  "title": "Dash Lockfile",
-  "description": "Schema for dash.lock — the generated, deterministic lockfile that pins every resolved dependency to its content ID (CID), making a build a pure function of the lockfile contents. This file is machine-generated; do not edit by hand.",
+  "$id": "https://bnpm.dev/schemas/bnpm.lock.json",
+  "title": "Bnpm Lockfile",
+  "description": "Schema for bnpm.lock — the generated, deterministic lockfile that pins every resolved dependency to its content ID (CID), making a build a pure function of the lockfile contents. This file is machine-generated; do not edit by hand.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -37,7 +37,7 @@
           "name": {
             "type": "string",
             "pattern": "^(@[a-z0-9-~][a-z0-9-._~]*/)?[a-z0-9-~][a-z0-9-._~]*$",
-            "description": "Package name. Matches the name in dash.toml.",
+            "description": "Package name. Matches the name in bnpm.toml.",
             "examples": ["zod", "@acme/http-client"]
           },
           "version": {
@@ -61,7 +61,7 @@
             "type": "string",
             "format": "uri",
             "description": "Registry URL from which this package was resolved and fetched.",
-            "examples": ["https://reg.dash.dev"]
+            "examples": ["https://reg.bnpm.dev"]
           },
           "provenance": {
             "type": "object",
@@ -84,9 +84,9 @@
               },
               "publisher": {
                 "type": "string",
-                "pattern": "^did:dash:",
+                "pattern": "^did:bnpm:",
                 "description": "Decentralized identifier (DID) of the publisher identity.",
-                "examples": ["did:dash:zod-org"]
+                "examples": ["did:bnpm:zod-org"]
               }
             },
             "required": ["logIndex", "slsaLevel", "publisher"]
@@ -140,7 +140,7 @@
               "tool": {
                 "type": "string",
                 "description": "Pinned builder tool reference used to produce the build outputs.",
-                "examples": ["dash:node-gyp@2.1.0"]
+                "examples": ["bnpm:node-gyp@2.1.0"]
               },
               "outputCid": {
                 "type": "string",

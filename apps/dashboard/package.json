@@ -1,5 +1,5 @@
 {
-  "name": "@dash/dashboard",
+  "name": "@better-npm/dashboard",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -16,9 +16,9 @@
     "next": "^15.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@dash/design-system": "workspace:*",
-    "@dash/hooks": "workspace:*",
-    "@dash/sdk": "workspace:*",
+    "@better-npm/design-system": "workspace:*",
+    "@better-npm/hooks": "workspace:*",
+    "@better-npm/sdk": "workspace:*",
     "recharts": "^2.15.0"
   },
   "devDependencies": {

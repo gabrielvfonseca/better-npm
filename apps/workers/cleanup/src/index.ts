@@ -1,6 +1,6 @@
-import { loadConfig } from "@dash/config"
-import { createLogger } from "@dash/logger"
-import { createStorageClient } from "@dash/storage"
+import { loadConfig } from "@better-npm/config"
+import { createLogger } from "@better-npm/logger"
+import { createStorageClient } from "@better-npm/storage"
 
 const logger = createLogger("workers-cleanup")
 const _config = loadConfig()
@@ -31,10 +31,10 @@ export async function handleCleanup(payload: Record<string, unknown>): Promise<{
 
   try {
     const result = await processCleanup(cleanupPayload)
-    return { status: "success", worker: "@dash/workers-cleanup", result }
+    return { status: "success", worker: "@better-npm/workers-cleanup", result }
   } catch (error) {
     logger.error("Failed to process cleanup job", { error: String(error) })
-    return { status: "failure", worker: "@dash/workers-cleanup", error: String(error) }
+    return { status: "failure", worker: "@better-npm/workers-cleanup", error: String(error) }
   }
 }
 

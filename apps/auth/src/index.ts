@@ -1,8 +1,8 @@
-import { createToken, hashPassword, verifyPassword, verifyToken } from "@dash/auth"
-import { loadConfig } from "@dash/config"
-import { createLogger } from "@dash/logger"
-import { createUserSchema, loginSchema } from "@dash/schemas"
-import { validate } from "@dash/validation"
+import { createToken, hashPassword, verifyPassword, verifyToken } from "@better-npm/auth"
+import { loadConfig } from "@better-npm/config"
+import { createLogger } from "@better-npm/logger"
+import { createUserSchema, loginSchema } from "@better-npm/schemas"
+import { validate } from "@better-npm/validation"
 import { Hono } from "hono"
 import { HTTPException } from "hono/http-exception"
 

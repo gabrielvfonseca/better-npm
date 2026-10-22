@@ -1,5 +1,5 @@
 {
-  "name": "@dash/example-vue",
+  "name": "@better-npm/example-vue",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dash/sdk": "workspace:*",
+    "@better-npm/sdk": "workspace:*",
     "vue": "^3.5.0"
   },
   "devDependencies": {

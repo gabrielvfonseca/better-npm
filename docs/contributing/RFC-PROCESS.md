@@ -1,4 +1,4 @@
-# Dash — RFC Process
+# Bnpm — RFC Process
 > **Status:** planned · **Owner:** WS-DOC · **Design refs:** DESIGN — · **Implements:** ARCH-M001 · **Conformance:** n/a
 
 **Audience:** contributors

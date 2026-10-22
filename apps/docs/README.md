@@ -1,6 +1,6 @@
-# `@dash/docs`
+# `@better-npm/docs`
 
-Dash documentation site — Next.js application with MDX support.
+Bnpm documentation site — Next.js application with MDX support.
 
 ## Overview
 
@@ -11,5 +11,5 @@ Next.js 15 documentation site with MDX support. Covers Getting Started (installa
 ```bash
 npm run dev
 # or
-turbo dev --filter=@dash/docs
+turbo dev --filter=@better-npm/docs
 ```

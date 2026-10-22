@@ -7,7 +7,7 @@ interface Package {
   version: string;
 }
 
-const title = 'Dash + Vue';
+const title = 'Bnpm + Vue';
 const pkg = ref<Package | null>(null);
 
 onMounted(async () => {
@@ -23,7 +23,7 @@ onMounted(async () => {
 <template>
   <div>
     <h1>{{ title }}</h1>
-    <p>Welcome to the Dash registry Vue example.</p>
+    <p>Welcome to the Bnpm registry Vue example.</p>
     <div v-if="pkg">
       <h2>{{ pkg.name }}</h2>
       <p>{{ pkg.description }}</p>

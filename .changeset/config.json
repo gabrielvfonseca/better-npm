@@ -7,5 +7,10 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@dash/website", "@dash/docs", "@dash/dashboard", "@dash/playground"]
+  "ignore": [
+    "@better-npm/website",
+    "@better-npm/docs",
+    "@better-npm/dashboard",
+    "@better-npm/playground"
+  ]
 }

@@ -1,4 +1,4 @@
-# Dash — SDKs
+# Bnpm — SDKs
 > **Status:** scoped · **Owner:** WS-AI · **Design refs:** DESIGN §17 · **Implements:** AI-M607 · **Conformance:** conformance/sdk
 
 **Audience:** humans, agents
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-@dash/core, @dash/registry, @dash/sbom, @dash/agent — package boundaries and public APIs.
+@better-npm/core, @better-npm/registry, @better-npm/sbom, @better-npm/agent — package boundaries and public APIs.
 
 ## Key points (from the design)
 

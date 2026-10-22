@@ -1,18 +1,18 @@
 # typed: true
 # frozen_string_literal: true
 
-# Dash — JavaScript package manager
+# Bnpm — JavaScript package manager
 # This file can be used as a standalone formula for `brew install` from URL.
-# Usage: brew install https://raw.githubusercontent.com/org/dash/main/homebrew/dash.rb
+# Usage: brew install https://raw.githubusercontent.com/org/bnpm/main/homebrew/bnpm.rb
 
-class Dash < Formula
+class Bnpm < Formula
   desc "JavaScript package manager — fast, secure, and reliable"
-  homepage "https://github.com/org/dash"
+  homepage "https://github.com/org/bnpm"
   license "MIT"
-  head "https://github.com/org/dash.git", branch: "main"
+  head "https://github.com/org/bnpm.git", branch: "main"
 
   stable do
-    url "https://github.com/org/dash/archive/refs/tags/v0.0.0.tar.gz"
+    url "https://github.com/org/bnpm/archive/refs/tags/v0.0.0.tar.gz"
     sha256 "0000000000000000000000000000000000000000000000000000000000000000"
   end
 
@@ -44,48 +44,48 @@ class Dash < Formula
 
   def generate_completions
     bash_completion.install Utils::ShellCompletions.new(
-      bin/"dash", "bash",
+      bin/"bnpm", "bash",
       shell_function: :bash
     ).output
 
     zsh_completion.install Utils::ShellCompletions.new(
-      bin/"dash", "zsh",
+      bin/"bnpm", "zsh",
       shell_function: :zsh
     ).output
 
     fish_completion.install Utils::ShellCompletions.new(
-      bin/"dash", "fish",
+      bin/"bnpm", "fish",
       shell_function: :fish
     ).output
   end
 
   def generate_man_pages
-    system bin/"dash", "man", "--output", buildpath/"man"
+    system bin/"bnpm", "man", "--output", buildpath/"man"
     man1.install Dir[buildpath/"man/**/*.1"]
   end
 
   def post_install
-    (var/"dash/cache").mkpath
-    (var/"dash/data").mkpath
+    (var/"bnpm/cache").mkpath
+    (var/"bnpm/data").mkpath
   end
 
   def caveats
     <<~EOS
-      Dash is installed as `dash`.
+      Bnpm is installed as `bnpm`.
 
-      Cache: #{var}/dash/cache
-      Data:  #{var}/dash/data
+      Cache: #{var}/bnpm/cache
+      Data:  #{var}/bnpm/data
 
       Quick start:
-        dash help
-        dash init my-project
-        cd my-project && dash install
+        bnpm help
+        bnpm init my-project
+        cd my-project && bnpm install
     EOS
   end
 
   test do
-    assert_match version.to_s, shell_output("#{bin}/dash --version")
-    assert_match "Usage:", shell_output("#{bin}/dash --help")
+    assert_match version.to_s, shell_output("#{bin}/bnpm --version")
+    assert_match "Usage:", shell_output("#{bin}/bnpm --help")
 
     (testpath/"package.json").write <<~JSON
       {
@@ -95,7 +95,7 @@ class Dash < Formula
       }
     JSON
 
-    output = shell_output("#{bin}/dash install 2>&1 || true")
+    output = shell_output("#{bin}/bnpm install 2>&1 || true")
     assert_match(/No dependencies|Done/i, output)
   end
 end

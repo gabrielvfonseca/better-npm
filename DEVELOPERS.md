@@ -1,10 +1,10 @@
 # Developer Guide
 
-This guide covers everything you need to know to develop Dash effectively.
+This guide covers everything you need to know to develop Bnpm effectively.
 
 ## Project Overview
 
-Dash is a modern JavaScript package manager built with a hybrid architecture:
+Bnpm is a modern JavaScript package manager built with a hybrid architecture:
 
 - **Rust** — Core engine (parsing, resolution, installation)
 - **TypeScript** — CLI interface, API server, web dashboard
@@ -17,13 +17,13 @@ The monorepo uses [Turborepo](https://turbo.build/repo) for build orchestration,
 
 ```
 ┌─────────────────────────────┐
-│         CLI (dash)          │
-│  TypeScript / Rust (dash-cli)│
+│         CLI (bnpm)          │
+│  TypeScript / Rust (bnpm-cli)│
 ├─────────────────────────────┤
 │         API Server          │
 │     Hono (apps/api/)        │
 ├─────────────────────────────┤
-│        Web Dashboard        │
+│        Web ⟦Bnpmboard⟧        │
 │    Next.js (apps/web/)      │
 ├─────────────────────────────┤
 │     Documentation Site      │
@@ -67,8 +67,8 @@ curl -fsSL https://bun.sh/install | bash
 ### Step 4: Clone and Install
 
 ```bash
-git clone https://github.com/dashapp/dash.git
-cd dash
+git clone https://github.com/bnpm-io/bnpm.git
+cd bnpm
 bun install
 ```
 
@@ -85,7 +85,7 @@ bun run build
 Start local infrastructure (database, cache, registry):
 
 ```bash
-docker compose -f docker-compose.dev.yml up -d
+docker compose -f docker/docker-compose.dev.yml up -d
 ```
 
 ### Services
@@ -94,30 +94,30 @@ In separate terminals:
 
 ```bash
 # API server (port 3000)
-bun run dev --filter @dash/api
+bun run dev --filter @better-npm/api
 
 # Web dashboard (port 3001)
-bun run dev --filter @dash/web
+bun run dev --filter @better-npm/web
 
 # Docs site (port 3002)
-bun run dev --filter @dash/docs
+bun run dev --filter @better-npm/docs
 ```
 
 ### CLI from Source
 
 ```bash
 # Run the CLI directly
-cargo run -- -p dash-cli -- help
+cargo run -- -p bnpm-cli -- help
 
 # Or if compiled
-cargo build --release -p dash-cli
-./target/release/dash help
+cargo build --release -p bnpm-cli
+./target/release/bnpm help
 ```
 
 ## Monorepo Layout
 
 ```
-dash/
+bnpm/
 ├── apps/               # Application services
 │   ├── api/            # Hono API server
 │   ├── cli/            # CLI binary entrypoint
@@ -159,23 +159,23 @@ dash/
 
 ## Database Setup and Migrations
 
-Dash uses SQLite for local state and PostgreSQL for the registry API.
+Bnpm uses SQLite for local state and PostgreSQL for the registry API.
 
 ### Local SQLite
 
-The SQLite database is created automatically at `~/.dash/dash.db`.
+The SQLite database is created automatically at `~/.bnpm/bnpm.db`.
 
 ### PostgreSQL (Development)
 
 ```bash
 # Start PostgreSQL
-docker compose -f docker-compose.dev.yml up -d postgres
+docker compose -f docker/docker-compose.dev.yml up -d postgres
 
 # Run migrations
-bun run db:migrate --filter @dash/api
+bun run db:migrate --filter @better-npm/api
 
 # Seed development data
-bun run db:seed --filter @dash/api
+bun run db:seed --filter @better-npm/api
 ```
 
 ### Migration Files
@@ -185,10 +185,10 @@ Migrations are located in `apps/api/src/db/migrations/` and use
 
 ```bash
 # Generate a new migration
-bun run db:generate --filter @dash/api
+bun run db:generate --filter @better-npm/api
 
 # Apply migrations
-bun run db:migrate --filter @dash/api
+bun run db:migrate --filter @better-npm/api
 ```
 
 ## Working with Protobuf
@@ -229,7 +229,7 @@ buf lint
 cargo build --workspace
 
 # Build a specific crate (release)
-cargo build --release -p dash-core
+cargo build --release -p bnpm-core
 
 # Check compilation (faster)
 cargo check --workspace
@@ -242,10 +242,10 @@ cargo check --workspace
 cargo test --workspace
 
 # Run tests for a specific crate
-cargo test -p dash-parser
+cargo test -p bnpm-parser
 
 # Run a specific test
-cargo test -p dash-parser -- --test-threads=1 test_name
+cargo test -p bnpm-parser -- --test-threads=1 test_name
 
 # Run tests with logging
 cargo test -- --nocapture
@@ -267,7 +267,7 @@ cargo fmt --check
 bun run build
 
 # Build a specific package
-bun run build --filter @dash/cli
+bun run build --filter @better-npm/cli
 
 # Build in watch mode
 bun run build --watch
@@ -280,7 +280,7 @@ bun run build --watch
 bun run test
 
 # Run tests in a specific package
-bun run test --filter @dash/cli
+bun run test --filter @better-npm/cli
 
 # Run tests with coverage
 bun run test --coverage
@@ -305,11 +305,11 @@ bun run lint --fix
 
 1. Set `DEBUG=1` environment variable for verbose logging:
    ```bash
-   DEBUG=1 bun run dev --filter @dash/api
+   DEBUG=1 bun run dev --filter @better-npm/api
    ```
 2. Use Chrome DevTools for Node.js debugging:
    ```bash
-   bun --inspect-brk run dev --filter @dash/api
+   bun --inspect-brk run dev --filter @better-npm/api
    ```
 3. VS Code launch configurations are in `.vscode/launch.json`.
 
@@ -318,11 +318,11 @@ bun run lint --fix
 1. Build with debug symbols (default for `cargo build`).
 2. Use `RUST_LOG=debug` for detailed logs:
    ```bash
-   RUST_LOG=debug cargo run -p dash-cli
+   RUST_LOG=debug cargo run -p bnpm-cli
    ```
 3. Use `lldb` or `rust-gdb` for step-through debugging:
    ```bash
-   rust-lldb target/debug/dash
+   rust-lldb target/debug/bnpm
    ```
 4. Use `tracing` spans for performance breakdowns.
 
@@ -349,26 +349,26 @@ bun run test --coverage --max-old-space-size=4096
 
 ```bash
 # Build with profiling symbols
-RUSTFLAGS="-g" cargo build --release -p dash-core
+RUSTFLAGS="-g" cargo build --release -p bnpm-core
 
 # Use perf (Linux)
-perf record ./target/release/dash install
+perf record ./target/release/bnpm install
 perf report
 
 # Use samply (macOS/Linux)
 cargo install samply
-samply record ./target/release/dash install
+samply record ./target/release/bnpm install
 ```
 
 ## Environment Variables Reference
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `DASH_HOME` | `~/.dash` | Data directory |
-| `DASH_REGISTRY` | `https://registry.dash.dev` | Registry URL |
-| `DASH_CACHE_DIR` | `$DASH_HOME/cache` | Cache directory |
-| `DASH_LOG_LEVEL` | `info` | Log level (trace/debug/info/warn/error) |
-| `DASH_NO_COLOR` | `false` | Disable colored output |
+| `BNPM_HOME` | `~/.bnpm` | Data directory |
+| `BNPM_REGISTRY` | `https://registry.bnpm.dev` | Registry URL |
+| `BNPM_CACHE_DIR` | `$BNPM_HOME/cache` | Cache directory |
+| `BNPM_LOG_LEVEL` | `info` | Log level (trace/debug/info/warn/error) |
+| `BNPM_NO_COLOR` | `false` | Disable colored output |
 | `DATABASE_URL` | — | PostgreSQL connection string |
 | `REDIS_URL` | — | Redis connection string |
 | `PORT` | `3000` | API server port |

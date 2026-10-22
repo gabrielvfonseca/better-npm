@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://dash.dev/schemas/dash.capsule.json",
-  "title": "Dash Capsule Metadata",
-  "description": "Schema for the canonical metadata embedded inside a Dash capsule (.capsule file). The capsule is the atomic unit of distribution — an immutable, content-addressed archive containing a single package version's files plus metadata. The metadata section is encoded as CBOR (canonical TOML→CBOR) inside the capsule container.",
+  "$id": "https://bnpm.dev/schemas/bnpm.capsule.json",
+  "title": "Bnpm Capsule Metadata",
+  "description": "Schema for the canonical metadata embedded inside a Bnpm capsule (.capsule file). The capsule is the atomic unit of distribution — an immutable, content-addressed archive containing a single package version's files plus metadata. The metadata section is encoded as CBOR (canonical TOML→CBOR) inside the capsule container.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -14,8 +14,8 @@
       "properties": {
         "magic": {
           "type": "string",
-          "const": "DASHCAP1",
-          "description": "File magic number. 8 ASCII bytes identifying this as a Dash capsule v1. Any file not starting with 'DASHCAP1' is rejected."
+          "const": "BNPMCAP1",
+          "description": "File magic number. 8 ASCII bytes identifying this as a Bnpm capsule v1. Any file not starting with 'BNPMCAP1' is rejected."
         },
         "version": {
           "type": "integer",
@@ -35,8 +35,8 @@
 
     "manifest": {
       "title": "Resolved Manifest",
-      "description": "The fully resolved manifest for this package version. This is the canonical (TOML → CBOR) representation of the dash.toml with all optional fields resolved and defaults applied.",
-      "allOf": [{ "$ref": "dash.toml.json" }]
+      "description": "The fully resolved manifest for this package version. This is the canonical (TOML → CBOR) representation of the bnpm.toml with all optional fields resolved and defaults applied.",
+      "allOf": [{ "$ref": "bnpm.toml.json" }]
     },
 
     "fileTable": {
@@ -177,7 +177,7 @@
   "examples": [
     {
       "header": {
-        "magic": "DASHCAP1",
+        "magic": "BNPMCAP1",
         "version": 1,
         "flags": 3
       },

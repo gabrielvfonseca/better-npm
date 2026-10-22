@@ -7,14 +7,14 @@ cd "$ROOT_DIR"
 OUTPUT_DIR="benchmarks/results"
 mkdir -p "$OUTPUT_DIR"
 
-echo "==> Dash Benchmarks"
+echo "==> Bnpm Benchmarks"
 echo ""
 
 # Check for hyperfine
 if ! command -v hyperfine &> /dev/null; then
     echo "WARNING: hyperfine is not installed."
     echo "Install it with: brew install hyperfine (macOS) or cargo install hyperfine"
-    echo "Alternatively, set DASH_BENCH_SIMPLE=1 for simple curl timing."
+    echo "Alternatively, set BNPM_BENCH_SIMPLE=1 for simple curl timing."
     echo ""
 fi
 
@@ -26,12 +26,12 @@ run_benchmark() {
 
     echo "  Running: ${name}..."
 
-    if [ "${DASH_BENCH_DRY_RUN:-0}" = "1" ]; then
+    if [ "${BNPM_BENCH_DRY_RUN:-0}" = "1" ]; then
         echo "    (dry run) Would execute: $cmd"
         return
     fi
 
-    if command -v hyperfine &> /dev/null && [ "${DASH_BENCH_SIMPLE:-0}" != "1" ]; then
+    if command -v hyperfine &> /dev/null && [ "${BNPM_BENCH_SIMPLE:-0}" != "1" ]; then
         hyperfine \
             --warmup 3 \
             --min-runs 10 \
@@ -71,7 +71,7 @@ fi
 
 # API benchmarks
 echo "--- API Benchmarks ---"
-BASE_URL="${DASH_BASE_URL:-http://localhost:3000}"
+BASE_URL="${BNPM_BASE_URL:-http://localhost:3000}"
 run_benchmark "api-health" "curl -s -o /dev/null -w '%{http_code}' $BASE_URL/health"
 run_benchmark "api-list-packages" "curl -s -o /dev/null $BASE_URL/v1/packages?page=1\&page_size=10"
 run_benchmark "api-get-package" "curl -s -o /dev/null $BASE_URL/v1/packages/lodash"
@@ -79,7 +79,7 @@ run_benchmark "api-get-package" "curl -s -o /dev/null $BASE_URL/v1/packages/loda
 # Registry benchmarks
 echo ""
 echo "--- Registry Benchmarks ---"
-REGISTRY_URL="${DASH_REGISTRY_URL:-http://localhost:4000}"
+REGISTRY_URL="${BNPM_REGISTRY_URL:-http://localhost:4000}"
 run_benchmark "registry-resolve" "curl -s -o /dev/null $REGISTRY_URL/v1/resolve?name=lodash\&version=latest"
 
 # Search benchmarks
@@ -93,7 +93,7 @@ run_benchmark "search-suggest" "curl -s -o /dev/null '$BASE_URL/v1/suggest?q=lo'
 if command -v psql &> /dev/null; then
     echo ""
     echo "--- Database Benchmarks ---"
-    PG_URL="${DATABASE_URL:-postgresql://dash:dash_dev_password@localhost:5432/dash_dev}"
+    PG_URL="${DATABASE_URL:-postgresql://bnpm:bnpm_dev_password@localhost:5432/bnpm_dev}"
     run_benchmark "db-query-packages" "psql '$PG_URL' -c 'SELECT * FROM packages LIMIT 100;' -t -q -o /dev/null"
     run_benchmark "db-query-downloads" "psql '$PG_URL' -c 'SELECT package_id, COUNT(*) FROM downloads GROUP BY package_id;' -t -q -o /dev/null"
 fi

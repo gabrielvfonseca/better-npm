@@ -1,4 +1,4 @@
-# `@dash/auth`
+# `@better-npm/auth`
 
 Cryptographic authentication utilities: JWT, PBKDF2, and token parsing.
 
@@ -9,7 +9,7 @@ Pure crypto-based auth utilities including JWT creation/verification (HMAC-SHA25
 ## Usage
 
 ```ts
-import { createToken, verifyToken, hashPassword, verifyPassword } from "@dash/auth";
+import { createToken, verifyToken, hashPassword, verifyPassword } from "@better-npm/auth";
 
 const token = await createToken({ userId: "123", role: "admin" }, "secret");
 const decoded = await verifyToken(token, "secret");

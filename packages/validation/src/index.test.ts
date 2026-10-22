@@ -1,8 +1,8 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 import { z } from "zod"
-import { validate, assert, isValid, ValidationError } from "./index.js"
+import { assert, ValidationError, isValid, validate } from "./index.js"
 
-describe("@dash/validation", () => {
+describe("@better-npm/validation", () => {
   const stringSchema = z.string()
 
   describe("validate", () => {

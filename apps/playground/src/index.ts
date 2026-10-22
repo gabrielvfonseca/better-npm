@@ -1,4 +1,4 @@
-import { createLogger } from "@dash/logger"
+import { createLogger } from "@better-npm/logger"
 import { Hono } from "hono"
 import { HTTPException } from "hono/http-exception"
 import type { ContentfulStatusCode } from "hono/utils/http-status"
@@ -40,7 +40,7 @@ app.get("/playground", async (c) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>@dash/playground</title>
+  <title>@better-npm/playground</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0d1117; color: #c9d1d9; height: 100vh; display: flex; flex-direction: column; }
@@ -62,12 +62,12 @@ app.get("/playground", async (c) => {
 </head>
 <body>
   <header>
-    <h1>@dash/playground</h1>
+    <h1>@better-npm/playground</h1>
   </header>
   <div class="container">
     <div class="editor-panel">
       <div class="panel-header">Code</div>
-      <textarea id="code" placeholder="Write JavaScript code here...">console.log("Hello, Dash!");</textarea>
+      <textarea id="code" placeholder="Write JavaScript code here...">console.log("Hello, Bnpm!");</textarea>
       <div class="toolbar">
         <button id="runBtn">Run</button>
         <button id="formatBtn" class="secondary">Format</button>
@@ -178,7 +178,7 @@ app.post("/playground/format", async (c) => {
   }
 })
 
-app.get("/health", (c) => c.json({ status: "healthy", service: "@dash/playground" }))
+app.get("/health", (c) => c.json({ status: "healthy", service: "@better-npm/playground" }))
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {

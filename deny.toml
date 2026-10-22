@@ -1,4 +1,4 @@
-# cargo-deny configuration for Dash
+# cargo-deny configuration for Bnpm
 # See https://embarkstudios.github.io/cargo-deny/
 
 [advisories]

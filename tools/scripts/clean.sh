@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT_DIR"
 
-echo "==> Cleaning Dash monorepo..."
+echo "==> Cleaning Bnpm monorepo..."
 
 # Remove build artifacts
 echo "==> Removing build artifacts..."
@@ -27,12 +27,12 @@ rm -rf logs *.log apps/*/*.log packages/*/*.log
 
 # Remove temp files
 echo "==> Removing temp files..."
-rm -rf /tmp/dash-* .tmp
+rm -rf /tmp/bnpm-* .tmp
 
 # Remove Docker volumes (optional, skip with SKIP_VOLUMES=1)
 if [ -z "${SKIP_VOLUMES:-}" ]; then
     echo "==> Removing Docker volumes..."
-    docker compose -f docker-compose.yml -f tools/dev/docker-compose.dev.yml down -v 2>/dev/null || true
+    docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml down -v 2>/dev/null || true
 fi
 
 # Clean Rust artifacts

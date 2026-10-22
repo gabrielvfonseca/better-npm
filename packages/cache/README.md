@@ -1,4 +1,4 @@
-# `@dash/cache`
+# `@better-npm/cache`
 
 Multi-tier caching with in-memory and Redis backends, plus memoization.
 
@@ -9,7 +9,7 @@ Provides a `CacheBackend` interface with `MemoryCache` (TTL-based, auto-cleanup)
 ## Usage
 
 ```ts
-import { MemoryCache, memoize } from "@dash/cache";
+import { MemoryCache, memoize } from "@better-npm/cache";
 
 const cache = new MemoryCache<string>({ ttl: 300_000 });
 await cache.set("key", "value");

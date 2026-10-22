@@ -1,5 +1,5 @@
 {
-  "name": "@dash/example-svelte",
+  "name": "@better-npm/example-svelte",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dash/sdk": "workspace:*",
+    "@better-npm/sdk": "workspace:*",
     "svelte": "^5.0.0"
   },
   "devDependencies": {

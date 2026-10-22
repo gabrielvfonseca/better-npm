@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://dash.dev/schemas/dash.policy.toml.json",
-  "title": "Dash Policy File",
-  "description": "Schema for dash.policy.toml — organization-level security and governance policy. Enforced by the registry and client to gate dependency resolution, installation, and publishing. Policies can be inlined in dash.toml ([policy]) or live in a separate file.",
+  "$id": "https://bnpm.dev/schemas/bnpm.policy.toml.json",
+  "title": "Bnpm Policy File",
+  "description": "Schema for bnpm.policy.toml — organization-level security and governance policy. Enforced by the registry and client to gate dependency resolution, installation, and publishing. Policies can be inlined in bnpm.toml ([policy]) or live in a separate file.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -64,22 +64,22 @@
       "type": "array",
       "items": {
         "type": "string",
-        "pattern": "^did:dash:",
+        "pattern": "^did:bnpm:",
         "description": "DID of a banned publisher identity.",
-        "examples": ["did:dash:known-attacker"]
+        "examples": ["did:bnpm:known-attacker"]
       },
       "description": "List of banned publisher DIDs. Any package published by a banned identity is blocked.",
-      "examples": [["did:dash:known-attacker"]]
+      "examples": [["did:bnpm:known-attacker"]]
     },
     "required-provenance-identities": {
       "type": "array",
       "items": {
         "type": "string",
         "description": "A required identity DID or OIDC issuer URL that must appear in every package's provenance chain.",
-        "examples": ["did:dash:my-org-verifier", "https://github.com/my-org"]
+        "examples": ["did:bnpm:my-org-verifier", "https://github.com/my-org"]
       },
       "description": "Required identities that must appear in the provenance chain of every dependency. Packages whose provenance doesn't include at least one of these identities are blocked.",
-      "examples": [["did:dash:acme-trusted-publisher"]]
+      "examples": [["did:bnpm:acme-trusted-publisher"]]
     }
   },
   "examples": [
@@ -91,8 +91,8 @@
       "version-cooldown": "24h",
       "review-capability-diffs": true,
       "banned-packages": ["@malicious/pkg"],
-      "banned-publishers": ["did:dash:known-attacker"],
-      "required-provenance-identities": ["did:dash:acme-trusted-publisher"]
+      "banned-publishers": ["did:bnpm:known-attacker"],
+      "required-provenance-identities": ["did:bnpm:acme-trusted-publisher"]
     }
   ]
 }

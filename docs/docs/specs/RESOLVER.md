@@ -1,4 +1,4 @@
-# Dash — Resolver (MVS + PubGrub)
+# Bnpm — Resolver (MVS + PubGrub)
 > **Status:** scoped · **Owner:** WS-RESOLVE · **Design refs:** DESIGN §9, App. C · **Implements:** RES-M203..207 · **Conformance:** conformance/resolver
 
 **Audience:** platform, contributors

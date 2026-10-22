@@ -1,4 +1,4 @@
-# Dash — Storage & Cache
+# Bnpm — Storage & Cache
 > **Status:** scoped · **Owner:** WS-CORE · **Design refs:** DESIGN §5.3, §10 · **Implements:** CORE-M108..110 · **Conformance:** conformance/cache
 
 **Audience:** platform, contributors

@@ -1,5 +1,5 @@
-# Dash Configuration
-# This file is installed to $(brew --prefix)/etc/dash.toml
+# Bnpm Configuration
+# This file is installed to $(brew --prefix)/etc/bnpm.toml
 
 [core]
 # Log level: trace, debug, info, warn, error
@@ -9,11 +9,11 @@ log_level = "info"
 color = true
 
 # Default registry URL
-registry = "https://registry.dash.dev"
+registry = "https://registry.bnpm.dev"
 
 [cache]
 # Cache directory path
-directory = "/usr/local/var/dash/cache"
+directory = "/usr/local/var/bnpm/cache"
 
 # Maximum cache size in bytes (0 = unlimited)
 max_size = 5368709120
@@ -46,7 +46,7 @@ dev_deps = true
 enabled = false
 
 # Telemetry endpoint
-endpoint = "https://telemetry.dash.dev/v1/events"
+endpoint = "https://telemetry.bnpm.dev/v1/events"
 
 [auth]
 # Default authentication token (optional)

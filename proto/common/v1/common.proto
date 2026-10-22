@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package dash.common.v1;
+package bnpm.common.v1;
 
-option go_package = "github.com/dash-io/dash/proto/common/v1;commonv1";
+option go_package = "github.com/bnpm-io/bnpm/proto/common/v1;commonv1";
 
 message Timestamp {
   int64 seconds = 1;

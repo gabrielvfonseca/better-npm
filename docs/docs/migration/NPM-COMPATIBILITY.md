@@ -1,4 +1,4 @@
-# Dash — npm Compatibility
+# Bnpm — npm Compatibility
 > **Status:** scoped · **Owner:** WS-BRIDGE · **Design refs:** DESIGN §20 · **Implements:** BRIDGE-M501..505 · **Conformance:** conformance/bridge, corpus
 
 **Audience:** humans

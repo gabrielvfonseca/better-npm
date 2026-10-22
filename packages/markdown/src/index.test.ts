@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest"
-import { renderMarkdown, renderMarkdownSafe, extractHeadings, extractMetadata } from "./index.js"
+import { describe, expect, it } from "vitest"
+import { extractHeadings, extractMetadata, renderMarkdown, renderMarkdownSafe } from "./index.js"
 
-describe("@dash/markdown", () => {
+describe("@better-npm/markdown", () => {
   describe("renderMarkdown", () => {
     it("should render headings", () => {
       expect(renderMarkdown("# Title")).toContain("<h1>")
@@ -41,9 +41,9 @@ describe("@dash/markdown", () => {
     it("should extract frontmatter metadata", () => {
       const content = "---\ntitle: My Post\ndate: 2024-01-01\ntags: test\n---\n\nContent here"
       const metadata = extractMetadata(content)
-      expect(metadata["title"]).toBe("My Post")
-      expect(metadata["date"]).toBe("2024-01-01")
-      expect(metadata["tags"]).toBe("test")
+      expect(metadata.title).toBe("My Post")
+      expect(metadata.date).toBe("2024-01-01")
+      expect(metadata.tags).toBe("test")
     })
   })
 })

@@ -1,16 +1,16 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 import {
+  useClipboard,
   useDebounce,
-  useThrottle,
+  useIntersectionObserver,
+  useInterval,
+  useLocalStorage,
   useMediaQuery,
   usePrevious,
-  useLocalStorage,
-  useClipboard,
-  useInterval,
-  useIntersectionObserver,
+  useThrottle,
 } from "./index.js"
 
-describe("@dash/hooks", () => {
+describe("@better-npm/hooks", () => {
   it("should export all hooks", () => {
     expect(useDebounce).toBeDefined()
     expect(useThrottle).toBeDefined()

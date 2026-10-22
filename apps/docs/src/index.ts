@@ -1,6 +1,6 @@
 export const metadata = {
-  name: "@dash/docs",
-  description: "Dash documentation site",
+  name: "@better-npm/docs",
+  description: "Bnpm documentation site",
   version: "0.1.0",
 }
 

@@ -23,7 +23,7 @@ const mockExplainResponse: ExplainResponse = {
   cid: "b3:qm7fabc123",
   description: "TypeScript-first schema validation",
   license: "MIT",
-  provenance: { publisher: "did:dash:colinhacks", logIndex: 88123441, slsaLevel: 3 },
+  provenance: { publisher: "did:bnpm:colinhacks", logIndex: 88123441, slsaLevel: 3 },
   graphPath: ["@acme/app@0.0.0", "zod@3.23.8"],
   capabilities: [{ name: "net", value: false }],
 }
@@ -68,17 +68,17 @@ const mockApplyResponse: ApplyResponse = {
   manifestChanged: true,
   lockfileChanged: true,
   verified: true,
-  diff: '--- a/dash.toml\n+++ b/dash.toml\n@@ -1 +1 @@\n-zod = "^3.23"\n+zod = "^3.24"',
+  diff: '--- a/bnpm.toml\n+++ b/bnpm.toml\n@@ -1 +1 @@\n-zod = "^3.23"\n+zod = "^3.24"',
 }
 
-describe("DashAgentClient", () => {
+describe("BnpmAgentClient", () => {
   let client: ReturnType<typeof createAgentClient>
   let fetchSpy: ReturnType<typeof vi.fn>
 
   beforeEach(() => {
     fetchSpy = vi.fn()
     vi.stubGlobal("fetch", fetchSpy)
-    client = createAgentClient({ registry: "https://reg.dash.dev" })
+    client = createAgentClient({ registry: "https://reg.bnpm.dev" })
   })
 
   afterEach(() => {
@@ -97,7 +97,7 @@ describe("DashAgentClient", () => {
     expect(result.candidates).toHaveLength(1)
     expect(result.candidates[0]?.name).toBe("zod")
     expect(fetchSpy).toHaveBeenCalledWith(
-      "https://reg.dash.dev/.well-known/dash/select",
+      "https://reg.bnpm.dev/.well-known/bnpm/select",
       expect.objectContaining({ method: "POST", body: expect.any(String) }),
     )
   })
@@ -112,9 +112,9 @@ describe("DashAgentClient", () => {
 
     const result = await client.explain("zod")
     expect(result.name).toBe("zod")
-    expect(result.provenance?.publisher).toBe("did:dash:colinhacks")
+    expect(result.provenance?.publisher).toBe("did:bnpm:colinhacks")
     expect(fetchSpy).toHaveBeenCalledWith(
-      "https://reg.dash.dev/.well-known/dash/explain?package=zod",
+      "https://reg.bnpm.dev/.well-known/bnpm/explain?package=zod",
       expect.any(Object),
     )
   })
@@ -190,6 +190,6 @@ describe("DashAgentClient", () => {
     await client.select({ intent: "validation" })
     const callArgs = fetchSpy.mock.calls[0]
     const headers = (callArgs?.[1] as RequestInit)?.headers as Record<string, string> | undefined
-    expect(headers?.["User-Agent"]).toContain("@dash/agent")
+    expect(headers?.["User-Agent"]).toContain("@better-npm/agent")
   })
 })

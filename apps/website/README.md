@@ -1,15 +1,15 @@
-# `@dash/website`
+# `@better-npm/website`
 
-Dash public website — Next.js application.
+Bnpm public website — Next.js application.
 
 ## Overview
 
-Next.js 15 application serving the public-facing Dash website. Built with `@dash/design-system`, `@dash/hooks`, and `@dash/sdk`.
+Next.js 15 application serving the public-facing Bnpm website. Built with `@better-npm/design-system`, `@better-npm/hooks`, and `@better-npm/sdk`.
 
 ## Getting Started
 
 ```bash
 npm run dev
 # or
-turbo dev --filter=@dash/website
+turbo dev --filter=@better-npm/website
 ```

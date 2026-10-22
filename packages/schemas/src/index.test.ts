@@ -1,14 +1,14 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 import {
-  packageNameSchema,
-  semVerSchema,
-  publishPackageSchema,
-  paginationParamsSchema,
   createUserSchema,
+  packageNameSchema,
+  paginationParamsSchema,
+  publishPackageSchema,
+  semVerSchema,
   workerResultSchema,
 } from "./index.js"
 
-describe("@dash/schemas", () => {
+describe("@better-npm/schemas", () => {
   describe("packageNameSchema", () => {
     it("should accept valid package names", () => {
       expect(packageNameSchema.parse("lodash")).toBe("lodash")
@@ -58,7 +58,9 @@ describe("@dash/schemas", () => {
     })
 
     it("should reject weak passwords", () => {
-      expect(() => createUserSchema.parse({ username: "test", email: "a@b.com", password: "short" })).toThrow()
+      expect(() =>
+        createUserSchema.parse({ username: "test", email: "a@b.com", password: "short" }),
+      ).toThrow()
     })
   })
 
@@ -74,7 +76,10 @@ describe("@dash/schemas", () => {
     })
 
     it("should accept failure result", () => {
-      expect(workerResultSchema.parse({ status: "failure", error: "boom" })).toEqual({ status: "failure", error: "boom" })
+      expect(workerResultSchema.parse({ status: "failure", error: "boom" })).toEqual({
+        status: "failure",
+        error: "boom",
+      })
     })
   })
 })

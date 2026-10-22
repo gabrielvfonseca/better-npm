@@ -1,18 +1,18 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 import {
-  createTestLogger,
   createTestConfig,
-  randomId,
+  createTestLogger,
   createTestPackage,
+  randomId,
   withTempDir,
 } from "./index.js"
 
-describe("@dash/testing", () => {
+describe("@better-npm/testing", () => {
   it("should create a noop logger", () => {
     const logger = createTestLogger()
     expect(logger).toBeDefined()
-    expect(() => logger["debug"]("test")).not.toThrow()
-    expect(() => logger["child"]("child")).not.toThrow()
+    expect(() => logger.debug("test")).not.toThrow()
+    expect(() => logger.child("child")).not.toThrow()
   })
 
   it("should create a test config", () => {
@@ -22,7 +22,9 @@ describe("@dash/testing", () => {
   })
 
   it("should create test config with overrides", () => {
-    const config = createTestConfig({ api: { url: "http://custom:8080", port: 8080, host: "0.0.0.0", corsOrigin: "*" } })
+    const config = createTestConfig({
+      api: { url: "http://custom:8080", port: 8080, host: "0.0.0.0", corsOrigin: "*" },
+    })
     expect(config.api.url).toBe("http://custom:8080")
   })
 
@@ -33,7 +35,7 @@ describe("@dash/testing", () => {
 
   it("should create test packages", () => {
     const pkg = createTestPackage()
-    expect(pkg.name).toContain("@dash/test-")
+    expect(pkg.name).toContain("@better-npm/test-")
     expect(pkg.version).toBe("1.0.0")
     expect(pkg.main).toBe("./src/index.js")
   })
@@ -45,9 +47,9 @@ describe("@dash/testing", () => {
   })
 
   it("should work with temp directories", async () => {
-    let dirPath = ""
+    let _dirPath = ""
     await withTempDir(async (dir) => {
-      dirPath = dir
+      _dirPath = dir
       expect(dir).toBeTruthy()
     })
     // dir should be cleaned up after

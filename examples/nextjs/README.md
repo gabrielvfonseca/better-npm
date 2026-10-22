@@ -1,12 +1,12 @@
 # Next.js Example
 
-A [Next.js](https://nextjs.org/) 15 application using the App Router that demonstrates using `@dash/sdk` for server-side data fetching.
+A [Next.js](https://nextjs.org/) 15 application using the App Router that demonstrates using `@better-npm/sdk` for server-side data fetching.
 
 ## What This Demonstrates
 
-- Using `@dash/sdk` with Next.js 15 App Router
+- Using `@better-npm/sdk` with Next.js 15 App Router
 - Server-side data fetching in an `async` Server Component
-- `next.config.ts` rewrites to proxy API calls to the Dash registry
+- `next.config.ts` rewrites to proxy API calls to the Bnpm registry
 - Incremental Static Regeneration via `next: { revalidate: 60 }`
 
 ## Prerequisites
@@ -36,7 +36,7 @@ nextjs/
 
 ## Rewrites / Proxy
 
-`next.config.ts` defines a rewrite rule so that `/api/:path*` requests are proxied to the Dash registry at `http://localhost:3000`. This keeps the client/server API path consistent without exposing the registry URL directly.
+`next.config.ts` defines a rewrite rule so that `/api/:path*` requests are proxied to the Bnpm registry at `http://localhost:3000`. This keeps the client/server API path consistent without exposing the registry URL directly.
 
 ```ts
 rewrites: async () => [

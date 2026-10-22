@@ -1,10 +1,10 @@
-# `@dash/registry`
+# `@better-npm/registry`
 
 Package registry service — Hono-based registry API.
 
 ## Overview
 
-Hono-based package registry service for hosting and serving Dash packages. Supports package CRUD, search, and deprecation with OpenAPI documentation.
+Hono-based package registry service for hosting and serving Bnpm packages. Supports package CRUD, search, and deprecation with OpenAPI documentation.
 
 ## Endpoints
 
@@ -18,8 +18,8 @@ Hono-based package registry service for hosting and serving Dash packages. Suppo
 ## Usage
 
 ```ts
-import { createRegistry } from "@dash/registry";
-import { getStorage } from "@dash/storage";
+import { createRegistry } from "@better-npm/registry";
+import { getStorage } from "@better-npm/storage";
 
 const storage = getStorage({ type: "local", basePath: "./data" });
 const app = createRegistry(storage);

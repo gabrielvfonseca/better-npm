@@ -1,3 +1,3 @@
 export default function Dashboard() {
-  return <div>Dash Dashboard</div>
+  return <div>Bnpm Dashboard</div>
 }

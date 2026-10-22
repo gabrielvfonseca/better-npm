@@ -1,10 +1,10 @@
-# `@dash/apps-auth`
+# `@better-npm/apps-auth`
 
 Authentication service — Hono-based service for user auth.
 
 ## Overview
 
-Hono-based auth service handling login, registration, token refresh, logout, session verification, and session lookup using JWT tokens and PBKDF2 password hashing from `@dash/auth`.
+Hono-based auth service handling login, registration, token refresh, logout, session verification, and session lookup using JWT tokens and PBKDF2 password hashing from `@better-npm/auth`.
 
 ## Endpoints
 
@@ -18,7 +18,7 @@ Hono-based auth service handling login, registration, token refresh, logout, ses
 ## Usage
 
 ```ts
-import { createApp } from "@dash/apps-auth";
+import { createApp } from "@better-npm/apps-auth";
 
 const app = createApp({ port: 3001 });
 ```

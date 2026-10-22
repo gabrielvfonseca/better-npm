@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT_DIR"
 
-echo "==> Dash Release Process"
+echo "==> Bnpm Release Process"
 
 # Check if working tree is clean
 if [ -n "$(git status --porcelain)" ]; then
@@ -14,8 +14,8 @@ fi
 
 # Ensure we're on main branch
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [ "$BRANCH" != "main" ] && [ "$BRANCH" != "master" ]; then
-    echo "WARNING: Not on main/master branch (current: $BRANCH)"
+if [ "$BRANCH" != "main" ]; then
+    echo "WARNING: Not on main branch (current: $BRANCH)"
     read -rp "Continue anyway? [y/N] " confirm
     if [ "$confirm" != "y" ]; then
         exit 1

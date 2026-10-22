@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 import { FeatureFlags, createFeatureFlags } from "./index.js"
 
-describe("@dash/flags", () => {
+describe("@better-npm/flags", () => {
   it("should create a flags instance", () => {
     const flags = createFeatureFlags()
     expect(flags).toBeInstanceOf(FeatureFlags)

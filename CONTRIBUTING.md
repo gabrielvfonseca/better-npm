@@ -1,6 +1,6 @@
-# Contributing to Dash
+# Contributing to Bnpm
 
-Thank you for your interest in contributing to Dash! We welcome contributions
+Thank you for your interest in contributing to Bnpm! We welcome contributions
 from everyone. By participating in this project, you agree to abide by our
 [Code of Conduct](CODE_OF_CONDUCT.md).
 
@@ -11,12 +11,12 @@ from everyone. By participating in this project, you agree to abide by our
 1. Fork the repository on GitHub.
 2. Clone your fork locally:
    ```bash
-   git clone https://github.com/YOUR-USERNAME/dash.git
-   cd dash
+   git clone https://github.com/YOUR-USERNAME/bnpm.git
+   cd bnpm
    ```
 3. Add the upstream repository as a remote:
    ```bash
-   git remote add upstream https://github.com/dashapp/dash.git
+   git remote add upstream https://github.com/bnpm-io/bnpm.git
    ```
 
 ### Set Up the Development Environment
@@ -141,7 +141,7 @@ All TypeScript packages use [Vitest](https://vitest.dev/).
 bun run test
 
 # Run tests for a specific package
-bun run test --filter @dash/cli
+bun run test --filter @better-npm/cli
 
 # Run tests in watch mode
 bun run test --watch
@@ -159,7 +159,7 @@ All Rust crates use the built-in `cargo test` framework.
 cargo test --workspace
 
 # Run tests for a specific crate
-cargo test -p dash-core
+cargo test -p bnpm-core
 
 # Run tests with output
 cargo test -- --nocapture
@@ -211,17 +211,17 @@ All PRs run the following checks:
 
 ### Bug Reports
 
-Open a [bug report](https://github.com/dashapp/dash/issues/new?template=bug_report.yml)
+Open a [bug report](https://github.com/bnpm-io/bnpm/issues/new?template=bug_report.yml)
 with:
 - A clear, descriptive title
 - Steps to reproduce the behavior
 - Expected vs. actual behavior
-- Environment details (OS, Dash version, Bun version)
+- Environment details (OS, Bnpm version, Bun version)
 - Minimal reproduction case, if possible
 
 ### Feature Requests
 
-Open a [feature request](https://github.com/dashapp/dash/issues/new?template=feature_request.yml)
+Open a [feature request](https://github.com/bnpm-io/bnpm/issues/new?template=feature_request.yml)
 with:
 - A clear, descriptive title
 - Use case and motivation
@@ -231,17 +231,17 @@ with:
 ### Security Issues
 
 Do **not** open a public issue for security vulnerabilities. Please report
-security issues privately to **security@dash.dev**. See our
+security issues privately to **security@bnpm.dev**. See our
 [Security Policy](SECURITY.md) for details.
 
 ## Project Structure
 
 ```
-dash/
+bnpm/
 ├── apps/           # Application services
-│   ├── cli/        # Dash CLI binary
+│   ├── cli/        # Bnpm CLI binary
 │   ├── api/        # Public API server (Hono)
-│   ├── web/        # Dashboard web app (Next.js)
+│   ├── web/        # ⟦Bnpmboard⟧ web app (Next.js)
 │   └── docs/       # Documentation site
 ├── crates/         # Rust crates (internal workspace)
 │   ├── core/       # Core library
@@ -267,4 +267,4 @@ it's code, documentation, bug reports, or community support.
 
 ---
 
-Thank you for helping make Dash better!
+Thank you for helping make Bnpm better!

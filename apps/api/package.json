@@ -1,5 +1,5 @@
 {
-  "name": "@dash/apps-api",
+  "name": "@better-npm/apps-api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -16,10 +16,10 @@
     "hono": "^4.7.0",
     "@hono/zod-openapi": "^0.18.0",
     "@hono/valibot-validator": "^0.5.0",
-    "@dash/config": "workspace:*",
-    "@dash/logger": "workspace:*",
-    "@dash/validation": "workspace:*",
-    "@dash/auth": "workspace:*"
+    "@better-npm/config": "workspace:*",
+    "@better-npm/logger": "workspace:*",
+    "@better-npm/validation": "workspace:*",
+    "@better-npm/auth": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.19.0",

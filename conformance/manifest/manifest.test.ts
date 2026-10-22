@@ -1,7 +1,7 @@
 import { describe, it } from "vitest"
 
 describe("Manifest parsing", () => {
-  it.todo("parses valid dash.toml")
+  it.todo("parses valid bnpm.toml")
 
   it.todo("validates capability blocks")
 

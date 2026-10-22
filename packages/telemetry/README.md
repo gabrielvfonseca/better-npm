@@ -1,4 +1,4 @@
-# `@dash/telemetry`
+# `@better-npm/telemetry`
 
 Telemetry and observability: metrics, tracing, and OpenTelemetry integration.
 
@@ -9,9 +9,9 @@ Provides a `TelemetryClient` for event/metric ingestion, Prometheus export, and 
 ## Usage
 
 ```ts
-import { createTelemetryClient, recordMetric, wrapWithSpan } from "@dash/telemetry";
+import { createTelemetryClient, recordMetric, wrapWithSpan } from "@better-npm/telemetry";
 
-const telemetry = createTelemetryClient({ endpoint: "https://telemetry.dash.sh" });
+const telemetry = createTelemetryClient({ endpoint: "https://telemetry.bnpm.sh" });
 await telemetry.ingestEvent({ type: "package_install", properties: { name: "react" } });
 
 recordMetric("packages_downloaded", 42);

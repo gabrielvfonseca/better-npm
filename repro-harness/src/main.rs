@@ -1,7 +1,7 @@
 use std::process;
 
-use dash_capsule::Capsule;
-use dash_cid::Cid;
+use bnpm_capsule::Capsule;
+use bnpm_cid::Cid;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -32,7 +32,7 @@ fn main() {
     let vectors: TestVectors =
         serde_json::from_str(manifest).expect("failed to parse test vectors");
 
-    println!("=== Dash Reproducibility Harness ===");
+    println!("=== Bnpm Reproducibility Harness ===");
     println!("Suite: {}", vectors.description);
     println!("Vectors: {}\n", vectors.vectors.len());
 

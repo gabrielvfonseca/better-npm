@@ -1,4 +1,4 @@
-# Dash — CLI (dash)
+# Bnpm — CLI (bnpm)
 > **Status:** scoped · **Owner:** WS-RESOLVE · **Design refs:** DESIGN §16 · **Implements:** RES-M210 · **Conformance:** conformance/cli
 
 **Audience:** humans, agents
@@ -7,12 +7,12 @@
 
 ## Purpose
 
-dash command surface, flags, exit codes, --json contracts, zero-config behavior.
+bnpm command surface, flags, exit codes, --json contracts, zero-config behavior.
 
 ## Key points (from the design)
 
 - Zero-config, fast, explainable (`--why` everywhere), honest (`--json` everywhere) (§16).
-- A bare `dash install` in an npm project just works via the bridge (§16, §20).
+- A bare `bnpm install` in an npm project just works via the bridge (§16, §20).
 
 ## What this doc will contain when authored
 

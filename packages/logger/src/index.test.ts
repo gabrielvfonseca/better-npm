@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from "vitest"
-import { Logger, createLogger, setLogLevel, configureLogger, LogLevel } from "./index.js"
+import { beforeEach, describe, expect, it, vi } from "vitest"
+import { LogLevel, Logger, configureLogger, createLogger, setLogLevel } from "./index.js"
 
-describe("@dash/logger", () => {
+describe("@better-npm/logger", () => {
   beforeEach(() => {
     configureLogger({ level: LogLevel.Debug, format: "json", destination: "stdout" })
   })
@@ -45,7 +45,7 @@ describe("@dash/logger", () => {
     configureLogger({ format: "json" })
     const logger = createLogger("test")
     logger.info("hello")
-    const output = JSON.parse(write.mock.calls[0]![0] as string)
+    const output = JSON.parse(write.mock.calls[0]?.[0] as string)
     expect(output.message).toBe("hello")
     expect(output.level).toBe(LogLevel.Info)
     expect(output.module).toBe("test")

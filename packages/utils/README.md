@@ -1,15 +1,15 @@
-# `@dash/utils`
+# `@better-npm/utils`
 
 General-purpose JavaScript/TypeScript utility functions.
 
 ## Overview
 
-Utilities for Dash applications: `cn()` (className merging), `isBrowser()`/`isServer()`, `formatBytes()`, `formatDate()`, `formatRelativeTime()`, `truncate()`, `capitalize()`, `pluralize()`, `range()`, `noop()`, `clamp()`, `isObject()`.
+Utilities for Bnpm applications: `cn()` (className merging), `isBrowser()`/`isServer()`, `formatBytes()`, `formatDate()`, `formatRelativeTime()`, `truncate()`, `capitalize()`, `pluralize()`, `range()`, `noop()`, `clamp()`, `isObject()`.
 
 ## Usage
 
 ```ts
-import { cn, formatBytes, formatRelativeTime, truncate } from "@dash/utils";
+import { cn, formatBytes, formatRelativeTime, truncate } from "@better-npm/utils";
 
 cn("px-4", false && "hidden", "py-2"); // "px-4 py-2"
 formatBytes(1_500_000); // "1.43 MB"

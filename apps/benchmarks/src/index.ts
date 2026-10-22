@@ -1,5 +1,5 @@
-import { loadConfig } from "@dash/config"
-import { createLogger } from "@dash/logger"
+import { loadConfig } from "@better-npm/config"
+import { createLogger } from "@better-npm/logger"
 
 const logger = createLogger("benchmarks")
 const config = loadConfig()

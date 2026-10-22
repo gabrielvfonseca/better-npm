@@ -1,6 +1,6 @@
-import { loadConfig } from "@dash/config"
-import { createLogger } from "@dash/logger"
-import { type TelemetryClient, createTelemetryClient } from "@dash/telemetry"
+import { loadConfig } from "@better-npm/config"
+import { createLogger } from "@better-npm/logger"
+import { type TelemetryClient, createTelemetryClient } from "@better-npm/telemetry"
 import { Hono } from "hono"
 import { HTTPException } from "hono/http-exception"
 import type { ContentfulStatusCode } from "hono/utils/http-status"
@@ -33,7 +33,7 @@ app.get("/status", async (c) => {
 
     return c.json({
       status: overallStatus,
-      service: "@dash/status",
+      service: "@better-npm/status",
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       components,
@@ -79,7 +79,7 @@ app.get("/status/incidents", async (c) => {
 app.get("/health", (c) => {
   return c.json({
     status: "healthy",
-    service: "@dash/status",
+    service: "@better-npm/status",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
   })

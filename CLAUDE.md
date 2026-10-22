@@ -1,4 +1,4 @@
-You are working on the Dash monorepo — a JavaScript package manager written in TypeScript and Rust.
+You are working on the Bnpm monorepo — a JavaScript package manager written in TypeScript and Rust.
 
 ## Key Commands
 
@@ -12,7 +12,7 @@ You are working on the Dash monorepo — a JavaScript package manager written in
 
 ## Architecture
 
-The CLI binary is `dash-cli` (crates/cli/), built as `dash`. Packages in packages/ are published to npm. Crates in crates/ are internal workspace members.
+The CLI binary is `bnpm-cli` (crates/cli/), built as `bnpm`. Packages in packages/ are published to npm. Crates in crates/ are internal workspace members.
 
 ## Important Paths
 

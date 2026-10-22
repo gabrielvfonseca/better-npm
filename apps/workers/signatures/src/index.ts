@@ -1,7 +1,7 @@
 import { createHash, verify } from "node:crypto"
-import { loadConfig } from "@dash/config"
-import { createLogger } from "@dash/logger"
-import { createStorageClient } from "@dash/storage"
+import { loadConfig } from "@better-npm/config"
+import { createLogger } from "@better-npm/logger"
+import { createStorageClient } from "@better-npm/storage"
 
 const logger = createLogger("workers-signatures")
 const _config = loadConfig()
@@ -37,13 +37,13 @@ export async function handleSignatures(payload: Record<string, unknown>): Promis
 
   try {
     const result = await processSignature(sigPayload)
-    return { status: "success", worker: "@dash/workers-signatures", result }
+    return { status: "success", worker: "@better-npm/workers-signatures", result }
   } catch (error) {
     logger.error("Failed to process signature verification job", {
       packageName: sigPayload.packageName,
       error: String(error),
     })
-    return { status: "failure", worker: "@dash/workers-signatures", error: String(error) }
+    return { status: "failure", worker: "@better-npm/workers-signatures", error: String(error) }
   }
 }
 

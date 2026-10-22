@@ -4,8 +4,8 @@ import { defineConfig } from "vitest/config"
 export default defineConfig({
   resolve: {
     alias: {
-      "@dash/search": resolve(__dirname, "../search/src"),
-      "@dash/agent": resolve(__dirname, "../agent/src"),
+      "@better-npm/search": resolve(__dirname, "../search/src"),
+      "@better-npm/agent": resolve(__dirname, "../agent/src"),
     },
   },
   test: {

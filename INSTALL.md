@@ -1,11 +1,11 @@
-# Installing Dash
+# Installing Bnpm
 
-Dash is a JavaScript package manager written in TypeScript and Rust. These
-instructions will help you install Dash on your system.
+Bnpm is a JavaScript package manager written in TypeScript and Rust. These
+instructions will help you install Bnpm on your system.
 
 ## Prerequisites
 
-Before installing Dash, ensure you have the following prerequisites:
+Before installing Bnpm, ensure you have the following prerequisites:
 
 - **Bun** 1.1+ — [Install Bun](https://bun.sh)
 - **Rust** 1.80+ (edition 2024) — [Install Rust](https://rustup.rs)
@@ -17,46 +17,46 @@ Before installing Dash, ensure you have the following prerequisites:
 ### macOS (Homebrew)
 
 ```bash
-brew tap dashapp/dash
-brew install dash
+brew tap bnpm-io/bnpm
+brew install bnpm
 ```
 
 ### Linux (APT)
 
 ```bash
-# Add the Dash repository
-echo "deb [trusted=yes] https://apt.dash.dev/ /" | sudo tee /etc/apt/sources.list.d/dash.list
+# Add the Bnpm repository
+echo "deb [trusted=yes] https://apt.bnpm.dev/ /" | sudo tee /etc/apt/sources.list.d/bnpm.list
 sudo apt update
-sudo apt install dash
+sudo apt install bnpm
 ```
 
 ### Linux (apk — Alpine)
 
 ```bash
-apk add dash
+apk add bnpm
 ```
 
 ### Windows (Scoop)
 
 ```powershell
-scoop bucket add dash https://github.com/dashapp/scoop-bucket.git
-scoop install dash
+scoop bucket add bnpm https://github.com/bnpm-io/scoop-bucket.git
+scoop install bnpm
 ```
 
 ### npm / pnpm / bun (global)
 
 ```bash
-npm install -g @dash/cli
+npm install -g @better-npm/cli
 # or
-pnpm add -g @dash/cli
+pnpm add -g @better-npm/cli
 # or
-bun install -g @dash/cli
+bun install -g @better-npm/cli
 ```
 
 ### Cargo (from source)
 
 ```bash
-cargo install dash-cli
+cargo install bnpm-cli
 ```
 
 ## Building from Source
@@ -64,8 +64,8 @@ cargo install dash-cli
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/dashapp/dash.git
-cd dash
+git clone https://github.com/bnpm-io/bnpm.git
+cd bnpm
 ```
 
 ### Install Dependencies
@@ -83,31 +83,31 @@ bun run build
 ### Build the CLI Only
 
 ```bash
-cargo build --release -p dash-cli
+cargo build --release -p bnpm-cli
 ```
 
-The binary will be at `target/release/dash`.
+The binary will be at `target/release/bnpm`.
 
 ### Install the Built Binary
 
 ```bash
 # Add to your PATH (recommended)
-cp target/release/dash ~/.local/bin/
+cp target/release/bnpm ~/.local/bin/
 
 # Or install system-wide (macOS/Linux)
-sudo cp target/release/dash /usr/local/bin/
+sudo cp target/release/bnpm /usr/local/bin/
 ```
 
 ## Platform-Specific Notes
 
 ### macOS (Apple Silicon)
 
-Dash runs natively on Apple Silicon. No Rosetta or emulation is required. The
+Bnpm runs natively on Apple Silicon. No Rosetta or emulation is required. The
 Homebrew formula ships an `arm64` binary.
 
 ### Linux
 
-Dash is tested on:
+Bnpm is tested on:
 - Ubuntu 22.04+ / Debian 12+
 - Fedora 38+
 - Arch Linux
@@ -117,59 +117,59 @@ Pre-built binaries are available for `x86_64` and `aarch64`.
 
 ### Windows (WSL2)
 
-Dash does not currently support native Windows. Use WSL2 with an Ubuntu
+Bnpm does not currently support native Windows. Use WSL2 with an Ubuntu
 distribution:
 
 1. Install [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install)
 2. Launch Ubuntu from the Start menu
-3. Install Dash via the Linux instructions above
+3. Install Bnpm via the Linux instructions above
 
 ## Verifying Installation
 
 ```bash
 # Check the installed version
-dash --version
+bnpm --version
 
 # Display help
-dash --help
+bnpm --help
 
 # Run the self-check
-dash doctor
+bnpm doctor
 ```
 
 You should see output similar to:
 
 ```
-$ dash --version
-dash 0.1.0 (aarch64-apple-darwin)
+$ bnpm --version
+bnpm 0.1.0 (aarch64-apple-darwin)
 ```
 
 ## Next Steps
 
-- **[Quick Start](https://dash.dev/docs/quick-start)** — Create your first
-  project with Dash
-- **[Configuration](https://dash.dev/docs/configuration)** — Learn how to
-  configure Dash for your project
-- **[CLI Reference](https://dash.dev/docs/cli)** — Complete command reference
-- **[Contributing](CONTRIBUTING.md)** — Learn how to contribute to Dash
+- **[Quick Start](https://bnpm.dev/docs/quick-start)** — Create your first
+  project with Bnpm
+- **[Configuration](https://bnpm.dev/docs/configuration)** — Learn how to
+  configure Bnpm for your project
+- **[CLI Reference](https://bnpm.dev/docs/cli)** — Complete command reference
+- **[Contributing](CONTRIBUTING.md)** — Learn how to contribute to Bnpm
 
 ## Troubleshooting
 
 ### Permission Denied
 
-If you get a permission error when running `dash`, ensure the binary is
+If you get a permission error when running `bnpm`, ensure the binary is
 executable:
 
 ```bash
-chmod +x $(which dash)
+chmod +x $(which bnpm)
 ```
 
 ### Command Not Found
 
-Ensure Dash is in your PATH. If you installed via Homebrew, run:
+Ensure Bnpm is in your PATH. If you installed via Homebrew, run:
 
 ```bash
-brew link dash
+brew link bnpm
 ```
 
 ### Build Errors

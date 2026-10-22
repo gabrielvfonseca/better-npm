@@ -1,3 +1,3 @@
 export default function Home() {
-  return <div>Dash Website</div>
+  return <div>Bnpm Website</div>
 }

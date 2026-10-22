@@ -1,7 +1,7 @@
-import { describe, it, expect, afterEach } from "vitest"
-import { getConfig, loadConfig, getEnvVar, isDevelopment, isProduction } from "./index.js"
+import { afterEach, describe, expect, it } from "vitest"
+import { getConfig, getEnvVar, isDevelopment, isProduction, loadConfig } from "./index.js"
 
-describe("@dash/config", () => {
+describe("@better-npm/config", () => {
   const originalEnv = { ...process.env }
 
   afterEach(() => {
@@ -16,8 +16,8 @@ describe("@dash/config", () => {
   })
 
   it("should read from environment variables", () => {
-    process.env["API_URL"] = "https://api.example.com"
-    process.env["API_PORT"] = "8080"
+    process.env.API_URL = "https://api.example.com"
+    process.env.API_PORT = "8080"
     const config = loadConfig()
     expect(config.api.url).toBe("https://api.example.com")
     expect(config.api.port).toBe(8080)
@@ -34,12 +34,12 @@ describe("@dash/config", () => {
   })
 
   it("should detect development environment", () => {
-    process.env["NODE_ENV"] = "development"
+    process.env.NODE_ENV = "development"
     expect(isDevelopment()).toBe(true)
   })
 
   it("should detect production environment", () => {
-    process.env["NODE_ENV"] = "production"
+    process.env.NODE_ENV = "production"
     expect(isProduction()).toBe(true)
     expect(isDevelopment()).toBe(false)
   })

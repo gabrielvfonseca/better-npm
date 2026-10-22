@@ -1,4 +1,4 @@
-# `@dash/workers-scanning`
+# `@better-npm/workers-scanning`
 
 Security scanning worker.
 
@@ -9,7 +9,7 @@ Scans package files for security vulnerabilities: `eval()` usage, `innerHTML` XS
 ## Usage
 
 ```ts
-import { handler } from "@dash/workers-scanning";
+import { handler } from "@better-npm/workers-scanning";
 
 const result = await handler({ name: "react", version: "18.2.0", files: { "index.js": "console.log('hello')" } });
 console.log(result.vulnerabilities);

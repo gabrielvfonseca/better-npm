@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 import { ICON_NAMES } from "./index.js"
 
-describe("@dash/icons", () => {
+describe("@better-npm/icons", () => {
   it("should export icon names", () => {
     expect(ICON_NAMES).toContain("search")
     expect(ICON_NAMES).toContain("chevron-down")

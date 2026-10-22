@@ -103,7 +103,7 @@ const expectedExports = [
   "FormMessage",
 ] as const
 
-describe("@dash/design-system", () => {
+describe("@better-npm/design-system", () => {
   it("exports all UI primitives", () => {
     for (const name of expectedExports) {
       expect(DesignSystem[name], `missing export: ${name}`).toBeDefined()

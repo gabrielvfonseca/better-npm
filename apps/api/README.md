@@ -1,6 +1,6 @@
-# `@dash/apps-api`
+# `@better-npm/apps-api`
 
-Dash API gateway — Hono-based HTTP API with OpenAPI documentation.
+Bnpm API gateway — Hono-based HTTP API with OpenAPI documentation.
 
 ## Overview
 
@@ -15,7 +15,7 @@ Hono application with CORS, request ID logging, error handling, health checks, a
 ## Usage
 
 ```ts
-import { createApp, start } from "@dash/apps-api";
+import { createApp, start } from "@better-npm/apps-api";
 
 const app = createApp({ port: 3000 });
 await start(app);

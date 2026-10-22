@@ -1,17 +1,20 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
-import { DashClient, createClient, DashClientError } from "./index.js"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { BnpmClient, BnpmClientError, createClient } from "./index.js"
 
-describe("@dash/client", () => {
-  let client: DashClient
+describe("@better-npm/client", () => {
+  let client: BnpmClient
 
   beforeEach(() => {
     vi.spyOn(globalThis, "fetch").mockImplementation(async (url: RequestInfo | URL) => {
       const urlStr = url.toString()
       if (urlStr.includes("/error")) {
-        return new Response(JSON.stringify({ code: "TEST_ERROR", message: "Something went wrong" }), {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        })
+        return new Response(
+          JSON.stringify({ code: "TEST_ERROR", message: "Something went wrong" }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          },
+        )
       }
       if (urlStr.includes("/empty")) {
         return new Response(null, { status: 204 })
@@ -30,7 +33,7 @@ describe("@dash/client", () => {
   })
 
   it("should create a client", () => {
-    expect(client).toBeInstanceOf(DashClient)
+    expect(client).toBeInstanceOf(BnpmClient)
   })
 
   it("should make GET requests", async () => {
@@ -65,14 +68,14 @@ describe("@dash/client", () => {
   })
 
   it("should throw on error responses", async () => {
-    await expect(client.get("/error")).rejects.toThrow(DashClientError)
+    await expect(client.get("/error")).rejects.toThrow(BnpmClientError)
   })
 
   it("should include auth token", async () => {
     const fetchSpy = vi.mocked(fetch)
     await client.get("/test")
-    const headers = fetchSpy.mock.calls[0]![1]?.headers as Record<string, string>
-    expect(headers["Authorization"]).toBe("Bearer test-token")
+    const headers = fetchSpy.mock.calls[0]?.[1]?.headers as Record<string, string>
+    expect(headers.Authorization).toBe("Bearer test-token")
   })
 
   it("should manage tokens", () => {

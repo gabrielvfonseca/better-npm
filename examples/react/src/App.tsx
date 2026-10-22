@@ -18,8 +18,8 @@ function App() {
 
   return (
     <div>
-      <h1>Dash + React</h1>
-      <p>Welcome to the Dash registry React example.</p>
+      <h1>Bnpm + React</h1>
+      <p>Welcome to the Bnpm registry React example.</p>
       {pkg && (
         <div>
           <h2>{pkg.name}</h2>

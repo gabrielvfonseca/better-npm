@@ -1,4 +1,4 @@
-# `@dash/search`
+# `@better-npm/search`
 
 Search client for MeiliSearch-compatible registry search.
 
@@ -9,9 +9,9 @@ Provides a `SearchClient` with methods for `search`, `suggest`, `index`, and `re
 ## Usage
 
 ```ts
-import { createSearchClient } from "@dash/search";
+import { createSearchClient } from "@better-npm/search";
 
-const client = createSearchClient({ endpoint: "https://search.dash.sh" });
+const client = createSearchClient({ endpoint: "https://search.bnpm.sh" });
 const results = await client.search({ q: "react", limit: 20 });
 const suggestions = await client.suggest("rea");
 ```

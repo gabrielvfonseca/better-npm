@@ -1,4 +1,4 @@
-# Dash — Content-Addressing Specification
+# Bnpm — Content-Addressing Specification
 
 > **Status:** normative · **Owner:** WS-ARCH · **Design refs:** DESIGN §5 · **Implements:** ARCH-M004 · **Conformance:** `conformance/cid/`
 
@@ -180,9 +180,9 @@ Integers MUST use the **smallest encoding** that represents the value:
 
 #### 3.1.4 Float encoding — FORBIDDEN
 
-CBOR float types (half-precision `f6`, single-precision `f7`, double-precision `f8`) are **forbidden** in canonical Dash capsule data. All numeric values MUST use integer encodings.
+CBOR float types (half-precision `f6`, single-precision `f7`, double-precision `f8`) are **forbidden** in canonical Bnpm capsule data. All numeric values MUST use integer encodings.
 
-Rationale: Float encoding introduces ambiguity (1.0 can be represented as `f9 3c 00`, `fa 3f 80 00 00`, or `fb 3f f0 00 00 00 00 00 00`), violating the determinism requirement. Dash does not store floating-point metadata.
+Rationale: Float encoding introduces ambiguity (1.0 can be represented as `f9 3c 00`, `fa 3f 80 00 00`, or `fb 3f f0 00 00 00 00 00 00`), violating the determinism requirement. Bnpm does not store floating-point metadata.
 
 Implementations MUST reject capsule data containing major type 7 (`f6`–`f8`) with a canonicalization error.
 
@@ -217,10 +217,10 @@ Implementations MUST validate that canonical capsule bytes satisfy all of the ab
 
 ### 4.1 Directory structure
 
-The global content-addressed store lives at `~/.dash/store/`:
+The global content-addressed store lives at `~/.bnpm/store/`:
 
 ```
-~/.dash/store/
+~/.bnpm/store/
 ├── cas/
 │   └── b3/
 │       └── <aa>/
@@ -249,7 +249,7 @@ shard = b3/<first two hex chars of hash>/<next two hex chars of hash>/
 Example for CID `b3:d4qpxhzhyjtbwci4qjkhla7xq4djtx76dzhxdyhjnkokz5rgazhbomi`:
 
 ```
-~/.dash/store/cas/b3/d4/qp/d4qpxhzhyjtbwci4qjkhla7xq4djtx76dzhxdyhjnkokz5rgazhbomi.capsule
+~/.bnpm/store/cas/b3/d4/qp/d4qpxhzhyjtbwci4qjkhla7xq4djtx76dzhxdyhjnkokz5rgazhbomi.capsule
 ```
 
 The shard key is derived from the **raw BLAKE3 digest hex** (the inner 32 bytes), not from the base32 CID string.
@@ -325,7 +325,7 @@ Files in `cas/` and `files/` are **read-only** (chmod `0o444` perms, or filesyst
 
 ### 6.4 Garbage collection
 
-Reference counts (`index.db.refs`) track how many projects/unpacked trees reference each capsule and file. A GC pass (`dash store gc`) removes objects with zero references.
+Reference counts (`index.db.refs`) track how many projects/unpacked trees reference each capsule and file. A GC pass (`bnpm store gc`) removes objects with zero references.
 
 ---
 

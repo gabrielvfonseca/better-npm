@@ -1,4 +1,4 @@
-# `@dash/flags`
+# `@better-npm/flags`
 
 Feature flag evaluation with context-based rules.
 
@@ -9,7 +9,7 @@ Evaluates feature flags against a context object using rules (`eq`, `neq`, `in`,
 ## Usage
 
 ```ts
-import { createFeatureFlags } from "@dash/flags";
+import { createFeatureFlags } from "@better-npm/flags";
 
 const flags = createFeatureFlags({
   "new-installer": { rules: [{ field: "userId", operator: "gte", value: 1000 }] },

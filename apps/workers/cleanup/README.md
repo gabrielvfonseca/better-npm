@@ -1,4 +1,4 @@
-# `@dash/workers-cleanup`
+# `@better-npm/workers-cleanup`
 
 Stale data cleanup worker.
 
@@ -9,7 +9,7 @@ Removes stale data from the system: expired cache entries, temporary files, old 
 ## Usage
 
 ```ts
-import { handler } from "@dash/workers-cleanup";
+import { handler } from "@better-npm/workers-cleanup";
 
 await handler({ types: ["cache", "temp", "old-versions", "logs", "metadata"] });
 ```

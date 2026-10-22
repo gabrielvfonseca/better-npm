@@ -1,4 +1,4 @@
-# Dash — Manifest (dash.toml)
+# Bnpm — Manifest (bnpm.toml)
 > **Status:** scoped · **Owner:** WS-RESOLVE · **Design refs:** DESIGN §6 · **Implements:** RES-M201..202 · **Conformance:** conformance/manifest
 
 **Audience:** humans, agents
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-Field-by-field dash.toml schema: identity, exports, deps, capabilities, build, [ai], workspace.
+Field-by-field bnpm.toml schema: identity, exports, deps, capabilities, build, [ai], workspace.
 
 ## Key points (from the design)
 

@@ -6,7 +6,7 @@ WORKDIR /app
 RUN bun install -g turbo
 COPY package.json bun.lock turbo.json ./
 COPY . .
-RUN turbo prune --docker @dash/app-api
+RUN turbo prune --docker @better-npm/app-api
 
 # Stage 2: Dependencies
 FROM oven/bun:1.2-alpine AS deps
@@ -21,7 +21,7 @@ WORKDIR /app
 COPY --from=pruner /app/out/full/ .
 COPY --from=deps /app/node_modules ./node_modules
 ARG APP=api
-RUN --mount=type=cache,target=/root/.turbo bun run build --filter=@dash/app-api
+RUN --mount=type=cache,target=/root/.turbo bun run build --filter=@better-npm/app-api
 
 # Stage 4: Runner (distroless)
 FROM gcr.io/distroless/nodejs22-debian12 AS runner

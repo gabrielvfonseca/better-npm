@@ -13,7 +13,7 @@ import type {
   SelectResponse,
 } from "./types.js"
 
-export class DashAgentClient implements AgentClient {
+export class BnpmAgentClient implements AgentClient {
   private config: Required<AgentClientConfig>
 
   constructor(config: AgentClientConfig) {
@@ -29,7 +29,7 @@ export class DashAgentClient implements AgentClient {
       ...init,
       headers: {
         "Content-Type": "application/json",
-        "User-Agent": `@dash/agent/${this.config.identity}`,
+        "User-Agent": `@better-npm/agent/${this.config.identity}`,
         ...init?.headers,
       },
     })
@@ -43,7 +43,7 @@ export class DashAgentClient implements AgentClient {
   }
 
   async select(request: SelectRequest): Promise<SelectResponse> {
-    return this.fetchJson("/.well-known/dash/select", {
+    return this.fetchJson("/.well-known/bnpm/select", {
       method: "POST",
       body: JSON.stringify(request),
     }) as Promise<SelectResponse>
@@ -51,12 +51,12 @@ export class DashAgentClient implements AgentClient {
 
   async explain(packageName: string): Promise<ExplainResponse> {
     return this.fetchJson(
-      `/.well-known/dash/explain?package=${encodeURIComponent(packageName)}`,
+      `/.well-known/bnpm/explain?package=${encodeURIComponent(packageName)}`,
     ) as Promise<ExplainResponse>
   }
 
   async planUpgrade(request: PlanUpgradeRequest): Promise<PlanUpgradeResponse> {
-    return this.fetchJson("/.well-known/dash/plan-upgrade", {
+    return this.fetchJson("/.well-known/bnpm/plan-upgrade", {
       method: "POST",
       body: JSON.stringify(request),
     }) as Promise<PlanUpgradeResponse>
@@ -70,18 +70,18 @@ export class DashAgentClient implements AgentClient {
             .map(([k, v]) => [k, String(v)]),
         ).toString()}`
       : ""
-    return this.fetchJson(`/.well-known/dash/audit${params}`) as Promise<AuditResponse>
+    return this.fetchJson(`/.well-known/bnpm/audit${params}`) as Promise<AuditResponse>
   }
 
   async compose(request: ComposeRequest): Promise<ComposeResponse> {
-    return this.fetchJson("/.well-known/dash/compose", {
+    return this.fetchJson("/.well-known/bnpm/compose", {
       method: "POST",
       body: JSON.stringify(request),
     }) as Promise<ComposeResponse>
   }
 
   async apply(plan: PlanUpgradeResponse): Promise<ApplyResponse> {
-    return this.fetchJson("/.well-known/dash/apply", {
+    return this.fetchJson("/.well-known/bnpm/apply", {
       method: "POST",
       body: JSON.stringify(plan),
     }) as Promise<ApplyResponse>

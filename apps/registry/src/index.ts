@@ -1,6 +1,6 @@
-import { createLogger } from "@dash/logger"
-import { type PackageStorage, PackageStorageFactory } from "@dash/storage"
-import { publishPackageSchema, validate } from "@dash/validation"
+import { createLogger } from "@better-npm/logger"
+import { type PackageStorage, PackageStorageFactory } from "@better-npm/storage"
+import { publishPackageSchema, validate } from "@better-npm/validation"
 import { Hono } from "hono"
 import { HTTPException } from "hono/http-exception"
 import { z } from "zod"
@@ -152,7 +152,7 @@ app.post("/packages/:name/deprecate", async (c) => {
   }
 })
 
-app.get("/health", (c) => c.json({ status: "healthy", service: "@dash/registry" }))
+app.get("/health", (c) => c.json({ status: "healthy", service: "@better-npm/registry" }))
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {

@@ -8,7 +8,7 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       input: resolve(__dirname, "src/index.ts"),
-      external: [/^@dash\//, /^node:.*/, /^hono/, /^@hono\//, /^zod/],
+      external: [/^@bnpm\//, /^node:.*/, /^hono/, /^@hono\//, /^zod/],
     },
   },
 })

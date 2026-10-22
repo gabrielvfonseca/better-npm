@@ -1,4 +1,4 @@
-# `@dash/mdx`
+# `@better-npm/mdx`
 
 MDX compilation, front matter extraction, and table of contents generation.
 
@@ -9,7 +9,7 @@ Converts MDX source to JSX-like output with heading components. Provides `extrac
 ## Usage
 
 ```ts
-import { compileMdx, extractFrontmatter, extractToc } from "@dash/mdx";
+import { compileMdx, extractFrontmatter, extractToc } from "@better-npm/mdx";
 
 const { code } = await compileMdx(mdxSource, { components: { Heading } });
 const frontmatter = extractFrontmatter(mdxSource);

@@ -3,10 +3,10 @@
 
 -- Users
 INSERT INTO users (id, username, email, password_hash, display_name, roles) VALUES
-    ('a0000000-0000-0000-0000-000000000001', 'admin', 'admin@dash.dev', '$2b$12$LJ3m4ys3Lk0TSwHnbfOMiOXPm1Qm0Il/7BQ0S0V8k5s0Y1k9qZS', 'Admin User', '{admin,publisher}'),
-    ('a0000000-0000-0000-0000-000000000002', 'developer', 'dev@dash.dev', '$2b$12$LJ3m4ys3Lk0TSwHnbfOMiOXPm1Qm0Il/7BQ0S0V8k5s0Y1k9qZS', 'Developer User', '{publisher,user}'),
-    ('a0000000-0000-0000-0000-000000000003', 'alice', 'alice@dash.dev', '$2b$12$LJ3m4ys3Lk0TSwHnbfOMiOXPm1Qm0Il/7BQ0S0V8k5s0Y1k9qZS', 'Alice Contributor', '{publisher}'),
-    ('a0000000-0000-0000-0000-000000000004', 'bob', 'bob@dash.dev', '$2b$12$LJ3m4ys3Lk0TSwHnbfOMiOXPm1Qm0Il/7BQ0S0V8k5s0Y1k9qZS', 'Bob Maintainer', '{maintainer}')
+    ('a0000000-0000-0000-0000-000000000001', 'admin', 'admin@bnpm.dev', '$2b$12$LJ3m4ys3Lk0TSwHnbfOMiOXPm1Qm0Il/7BQ0S0V8k5s0Y1k9qZS', 'Admin User', '{admin,publisher}'),
+    ('a0000000-0000-0000-0000-000000000002', 'developer', 'dev@bnpm.dev', '$2b$12$LJ3m4ys3Lk0TSwHnbfOMiOXPm1Qm0Il/7BQ0S0V8k5s0Y1k9qZS', 'Developer User', '{publisher,user}'),
+    ('a0000000-0000-0000-0000-000000000003', 'alice', 'alice@bnpm.dev', '$2b$12$LJ3m4ys3Lk0TSwHnbfOMiOXPm1Qm0Il/7BQ0S0V8k5s0Y1k9qZS', 'Alice Contributor', '{publisher}'),
+    ('a0000000-0000-0000-0000-000000000004', 'bob', 'bob@bnpm.dev', '$2b$12$LJ3m4ys3Lk0TSwHnbfOMiOXPm1Qm0Il/7BQ0S0V8k5s0Y1k9qZS', 'Bob Maintainer', '{maintainer}')
 ON CONFLICT (username) DO NOTHING;
 
 -- Packages

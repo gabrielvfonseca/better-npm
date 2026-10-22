@@ -1,6 +1,6 @@
 # Benchmarks
 
-Performance benchmarking suite for the Dash registry.
+Performance benchmarking suite for the Bnpm registry.
 
 ## Methodology
 
@@ -54,7 +54,7 @@ hyperfine --warmup 3 --min-runs 10 \
   'curl -s -o /dev/null http://localhost:3000/v1/packages'
 
 # Dry run (show commands without executing)
-DASH_BENCH_DRY_RUN=1 ./tools/benchmarks/run.sh
+BNPM_BENCH_DRY_RUN=1 ./tools/benchmarks/run.sh
 ```
 
 ## Results

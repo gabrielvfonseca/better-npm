@@ -5,7 +5,7 @@ set -euo pipefail
 # Usage: ./scripts/update-formula.sh <version>
 
 VERSION="${1:-}"
-FORMULA_FILE="Formula/dash.rb"
+FORMULA_FILE="Formula/bnpm.rb"
 
 if [ -z "$VERSION" ]; then
   echo "Usage: $0 <version>"
@@ -19,11 +19,11 @@ if [ ! -f "$FORMULA_FILE" ]; then
   exit 1
 fi
 
-echo "Updating dash formula to version $VERSION..."
+echo "Updating bnpm formula to version $VERSION..."
 echo ""
 
 # Fetch the source tarball and compute its SHA256
-SOURCE_URL="https://github.com/org/dash/archive/refs/tags/v${VERSION}.tar.gz"
+SOURCE_URL="https://github.com/org/bnpm/archive/refs/tags/v${VERSION}.tar.gz"
 echo "Fetching source from: $SOURCE_URL"
 SOURCE_SHA=$(curl -sL "$SOURCE_URL" | sha256sum | cut -d' ' -f1)
 echo "Source SHA256: $SOURCE_SHA"
@@ -47,6 +47,6 @@ echo ""
 echo "Next steps:"
 echo "  1. Review the changes: git diff $FORMULA_FILE"
 echo "  2. Test the formula: brew install --build-from-source $FORMULA_FILE"
-echo "  3. Run tests: brew test dash"
-echo "  4. Commit: git add $FORMULA_FILE && git commit -m \"dash $VERSION\""
+echo "  3. Run tests: brew test bnpm"
+echo "  4. Commit: git add $FORMULA_FILE && git commit -m \"bnpm $VERSION\""
 echo "  5. Push: git push"

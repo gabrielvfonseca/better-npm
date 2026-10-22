@@ -1,5 +1,5 @@
 {
-  "name": "@dash/conformance",
+  "name": "@better-npm/conformance",
   "type": "module",
   "version": "0.0.0",
   "private": true,
@@ -15,12 +15,12 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/dash.git"
+    "url": "https://github.com/your-org/bnpm.git"
   },
   "bugs": {
-    "url": "https://github.com/your-org/dash/issues"
+    "url": "https://github.com/your-org/bnpm/issues"
   },
-  "homepage": "https://github.com/your-org/dash#readme",
+  "homepage": "https://github.com/your-org/bnpm#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"

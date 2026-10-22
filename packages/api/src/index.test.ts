@@ -1,7 +1,16 @@
-import { describe, it, expect } from "vitest"
-import { ok, created, noContent, badRequest, notFound, unauthorized, forbidden, serverError } from "./index.js"
+import { describe, expect, it } from "vitest"
+import {
+  badRequest,
+  created,
+  forbidden,
+  noContent,
+  notFound,
+  ok,
+  serverError,
+  unauthorized,
+} from "./index.js"
 
-describe("@dash/api", () => {
+describe("@better-npm/api", () => {
   describe("response helpers", () => {
     it("should create ok response", () => {
       const res = ok({ data: "test" })

@@ -12,7 +12,7 @@ RUN bun install -g turbo
 COPY package.json bun.lock turbo.json ./
 COPY . .
 ARG PACKAGE
-RUN turbo prune --docker @dash/${PACKAGE}
+RUN turbo prune --docker @better-npm/${PACKAGE}
 
 # Stage 2: Dependencies
 FROM base AS deps
@@ -28,7 +28,7 @@ COPY --from=pruner /app/out/full/ .
 COPY --from=deps /app/node_modules ./node_modules
 ARG WORKER_NAME
 ARG PACKAGE
-RUN --mount=type=cache,target=/root/.turbo bun run build --filter=@dash/${PACKAGE}
+RUN --mount=type=cache,target=/root/.turbo bun run build --filter=@better-npm/${PACKAGE}
 
 # Stage 4: Runner (distroless)
 FROM gcr.io/distroless/nodejs22-debian12 AS runner

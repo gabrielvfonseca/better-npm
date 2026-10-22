@@ -1,5 +1,5 @@
 {
-  "name": "@dash/agent",
+  "name": "@better-npm/agent",
   "type": "module",
   "version": "0.0.0",
   "private": true,
@@ -17,7 +17,7 @@
     "lint": "biome lint src/"
   },
   "dependencies": {
-    "@dash/search": "workspace:*"
+    "@better-npm/search": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.7.0",
@@ -25,16 +25,16 @@
     "vite": "^6.0.0",
     "vite-plugin-dts": "^4.0.0"
   },
-  "description": "AI-native SDK for Dash — agent capability queries, semantic search, upgrade planning, audit, and safe transactional apply",
+  "description": "AI-native SDK for Bnpm — agent capability queries, semantic search, upgrade planning, audit, and safe transactional apply",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/dash.git"
+    "url": "https://github.com/your-org/bnpm.git"
   },
   "bugs": {
-    "url": "https://github.com/your-org/dash/issues"
+    "url": "https://github.com/your-org/bnpm/issues"
   },
-  "homepage": "https://github.com/your-org/dash#readme",
+  "homepage": "https://github.com/your-org/bnpm#readme",
   "sideEffects": false,
   "files": ["dist"],
   "main": "./dist/index.js",

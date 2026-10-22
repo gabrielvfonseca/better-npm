@@ -1,17 +1,17 @@
-# `@dash/sdk`
+# `@better-npm/sdk`
 
-Unified Dash SDK — single entry point for client, logger, config, auth, schemas, and utilities.
+Unified Bnpm SDK — single entry point for client, logger, config, auth, schemas, and utilities.
 
 ## Overview
 
-Combines `@dash/client`, `@dash/types`, `@dash/logger`, `@dash/config`, `@dash/auth`, and `@dash/schemas` into a single `Dash` class with a `createDash()` factory.
+Combines `@better-npm/client`, `@better-npm/types`, `@better-npm/logger`, `@better-npm/config`, `@better-npm/auth`, and `@better-npm/schemas` into a single `Bnpm` class with a `createBnpm()` factory.
 
 ## Usage
 
 ```ts
-import { createDash } from "@dash/sdk";
+import { createBnpm } from "@better-npm/sdk";
 
-const dash = await createDash({ token: "dash_tkn_xxx" });
-const pkg = await dash.client.get("/packages/react");
-dash.log.info("Fetched package", { name: pkg.name });
+const bnpm = await createBnpm({ token: "bnpm_tkn_xxx" });
+const pkg = await bnpm.client.get("/packages/react");
+bnpm.log.info("Fetched package", { name: pkg.name });
 ```

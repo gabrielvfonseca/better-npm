@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs"
 
-export interface DashConfig {
+export interface BnpmConfig {
   api: {
     url: string
     port: number
@@ -58,7 +58,7 @@ export interface DashConfig {
   }
 }
 
-const DEFAULT_CONFIG: DashConfig = {
+const DEFAULT_CONFIG: BnpmConfig = {
   api: {
     url: "http://localhost:3000",
     port: 3000,
@@ -73,18 +73,18 @@ const DEFAULT_CONFIG: DashConfig = {
   auth: {
     secret: "development-secret",
     url: "http://localhost:3000/auth",
-    issuer: "dash",
+    issuer: "bnpm",
     tokenExpiry: "7d",
   },
   telemetry: {
     enabled: false,
-    serviceName: "dash",
+    serviceName: "bnpm",
     samplerRatio: 0.1,
   },
   storage: {
     s3Endpoint: "http://localhost:9000",
     s3Region: "us-east-1",
-    s3Bucket: "dash",
+    s3Bucket: "bnpm",
     s3AccessKey: "minioadmin",
     s3SecretKey: "minioadmin",
   },
@@ -130,7 +130,7 @@ function envStr(key: string, defaultValue: string): string {
   return process.env[key] ?? defaultValue
 }
 
-function envConfig(): Partial<DashConfig> {
+function envConfig(): Partial<BnpmConfig> {
   return {
     api: {
       url: envStr("API_URL", DEFAULT_CONFIG.api.url),
@@ -186,7 +186,7 @@ function envConfig(): Partial<DashConfig> {
   }
 }
 
-let cachedConfig: DashConfig | undefined
+let cachedConfig: BnpmConfig | undefined
 
 export function getEnvVar(name: string, defaultValue?: string): string {
   return process.env[name] ?? defaultValue ?? ""
@@ -201,9 +201,9 @@ export function isProduction(): boolean {
   return process.env.NODE_ENV === "production"
 }
 
-function deepMergeConfig(base: DashConfig, override: Partial<DashConfig>): DashConfig {
+function deepMergeConfig(base: BnpmConfig, override: Partial<BnpmConfig>): BnpmConfig {
   const result: Record<string, unknown> = { ...base }
-  for (const key of Object.keys(override) as Array<keyof DashConfig>) {
+  for (const key of Object.keys(override) as Array<keyof BnpmConfig>) {
     const val = override[key]
     if (val && typeof val === "object" && !Array.isArray(val)) {
       const existing = result[key]
@@ -215,11 +215,11 @@ function deepMergeConfig(base: DashConfig, override: Partial<DashConfig>): DashC
       result[key] = val
     }
   }
-  return result as unknown as DashConfig
+  return result as unknown as BnpmConfig
 }
 
-export function loadConfig(options?: { file?: string; env?: string }): DashConfig {
-  let config: DashConfig = { ...DEFAULT_CONFIG }
+export function loadConfig(options?: { file?: string; env?: string }): BnpmConfig {
+  let config: BnpmConfig = { ...DEFAULT_CONFIG }
 
   const envOverrides = envConfig()
   config = deepMergeConfig(config, envOverrides)
@@ -227,7 +227,7 @@ export function loadConfig(options?: { file?: string; env?: string }): DashConfi
   if (options?.file) {
     try {
       const content = readFileSync(options.file, "utf-8")
-      const fileConfig = JSON.parse(content) as Partial<DashConfig>
+      const fileConfig = JSON.parse(content) as Partial<BnpmConfig>
       config = deepMergeConfig(config, fileConfig)
     } catch {
       // silently ignore file load errors
@@ -238,7 +238,7 @@ export function loadConfig(options?: { file?: string; env?: string }): DashConfi
   return config
 }
 
-export function getConfig(): DashConfig {
+export function getConfig(): BnpmConfig {
   if (!cachedConfig) {
     return loadConfig()
   }

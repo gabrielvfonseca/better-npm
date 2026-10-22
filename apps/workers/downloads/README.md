@@ -1,4 +1,4 @@
-# `@dash/workers-downloads`
+# `@better-npm/workers-downloads`
 
 Package download worker.
 
@@ -9,7 +9,7 @@ Downloads package tarballs from remote URLs, verifies SHA-512 integrity, checks 
 ## Usage
 
 ```ts
-import { handler } from "@dash/workers-downloads";
+import { handler } from "@better-npm/workers-downloads";
 
-await handler({ name: "react", version: "18.2.0", url: "https://registry.dash.sh/packages/react/18.2.0.tgz", integrity: "sha512-..." });
+await handler({ name: "react", version: "18.2.0", url: "https://registry.bnpm.sh/packages/react/18.2.0.tgz", integrity: "sha512-..." });
 ```

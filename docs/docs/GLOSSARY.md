@@ -1,4 +1,4 @@
-# Dash — Glossary
+# Bnpm — Glossary
 > **Status:** scoped · **Owner:** WS-DOC · **Design refs:** DESIGN §0.3 · **Implements:** DOC-M001 · **Conformance:** n/a
 
 **Audience:** humans, agents
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-Canonical definitions of every Dash term. One word, one meaning, everywhere.
+Canonical definitions of every Bnpm term. One word, one meaning, everywhere.
 
 ## Key points (from the design)
 
@@ -17,7 +17,7 @@ Canonical definitions of every Dash term. One word, one meaning, everywhere.
 - **MVS** — Minimal Version Selection, the default resolver (§9.1).
 - **Transparency log** — append-only, witnessed record of every publish (§13.2).
 - **Capability** — a declared, policy-granted privilege (`net`, `fs`, `env`, `subprocess`) (§13.3).
-- **DPR** — Dash Package Registry protocol (`RESOLVE`/`FETCH`/`PUBLISH`) (§11).
+- **DPR** — Bnpm Package Registry protocol (`RESOLVE`/`FETCH`/`PUBLISH`) (§11).
 
 ## What this doc will contain when authored
 

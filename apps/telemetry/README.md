@@ -1,4 +1,4 @@
-# `@dash/apps-telemetry`
+# `@better-npm/apps-telemetry`
 
 Telemetry ingestion service — Hono-based events and metrics API.
 
@@ -16,8 +16,8 @@ Hono-based service for ingesting analytics events and performance metrics. Accep
 ## Usage
 
 ```ts
-import { createTelemetryService } from "@dash/apps-telemetry";
-import { createTelemetryClient } from "@dash/telemetry";
+import { createTelemetryService } from "@better-npm/apps-telemetry";
+import { createTelemetryClient } from "@better-npm/telemetry";
 
 const client = createTelemetryClient({ endpoint: "http://localhost:4318" });
 const app = createTelemetryService(client);

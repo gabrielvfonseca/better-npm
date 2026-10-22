@@ -10,14 +10,9 @@ export class ValidationError extends Error {
   }
 }
 
-export type Result<T, E = Error> =
-  | { ok: true; value: T }
-  | { ok: false; error: E }
+export type Result<T, E = Error> = { ok: true; value: T } | { ok: false; error: E }
 
-export function validate<T>(
-  schema: z.ZodSchema<T>,
-  data: unknown,
-): Result<T, ValidationError> {
+export function validate<T>(schema: z.ZodSchema<T>, data: unknown): Result<T, ValidationError> {
   const result = schema.safeParse(data)
   if (result.success) {
     return { ok: true, value: result.data }
@@ -51,7 +46,7 @@ export {
   paginatedResponseSchema,
   workerPayloadSchema,
   workerResultSchema,
-} from "@dash/schemas"
+} from "@better-npm/schemas"
 
 export type {
   PublishPackageInput,
@@ -62,4 +57,4 @@ export type {
   UpdateUserInput,
   ApiErrorInput,
   PackageManifestInput,
-} from "@dash/schemas"
+} from "@better-npm/schemas"

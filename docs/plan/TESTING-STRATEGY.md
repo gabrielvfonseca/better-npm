@@ -1,10 +1,10 @@
-# Dash — Testing & Verification Strategy
+# Bnpm — Testing & Verification Strategy
 
-In Dash, tests are not a safety net bolted on after the fact — **the conformance suite *is* the specification's executable form, and "done" is defined as "the relevant tests are green"** ([AGENT-PLAYBOOK §4](AGENT-PLAYBOOK.md)). This document defines the test layers, what each proves, and how they gate the agentic build.
+In Bnpm, tests are not a safety net bolted on after the fact — **the conformance suite *is* the specification's executable form, and "done" is defined as "the relevant tests are green"** ([AGENT-PLAYBOOK §4](AGENT-PLAYBOOK.md)). This document defines the test layers, what each proves, and how they gate the agentic build.
 
 The guiding stance mirrors the product's own philosophy (*verify, don't trust*): acceptance is evidence‑based and independently re‑run, never asserted.
 
-## 1. The test pyramid, Dash‑specific
+## 1. The test pyramid, Bnpm‑specific
 
 | Layer | Proves | Runs | Gates |
 |---|---|---|---|
@@ -13,23 +13,23 @@ The guiding stance mirrors the product's own philosophy (*verify, don't trust*):
 | **Conformance** | Behavior matches the ratified spec + test vectors | cross‑impl | every PR |
 | **Reproducibility** | Byte‑identical outputs across machines/OSes | 2+ OS matrix | every PR |
 | **Integration/e2e** | Components compose (resolve→install, publish→verify) | scenario | affected PRs + nightly |
-| **Compatibility corpus** | Real npm packages work through Dash | top‑N harness | nightly (M5+) |
+| **Compatibility corpus** | Real npm packages work through Bnpm | top‑N harness | nightly (M5+) |
 | **Security red‑team** | Known attack classes are blocked | adversarial corpus | every PR (grows monotonically) |
 | **Load/SLO** | Meets latency/throughput targets | perf lab | pre‑gate (M3, M7) |
 
-## 2. The four verification pillars unique to Dash
+## 2. The four verification pillars unique to Bnpm
 
 ### 2.1 Determinism / reproducibility harness
 The single most important suite. It packs, stores, and materializes a large fixture corpus on **at least two OSes** (Linux + macOS, Windows in matrix) and on two independent machines, then asserts **byte‑identical CIDs, capsules, lockfiles, and materialized trees**. Any nondeterminism is a *build break*, not a warning. Enforced upstream by a lint in `crates/` that bans wall‑clock, RNG, locale‑sensitive ops, and unordered‑map iteration in core paths. This suite exists from M1 and every core component must pass it before merge — it de‑risks the project's central thesis first (BUILD‑PLAN §8).
 
 ### 2.2 Cross‑implementation conformance vectors
-Because Dash intends multiple implementations over time (and because agents shouldn't grade their own homework), correctness is pinned to **published test vectors**: CID vectors, canonical‑encoding vectors, capsule fixtures, resolver input→lock oracles, DPR message fixtures. A second, independent implementation (even a minimal reference one) must reproduce them. This turns "is this correct?" into "does it match the vector?" — a mechanical check the Verifier role applies.
+Because Bnpm intends multiple implementations over time (and because agents shouldn't grade their own homework), correctness is pinned to **published test vectors**: CID vectors, canonical‑encoding vectors, capsule fixtures, resolver input→lock oracles, DPR message fixtures. A second, independent implementation (even a minimal reference one) must reproduce them. This turns "is this correct?" into "does it match the vector?" — a mechanical check the Verifier role applies.
 
 ### 2.3 Resolver oracle testing
 The resolver is validated against a **reference oracle** on a large labeled graph corpus: MVS selections, singleton unification outcomes, and PubGrub conflict cases with their expected human/agent‑readable explanations. Semver‑honesty is tested on a corpus of real version pairs labeled breaking/non‑breaking (mined from the npm history via the bridge), measuring precision/recall of the API‑diff checker. This is where SPIKE‑03 (accuracy on dynamic TS) feeds in.
 
 ### 2.4 Security red‑team corpus
-An adversarial suite that grows every phase and never shrinks. It plants, and asserts Dash blocks or neutralizes:
+An adversarial suite that grows every phase and never shrinks. It plants, and asserts Bnpm blocks or neutralizes:
 - **Worm‑class** (Shai‑Hulud style): a package that, on a new version, tries to execute at install → must have **no execution point** (no lifecycle scripts).
 - **Capability escalation:** a patch release adding `net`/`subprocess` → **blocked pending review** with a legible diff.
 - **Dependency confusion / typosquat:** name‑similar + ownership + install‑pattern heuristics → **flagged/quarantined**.
@@ -55,7 +55,7 @@ Each red‑team case maps to the security control that defeats it (DESIGN §13) 
 
 ## 5. Observability of the test system itself
 
-The Orchestrator treats CI as the source of truth (Playbook §3). Dashboards track: conformance coverage (gates green / total), repro pass rate, corpus pass‑rate vs. npm baseline over time, red‑team corpus size (must be monotonic), and flake rate (must trend to zero). A drop in any is a standing task, not an ignored metric.
+The Orchestrator treats CI as the source of truth (Playbook §3). ⟦Bnpmboard⟧s track: conformance coverage (gates green / total), repro pass rate, corpus pass‑rate vs. npm baseline over time, red‑team corpus size (must be monotonic), and flake rate (must trend to zero). A drop in any is a standing task, not an ignored metric.
 
 ## 6. Release gates (M7)
 

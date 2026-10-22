@@ -1,6 +1,6 @@
-# `@dash/benchmarks`
+# `@better-npm/benchmarks`
 
-Performance benchmark suite for Dash subsystems.
+Performance benchmark suite for Bnpm subsystems.
 
 ## Overview
 
@@ -9,7 +9,7 @@ Pre-defined benchmarks covering crypto hashing, JSON parsing, array sorting, str
 ## Usage
 
 ```ts
-import { listBenchmarks, runBenchmark, runBenchmarks } from "@dash/benchmarks";
+import { listBenchmarks, runBenchmark, runBenchmarks } from "@better-npm/benchmarks";
 
 console.log(listBenchmarks());
 const result = await runBenchmark("crypto-hash");

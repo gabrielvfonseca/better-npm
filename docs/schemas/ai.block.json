@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://dash.dev/schemas/ai.block.json",
-  "title": "Dash AI Block",
-  "description": "Schema for the [ai] section in dash.toml — structured, machine-readable metadata that enables AI agents and semantic search to reason about packages without executing or scraping. Validated on publish and indexed by the registry's semantic index.",
+  "$id": "https://bnpm.dev/schemas/ai.block.json",
+  "title": "Bnpm AI Block",
+  "description": "Schema for the [ai] section in bnpm.toml — structured, machine-readable metadata that enables AI agents and semantic search to reason about packages without executing or scraping. Validated on publish and indexed by the registry's semantic index.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -17,7 +17,7 @@
     },
     "intent": {
       "type": "string",
-      "description": "A term from the curated Dash capability taxonomy. Follows a hierarchical slash-separated naming convention. Enables exact-filter search: 'find me an X' becomes a filter, not a fuzzy search.",
+      "description": "A term from the curated Bnpm capability taxonomy. Follows a hierarchical slash-separated naming convention. Enables exact-filter search: 'find me an X' becomes a filter, not a fuzzy search.",
       "pattern": "^[a-z]+(/[a-z][a-z0-9-]*)*$",
       "examples": [
         "networking/http-client",

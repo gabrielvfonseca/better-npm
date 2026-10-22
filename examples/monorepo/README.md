@@ -1,6 +1,6 @@
 # Monorepo Example
 
-A minimal two-package monorepo using [Turborepo](https://turbo.build/repo) that demonstrates sharing a common library (`@dash/example-shared`) between apps.
+A minimal two-package monorepo using [Turborepo](https://turbo.build/repo) that demonstrates sharing a common library (`@better-npm/example-shared`) between apps.
 
 ## What This Demonstrates
 
@@ -31,12 +31,12 @@ bun run build
 monorepo/
 ├── apps/
 │   └── web/                    # Consumer app
-│       ├── package.json        # Depends on @dash/example-shared
+│       ├── package.json        # Depends on @better-npm/example-shared
 │       └── src/
 │           └── index.ts        # Uses shared utilities
 ├── packages/
 │   └── shared/                 # Shared library
-│       ├── package.json        # Depends on @dash/sdk
+│       ├── package.json        # Depends on @better-npm/sdk
 │       └── src/
 │           └── index.ts        # Exports sharedUtil, getPackageUrl
 ├── package.json                # Root workspace & turbo config
@@ -46,7 +46,7 @@ monorepo/
 
 ## How It Works
 
-- `packages/shared` exports utilities (`sharedUtil`, `getPackageUrl`) that wrap `@dash/sdk`
-- `apps/web` imports from `@dash/example-shared` (resolved via workspace protocol)
+- `packages/shared` exports utilities (`sharedUtil`, `getPackageUrl`) that wrap `@better-npm/sdk`
+- `apps/web` imports from `@better-npm/example-shared` (resolved via workspace protocol)
 - Turborepo runs tasks in dependency order: `shared` builds before `web`
 - The root `package.json` uses `"workspaces": ["packages/*", "apps/*"]` to register both directories
