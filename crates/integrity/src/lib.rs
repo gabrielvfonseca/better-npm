@@ -96,15 +96,6 @@ impl Integrity {
         expected == &actual
     }
 
-    /// Serialize to the standard string format: `{algorithm}-{base64(value)}`
-    pub fn to_string(&self) -> String {
-        format!(
-            "{}-{}",
-            self.algorithm.as_str(),
-            bnpm_hashing::to_base64(&self.value)
-        )
-    }
-
     /// Parse an integrity string in the format `{algorithm}-{base64(value)}`.
     pub fn from_string(s: &str) -> Result<Self, IntegrityError> {
         let s = s.trim();
@@ -136,7 +127,7 @@ impl Integrity {
 
 impl std::fmt::Display for Integrity {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.to_string())
+        write!(f, "{}-{}", self.algorithm.as_str(), bnpm_hashing::to_base64(&self.value))
     }
 }
 

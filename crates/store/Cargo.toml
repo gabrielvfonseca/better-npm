@@ -22,9 +22,14 @@ hex = { workspace = true }
 bnpm-hashing = { path = "../hashing" }
 bnpm-filesystem = { path = "../filesystem" }
 bnpm-cache = { path = "../cache" }
+bnpm-cid = { path = "../cid" }
+bnpm-capsule = { path = "../capsule" }
 bnpm-config = { path = "../config" }
 moka = { workspace = true }
 uuid = { workspace = true }
 chrono = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"

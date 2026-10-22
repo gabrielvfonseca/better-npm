@@ -6,6 +6,8 @@
 use std::path::PathBuf;
 use std::sync::Arc;
 
+pub mod cas;
+
 /// Error type for store operations.
 #[derive(Debug, thiserror::Error)]
 pub enum StoreError {
