@@ -2,7 +2,7 @@ import { mkdirSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { LocalStorage, StorageFactory } from "./index.js"
+import { LocalStorage, createStorage } from "./index.js"
 
 describe("@better-npm/storage", () => {
   let testDir: string
@@ -49,14 +49,14 @@ describe("@better-npm/storage", () => {
     })
   })
 
-  describe("StorageFactory", () => {
+  describe("createStorage", () => {
     it("should create local storage", () => {
-      const storage = StorageFactory.create({ type: "local", baseDir: testDir })
+      const storage = createStorage({ type: "local", baseDir: testDir })
       expect(storage).toBeInstanceOf(LocalStorage)
     })
 
     it("should throw for unknown type", () => {
-      expect(() => StorageFactory.create({ type: "invalid" as never })).toThrow()
+      expect(() => createStorage({ type: "invalid" as never })).toThrow()
     })
   })
 })

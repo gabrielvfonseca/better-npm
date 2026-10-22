@@ -3,6 +3,7 @@ import {
   mkdirSync,
   readFileSync,
   readdirSync,
+  renameSync,
   statSync,
   unlinkSync,
   writeFileSync,
@@ -102,7 +103,7 @@ export class S3Storage implements StorageBackend {
         ...this.authHeaders(),
         "Content-Type": "application/octet-stream",
       },
-      body: data instanceof Buffer ? data : data,
+      body: typeof data === "string" ? data : new Uint8Array(data),
     })
     if (!response.ok) throw new Error(`S3 write failed: ${response.statusText}`)
   }
@@ -157,4 +158,168 @@ export function createStorage(config: StorageConfig): StorageBackend {
     default:
       throw new Error(`Unknown storage type: ${config.type}`)
   }
+}
+
+export interface PackageDist {
+  tarball: string
+  shasum: string
+  integrity?: string
+  fileCount?: number
+  unpackedSize?: number
+}
+
+export interface PublishPackagePayload {
+  name: string
+  version: string
+  tag?: string
+  readme?: string
+  access?: "public" | "restricted"
+  dist: PackageDist
+  dependencies?: Record<string, string>
+  devDependencies?: Record<string, string>
+  peerDependencies?: Record<string, string>
+  optionalDependencies?: Record<string, string>
+  engines?: Record<string, string>
+}
+
+export interface PackageVersionRecord extends Omit<PublishPackagePayload, "tag" | "access"> {
+  tag: string
+  access: "public" | "restricted"
+  publishedAt: string
+  deprecated?: string
+}
+
+export interface PackageRecord {
+  name: string
+  owners: string[]
+  distTags: Record<string, string>
+  versions: Record<string, PackageVersionRecord>
+  deprecated?: string
+}
+
+export class PackageStoreError extends Error {
+  constructor(
+    readonly status: 409,
+    message: string,
+  ) {
+    super(message)
+  }
+}
+
+export interface PackageStorage {
+  getPackage(name: string): Promise<PackageRecord | undefined>
+  getPackageVersion(name: string, version: string): Promise<PackageVersionRecord | undefined>
+  publishPackage(
+    name: string,
+    payload: PublishPackagePayload,
+    publisher: string,
+  ): Promise<PackageRecord>
+  unpublishPackageVersion(name: string, version: string): Promise<boolean>
+  deprecatePackage(name: string, reason: string): Promise<PackageRecord | undefined>
+  deprecatePackageVersion(
+    name: string,
+    version: string,
+    reason: string,
+  ): Promise<PackageVersionRecord | undefined>
+  searchPackages(query: string): Promise<PackageRecord[]>
+}
+
+class JsonPackageStorage implements PackageStorage {
+  private readonly packages: Record<string, PackageRecord>
+
+  constructor(private readonly file: string) {
+    this.packages = existsSync(file)
+      ? (JSON.parse(readFileSync(file, "utf-8")) as Record<string, PackageRecord>)
+      : {}
+  }
+
+  private save(): void {
+    mkdirSync(dirname(this.file), { recursive: true })
+    const tmp = `${this.file}.tmp`
+    writeFileSync(tmp, JSON.stringify(this.packages, null, 2))
+    renameSync(tmp, this.file)
+  }
+
+  async getPackage(name: string): Promise<PackageRecord | undefined> {
+    return this.packages[name]
+  }
+
+  async getPackageVersion(
+    name: string,
+    version: string,
+  ): Promise<PackageVersionRecord | undefined> {
+    return this.packages[name]?.versions[version]
+  }
+
+  async publishPackage(
+    name: string,
+    payload: PublishPackagePayload,
+    publisher: string,
+  ): Promise<PackageRecord> {
+    const pkg: PackageRecord = this.packages[name] ?? {
+      name,
+      owners: [publisher],
+      distTags: {},
+      versions: {},
+    }
+    if (pkg.versions[payload.version]) {
+      throw new PackageStoreError(
+        409,
+        `Version ${payload.version} of '${name}' is already published`,
+      )
+    }
+    const tag = payload.tag ?? "latest"
+    pkg.versions[payload.version] = {
+      ...payload,
+      tag,
+      access: payload.access ?? "public",
+      publishedAt: new Date().toISOString(),
+    }
+    pkg.distTags[tag] = payload.version
+    this.packages[name] = pkg
+    this.save()
+    return pkg
+  }
+
+  async unpublishPackageVersion(name: string, version: string): Promise<boolean> {
+    const pkg = this.packages[name]
+    if (!pkg?.versions[version]) return false
+    delete pkg.versions[version]
+    for (const [tag, v] of Object.entries(pkg.distTags)) {
+      if (v === version) delete pkg.distTags[tag]
+    }
+    this.save()
+    return true
+  }
+
+  async deprecatePackage(name: string, reason: string): Promise<PackageRecord | undefined> {
+    const pkg = this.packages[name]
+    if (!pkg) return undefined
+    pkg.deprecated = reason
+    this.save()
+    return pkg
+  }
+
+  async deprecatePackageVersion(
+    name: string,
+    version: string,
+    reason: string,
+  ): Promise<PackageVersionRecord | undefined> {
+    const record = this.packages[name]?.versions[version]
+    if (!record) return undefined
+    record.deprecated = reason
+    this.save()
+    return record
+  }
+
+  async searchPackages(query: string): Promise<PackageRecord[]> {
+    const needle = query.toLowerCase()
+    return Object.values(this.packages).filter((pkg) => pkg.name.toLowerCase().includes(needle))
+  }
+}
+
+export const PackageStorageFactory = {
+  create(file = process.env.BNPM_PACKAGE_STORE ?? "./data/registry/packages.json"): PackageStorage {
+    return new JsonPackageStorage(file)
+  },
 }
