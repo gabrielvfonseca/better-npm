@@ -2,7 +2,12 @@ import { type AuthToken, parseAuthHeader, verifyToken } from "@better-npm/auth"
 import { loadConfig } from "@better-npm/config"
 import { createLogger } from "@better-npm/logger"
 import { type PackageStorage, PackageStorageFactory, PackageStoreError } from "@better-npm/storage"
-import { publishPackageSchema, validate } from "@better-npm/validation"
+import {
+  packageNameSchema,
+  publishPackageSchema,
+  semVerSchema,
+  validate,
+} from "@better-npm/validation"
 import { type Context, Hono, type Next } from "hono"
 import { HTTPException } from "hono/http-exception"
 import { z } from "zod"
@@ -32,13 +37,28 @@ const requirePublisher = async (c: Context<Env>, next: Next) => {
   await next()
 }
 
-const assertCanModify = async (c: Context<Env>, name: string): Promise<void> => {
-  const pkg = await packageStorage.getPackage(name)
-  if (!pkg) return
+const parsePackageName = (raw: string | undefined): string => {
+  const result = validate(packageNameSchema, raw)
+  if (!result.ok) throw new HTTPException(400, { message: "Invalid package name" })
+  return result.value
+}
 
+const parseVersion = (raw: string | undefined): string => {
+  const result = validate(semVerSchema, raw)
+  if (!result.ok) throw new HTTPException(400, { message: "Invalid version" })
+  return result.value
+}
+
+const actorOf = (c: Context<Env>) => {
   const user = c.get("user")
-  if (user.roles.includes("admin") || pkg.owners.includes(user.sub)) return
-  throw new HTTPException(403, { message: `You are not an owner of '${name}'` })
+  return { id: user.sub, admin: user.roles.includes("admin") }
+}
+
+const toHttpException = (err: unknown): HTTPException | undefined => {
+  if (err instanceof HTTPException) return err
+  if (err instanceof PackageStoreError)
+    return new HTTPException(err.status, { message: err.message })
+  return undefined
 }
 
 app.use("*", async (c, next) => {
@@ -50,11 +70,9 @@ app.use("*", async (c, next) => {
 
 app.get("/packages/:name", async (c) => {
   try {
-    const name = c.req.param("name")
-    if (!name) throw new HTTPException(400, { message: "Package name is required" })
+    const name = parsePackageName(c.req.param("name"))
 
-    const storage = packageStorage
-    const pkg = await storage.getPackage(name)
+    const pkg = await packageStorage.getPackage(name)
     if (!pkg) throw new HTTPException(404, { message: `Package '${name}' not found` })
 
     return c.json({ package: pkg })
@@ -67,13 +85,10 @@ app.get("/packages/:name", async (c) => {
 
 app.get("/packages/:name/:version", async (c) => {
   try {
-    const name = c.req.param("name")
-    const version = c.req.param("version")
-    if (!(name && version))
-      throw new HTTPException(400, { message: "Package name and version are required" })
+    const name = parsePackageName(c.req.param("name"))
+    const version = parseVersion(c.req.param("version"))
 
-    const storage = packageStorage
-    const pkg = await storage.getPackageVersion(name, version)
+    const pkg = await packageStorage.getPackageVersion(name, version)
     if (!pkg) throw new HTTPException(404, { message: `Package '${name}@${version}' not found` })
 
     return c.json({ package: pkg })
@@ -90,8 +105,7 @@ app.get("/packages/:name/:version", async (c) => {
 
 app.put("/packages/:name", requirePublisher, async (c) => {
   try {
-    const name = c.req.param("name")
-    if (!name) throw new HTTPException(400, { message: "Package name is required" })
+    const name = parsePackageName(c.req.param("name"))
 
     const body = await c.req.json()
     const validationResult = validate(publishPackageSchema, body)
@@ -102,16 +116,17 @@ app.put("/packages/:name", requirePublisher, async (c) => {
       })
     }
     const payload = validationResult.value
+    if (payload.name !== name) {
+      throw new HTTPException(400, { message: "Package name in body does not match the URL" })
+    }
 
-    await assertCanModify(c, name)
-    const result = await packageStorage.publishPackage(name, payload, c.get("user").sub)
+    const result = await packageStorage.publishPackage(name, payload, actorOf(c))
     logger.info("Package published", { name, version: payload.version })
 
     return c.json({ package: result }, 201)
   } catch (err) {
-    if (err instanceof HTTPException) throw err
-    if (err instanceof PackageStoreError)
-      throw new HTTPException(err.status, { message: err.message })
+    const httpErr = toHttpException(err)
+    if (httpErr) throw httpErr
     logger.error("Failed to publish package", { name: c.req.param("name"), error: String(err) })
     throw new HTTPException(500, { message: "Failed to publish package" })
   }
@@ -119,20 +134,18 @@ app.put("/packages/:name", requirePublisher, async (c) => {
 
 app.delete("/packages/:name/:version", requirePublisher, async (c) => {
   try {
-    const name = c.req.param("name")
-    const version = c.req.param("version")
-    if (!(name && version))
-      throw new HTTPException(400, { message: "Package name and version are required" })
+    const name = parsePackageName(c.req.param("name"))
+    const version = parseVersion(c.req.param("version"))
 
-    await assertCanModify(c, name)
-    const removed = await packageStorage.unpublishPackageVersion(name, version)
+    const removed = await packageStorage.unpublishPackageVersion(name, version, actorOf(c))
     if (!removed)
       throw new HTTPException(404, { message: `Package '${name}@${version}' not found` })
     logger.info("Package version unpublished", { name, version })
 
     return c.json({ message: `Package '${name}@${version}' unpublished` })
   } catch (err) {
-    if (err instanceof HTTPException) throw err
+    const httpErr = toHttpException(err)
+    if (httpErr) throw httpErr
     logger.error("Failed to unpublish package version", {
       name: c.req.param("name"),
       version: c.req.param("version"),
@@ -147,8 +160,7 @@ app.get("/search", async (c) => {
     const query = c.req.query("q")
     if (!query) throw new HTTPException(400, { message: "Search query is required" })
 
-    const storage = packageStorage
-    const results = await storage.searchPackages(query)
+    const results = await packageStorage.searchPackages(query)
     return c.json({ results, query, total: results.length })
   } catch (err) {
     if (err instanceof HTTPException) throw err
@@ -159,9 +171,9 @@ app.get("/search", async (c) => {
 
 app.post("/packages/:name/deprecate", requirePublisher, async (c) => {
   try {
-    const name = c.req.param("name")
-    const version = c.req.query("version")
-    if (!name) throw new HTTPException(400, { message: "Package name is required" })
+    const name = parsePackageName(c.req.param("name"))
+    const versionParam = c.req.query("version")
+    const version = versionParam === undefined ? undefined : parseVersion(versionParam)
 
     const body = await c.req.json()
     const validationResult = validate(z.object({ reason: z.string() }), body)
@@ -173,11 +185,9 @@ app.post("/packages/:name/deprecate", requirePublisher, async (c) => {
     }
     const { reason } = validationResult.value
 
-    await assertCanModify(c, name)
-    const storage = packageStorage
     const result = version
-      ? await storage.deprecatePackageVersion(name, version, reason)
-      : await storage.deprecatePackage(name, reason)
+      ? await packageStorage.deprecatePackageVersion(name, version, reason, actorOf(c))
+      : await packageStorage.deprecatePackage(name, reason, actorOf(c))
     if (!result) {
       throw new HTTPException(404, {
         message: version ? `Package '${name}@${version}' not found` : `Package '${name}' not found`,
@@ -187,7 +197,8 @@ app.post("/packages/:name/deprecate", requirePublisher, async (c) => {
     logger.info("Package deprecated", { name, version, reason })
     return c.json({ package: result, deprecated: true, reason })
   } catch (err) {
-    if (err instanceof HTTPException) throw err
+    const httpErr = toHttpException(err)
+    if (httpErr) throw httpErr
     logger.error("Failed to deprecate package", { name: c.req.param("name"), error: String(err) })
     throw new HTTPException(500, { message: "Failed to deprecate package" })
   }

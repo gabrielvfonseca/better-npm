@@ -197,9 +197,14 @@ export interface PackageRecord {
   deprecated?: string
 }
 
+export interface PackageActor {
+  id: string
+  admin: boolean
+}
+
 export class PackageStoreError extends Error {
   constructor(
-    readonly status: 409,
+    readonly status: 400 | 403 | 404 | 409,
     message: string,
   ) {
     super(message)
@@ -212,63 +217,91 @@ export interface PackageStorage {
   publishPackage(
     name: string,
     payload: PublishPackagePayload,
-    publisher: string,
+    actor: PackageActor,
   ): Promise<PackageRecord>
-  unpublishPackageVersion(name: string, version: string): Promise<boolean>
-  deprecatePackage(name: string, reason: string): Promise<PackageRecord | undefined>
+  unpublishPackageVersion(name: string, version: string, actor: PackageActor): Promise<boolean>
+  deprecatePackage(
+    name: string,
+    reason: string,
+    actor: PackageActor,
+  ): Promise<PackageRecord | undefined>
   deprecatePackageVersion(
     name: string,
     version: string,
     reason: string,
+    actor: PackageActor,
   ): Promise<PackageVersionRecord | undefined>
   searchPackages(query: string): Promise<PackageRecord[]>
 }
 
+const RESERVED_KEYS = new Set(["__proto__", "constructor", "prototype"])
+
+function ownValue<T>(record: Record<string, T> | undefined, key: string): T | undefined {
+  return record && Object.hasOwn(record, key) ? record[key] : undefined
+}
+
+function assertSafeKey(key: string, label: string): void {
+  if (RESERVED_KEYS.has(key) || key.length === 0) {
+    throw new PackageStoreError(400, `Invalid ${label}: ${key}`)
+  }
+}
+
+function assertCanModify(pkg: PackageRecord, actor: PackageActor): void {
+  if (actor.admin || pkg.owners.includes(actor.id)) return
+  throw new PackageStoreError(403, `You are not an owner of '${pkg.name}'`)
+}
+
 class JsonPackageStorage implements PackageStorage {
-  private readonly packages: Record<string, PackageRecord>
+  private readonly packages: Map<string, PackageRecord>
 
   constructor(private readonly file: string) {
-    this.packages = existsSync(file)
+    const loaded = existsSync(file)
       ? (JSON.parse(readFileSync(file, "utf-8")) as Record<string, PackageRecord>)
       : {}
+    this.packages = new Map(Object.entries(loaded))
   }
 
   private save(): void {
     mkdirSync(dirname(this.file), { recursive: true })
     const tmp = `${this.file}.tmp`
-    writeFileSync(tmp, JSON.stringify(this.packages, null, 2))
+    writeFileSync(tmp, JSON.stringify(Object.fromEntries(this.packages), null, 2))
     renameSync(tmp, this.file)
   }
 
   async getPackage(name: string): Promise<PackageRecord | undefined> {
-    return this.packages[name]
+    return this.packages.get(name)
   }
 
   async getPackageVersion(
     name: string,
     version: string,
   ): Promise<PackageVersionRecord | undefined> {
-    return this.packages[name]?.versions[version]
+    return ownValue(this.packages.get(name)?.versions, version)
   }
 
   async publishPackage(
     name: string,
     payload: PublishPackagePayload,
-    publisher: string,
+    actor: PackageActor,
   ): Promise<PackageRecord> {
-    const pkg: PackageRecord = this.packages[name] ?? {
+    assertSafeKey(name, "package name")
+    assertSafeKey(payload.version, "version")
+    const existing = this.packages.get(name)
+    if (existing) assertCanModify(existing, actor)
+    const pkg: PackageRecord = existing ?? {
       name,
-      owners: [publisher],
+      owners: [actor.id],
       distTags: {},
       versions: {},
     }
-    if (pkg.versions[payload.version]) {
+    if (ownValue(pkg.versions, payload.version)) {
       throw new PackageStoreError(
         409,
         `Version ${payload.version} of '${name}' is already published`,
       )
     }
     const tag = payload.tag ?? "latest"
+    assertSafeKey(tag, "dist-tag")
     pkg.versions[payload.version] = {
       ...payload,
       tag,
@@ -276,14 +309,20 @@ class JsonPackageStorage implements PackageStorage {
       publishedAt: new Date().toISOString(),
     }
     pkg.distTags[tag] = payload.version
-    this.packages[name] = pkg
+    this.packages.set(name, pkg)
     this.save()
     return pkg
   }
 
-  async unpublishPackageVersion(name: string, version: string): Promise<boolean> {
-    const pkg = this.packages[name]
-    if (!pkg?.versions[version]) return false
+  async unpublishPackageVersion(
+    name: string,
+    version: string,
+    actor: PackageActor,
+  ): Promise<boolean> {
+    const pkg = this.packages.get(name)
+    if (!pkg) return false
+    if (!ownValue(pkg.versions, version)) return false
+    assertCanModify(pkg, actor)
     delete pkg.versions[version]
     for (const [tag, v] of Object.entries(pkg.distTags)) {
       if (v === version) delete pkg.distTags[tag]
@@ -292,9 +331,14 @@ class JsonPackageStorage implements PackageStorage {
     return true
   }
 
-  async deprecatePackage(name: string, reason: string): Promise<PackageRecord | undefined> {
-    const pkg = this.packages[name]
+  async deprecatePackage(
+    name: string,
+    reason: string,
+    actor: PackageActor,
+  ): Promise<PackageRecord | undefined> {
+    const pkg = this.packages.get(name)
     if (!pkg) return undefined
+    assertCanModify(pkg, actor)
     pkg.deprecated = reason
     this.save()
     return pkg
@@ -304,9 +348,13 @@ class JsonPackageStorage implements PackageStorage {
     name: string,
     version: string,
     reason: string,
+    actor: PackageActor,
   ): Promise<PackageVersionRecord | undefined> {
-    const record = this.packages[name]?.versions[version]
+    const pkg = this.packages.get(name)
+    const record = ownValue(pkg?.versions, version)
+    if (!pkg) return undefined
     if (!record) return undefined
+    assertCanModify(pkg, actor)
     record.deprecated = reason
     this.save()
     return record
@@ -314,7 +362,7 @@ class JsonPackageStorage implements PackageStorage {
 
   async searchPackages(query: string): Promise<PackageRecord[]> {
     const needle = query.toLowerCase()
-    return Object.values(this.packages).filter((pkg) => pkg.name.toLowerCase().includes(needle))
+    return [...this.packages.values()].filter((pkg) => pkg.name.toLowerCase().includes(needle))
   }
 }
 
