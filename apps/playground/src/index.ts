@@ -142,17 +142,9 @@ app.post("/playground/run", async (c) => {
     const ip = c.req.header("x-forwarded-for") ?? c.req.header("x-real-ip") ?? "unknown"
     checkRateLimit(ip)
 
-    const body = await c.req.json()
-    const { code, language } = body
-
-    if (!code) {
-      throw new HTTPException(400, { message: "Code is required" })
-    }
-
-    const result = await runInSandbox(code, language ?? "javascript")
-    logger.info("Code executed", { language, ip })
-
-    return c.json({ output: result.output, executionTime: result.executionTime })
+    throw new HTTPException(501, {
+      message: "Code execution is disabled until it runs in an isolated sandbox",
+    })
   } catch (err) {
     if (err instanceof HTTPException) throw err
     logger.error("Code execution failed", { error: String(err) })
@@ -189,29 +181,6 @@ app.onError((err, c) => {
 })
 
 app.notFound((c) => c.json({ error: "Not found", status: 404 }, 404))
-
-async function runInSandbox(code: string, _language: string) {
-  const start = performance.now()
-  let output = ""
-
-  try {
-    const logs: string[] = []
-    const mockConsole = {
-      log: (...args: unknown[]) => logs.push(args.map(String).join(" ")),
-      error: (...args: unknown[]) => logs.push(`Error: ${args.map(String).join(" ")}`),
-      warn: (...args: unknown[]) => logs.push(`Warn: ${args.map(String).join(" ")}`),
-      info: (...args: unknown[]) => logs.push(`Info: ${args.map(String).join(" ")}`),
-    }
-
-    const fn = new Function("console", code)
-    fn(mockConsole)
-    output = logs.join("\n")
-  } catch (err) {
-    output = `Execution error: ${String(err)}`
-  }
-
-  return { output, executionTime: performance.now() - start }
-}
 
 async function formatCode(code: string, language: string) {
   if (language === "javascript" || language === "typescript") {
