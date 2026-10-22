@@ -341,6 +341,7 @@ impl CasStore {
 
         for (rel_path, data) in &files {
             let target_path = safe_join(&target, rel_path)?;
+            reject_symlinked_components(&target, &target_path)?;
             if let Some(parent) = target_path.parent() {
                 tokio::fs::create_dir_all(parent).await?;
             }
@@ -584,6 +585,27 @@ fn safe_join(target: &Path, rel_path: &str) -> Result<PathBuf, StoreError> {
         return Err(StoreError::Backend(format!("unsafe path in capsule: {rel_path}")));
     }
     Ok(target.join(rel))
+}
+
+/// Refuse to write through a symlink that already exists between `root` and `path`.
+fn reject_symlinked_components(root: &Path, path: &Path) -> Result<(), StoreError> {
+    let relative = path.strip_prefix(root).unwrap_or(path);
+    let mut current = root.to_path_buf();
+    for component in relative.components() {
+        current.push(component);
+        match std::fs::symlink_metadata(&current) {
+            Ok(meta) if meta.file_type().is_symlink() => {
+                return Err(StoreError::Backend(format!(
+                    "refusing to write through symlink: {}",
+                    current.display()
+                )));
+            }
+            Ok(_) => {}
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+            Err(e) => return Err(e.into()),
+        }
+    }
+    Ok(())
 }
 
 fn materialize_file(src: &Path, dst: &Path, fallback_data: &[u8]) -> Result<(), StoreError> {
