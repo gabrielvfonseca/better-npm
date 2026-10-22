@@ -234,6 +234,13 @@ export function loadConfig(options?: { file?: string; env?: string }): BnpmConfi
     }
   }
 
+  if (
+    isProduction() &&
+    (config.auth.secret === DEFAULT_CONFIG.auth.secret || config.auth.secret.length < 32)
+  ) {
+    throw new Error("AUTH_SECRET must be set to at least 32 characters in production")
+  }
+
   cachedConfig = config
   return config
 }
