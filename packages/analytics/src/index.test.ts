@@ -34,7 +34,7 @@ describe("@better-npm/analytics", () => {
   })
 
   it("should attempt to send events on flush", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({ ok: true })
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: true }) as unknown as typeof fetch
     const client = new AnalyticsClient({ enabled: true, endpoint: "http://localhost:9999" })
     client.track({ name: "test", timestamp: new Date().toISOString(), sessionId: "sess" })
     await client.flush()

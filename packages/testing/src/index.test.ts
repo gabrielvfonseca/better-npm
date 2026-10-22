@@ -47,9 +47,7 @@ describe("@better-npm/testing", () => {
   })
 
   it("should work with temp directories", async () => {
-    let _dirPath = ""
     await withTempDir(async (dir) => {
-      _dirPath = dir
       expect(dir).toBeTruthy()
     })
     // dir should be cleaned up after

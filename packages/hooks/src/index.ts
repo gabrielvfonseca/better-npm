@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, type RefObject } from "react"
+import { type RefObject, useCallback, useEffect, useRef, useState } from "react"
 
 export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void] {
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -88,7 +88,7 @@ export function usePrevious<T>(value: T): T | undefined {
 
 export function useClipboard(): { copy: (text: string) => Promise<void>; copied: boolean } {
   const [copied, setCopied] = useState(false)
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>()
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   const copy = useCallback(async (text: string) => {
     try {

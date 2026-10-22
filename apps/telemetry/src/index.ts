@@ -1,4 +1,3 @@
-import { loadConfig } from "@better-npm/config"
 import { createLogger } from "@better-npm/logger"
 import { type TelemetryClient, createTelemetryClient } from "@better-npm/telemetry"
 import { Hono } from "hono"
@@ -6,7 +5,6 @@ import { HTTPException } from "hono/http-exception"
 import type { ContentfulStatusCode } from "hono/utils/http-status"
 
 const logger = createLogger("telemetry")
-const config = loadConfig()
 
 const app = new Hono()
 let telemetry: TelemetryClient
@@ -115,7 +113,7 @@ app.onError((err, c) => {
 app.notFound((c) => c.json({ error: "Not found", status: 404 }, 404))
 
 export async function createTelemetryService(client?: TelemetryClient) {
-  telemetry = client ?? (await createTelemetryClient(config.telemetry))
+  telemetry = client ?? (await createTelemetryClient())
   logger.info("Telemetry service initialized")
   return app
 }

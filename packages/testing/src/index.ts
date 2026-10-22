@@ -35,7 +35,7 @@ export function createTestConfig(overrides?: Partial<BnpmConfig>): BnpmConfig {
   return config
 }
 
-function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial<T>): T {
+function deepMerge<T extends object>(target: T, source: Partial<T>): T {
   const result = { ...target } as Record<string, unknown>
   for (const key of Object.keys(source) as Array<keyof T>) {
     const val = source[key]

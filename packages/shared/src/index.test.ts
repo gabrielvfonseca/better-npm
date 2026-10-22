@@ -43,7 +43,7 @@ describe("@better-npm/shared", () => {
 
   describe("deepMerge", () => {
     it("should deeply merge objects", () => {
-      const a = { x: { y: 1, z: 2 } }
+      const a: { x: { y: number; z?: number } } = { x: { y: 1, z: 2 } }
       const b = { x: { y: 3 } }
       expect(deepMerge(a, b)).toEqual({ x: { y: 3, z: 2 } })
     })
