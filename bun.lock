@@ -30,6 +30,8 @@
         "@better-npm/config": "workspace:*",
         "@better-npm/logger": "workspace:*",
         "@better-npm/validation": "workspace:*",
+        "@hono/node-server": "^1.13.0",
+        "@hono/swagger-ui": "^0.5.0",
         "@hono/valibot-validator": "^0.5.0",
         "@hono/zod-openapi": "^0.18.0",
         "hono": "^4.7.0",
@@ -136,6 +138,7 @@
         "@better-npm/validation": "workspace:*",
         "@hono/zod-openapi": "^0.18.0",
         "hono": "^4.7.0",
+        "zod": "^3.23.0",
       },
       "devDependencies": {
         "@biomejs/biome": "^1.9.0",
@@ -426,6 +429,7 @@
       "name": "@better-npm/hooks",
       "version": "0.0.0",
       "devDependencies": {
+        "@types/react": "^19.0.0",
         "typescript": "^5.7.0",
         "vitest": "^2.1.0",
       },
@@ -816,6 +820,10 @@
     "@floating-ui/react-dom": ["@floating-ui/react-dom@2.1.9", "", { "dependencies": { "@floating-ui/dom": "^1.8.0" }, "peerDependencies": { "react": ">=16.8.0", "react-dom": ">=16.8.0" } }, "sha512-JDjEFGCpImxDCA7JJKviA0M9+RtmJdj0m/NVU5IMgBK+AmZouAQQ7/+2GLH0GXXY0YMw9oXPB8hKdbPYg5QLYg=="],
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.12", "", {}, "sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww=="],
+
+    "@hono/node-server": ["@hono/node-server@1.19.17", "", { "peerDependencies": { "hono": "^4" } }, "sha512-dSneS5qhiauZWGDCeK4o695Xd9nUNjviSZCMQrj10eetr8Uln1ucn6bbphOM6UynAMMtNIzZNSpL9vnASJwrPQ=="],
+
+    "@hono/swagger-ui": ["@hono/swagger-ui@0.5.3", "", { "peerDependencies": { "hono": ">=4.0.0" } }, "sha512-Hn90DOOJ62ICJQplQvCDVpi9Jcn6EhtRaiffyJIS53wA5RmRLtMCDQGVc0bor8vQD7JIwpkweWjs+3cycp+IvA=="],
 
     "@hono/valibot-validator": ["@hono/valibot-validator@0.5.3", "", { "peerDependencies": { "hono": ">=3.9.0", "valibot": "^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc" } }, "sha512-91wjmjDvrTdEm2ZcuCyLBghtld78QoLEduzfkqLo1L74n6sqqoVfc0gDfmju1Ar6w1eK8Q0UyIubrtj4KMWVnQ=="],
 

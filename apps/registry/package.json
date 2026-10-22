@@ -15,6 +15,7 @@
   "dependencies": {
     "hono": "^4.7.0",
     "@hono/zod-openapi": "^0.18.0",
+    "zod": "^3.23.0",
     "@better-npm/auth": "workspace:*",
     "@better-npm/config": "workspace:*",
     "@better-npm/logger": "workspace:*",
