@@ -340,7 +340,7 @@ impl CasStore {
         let target = target.to_path_buf();
 
         for (rel_path, data) in &files {
-            let target_path = target.join(rel_path);
+            let target_path = safe_join(&target, rel_path)?;
             if let Some(parent) = target_path.parent() {
                 tokio::fs::create_dir_all(parent).await?;
             }
@@ -576,6 +576,16 @@ fn try_reflink(src: &Path, dst: &Path) -> bool {
 /// 1. Try reflink (copy-on-write clone)
 /// 2. Try hardlink (same-device check)
 /// 3. Fall back to copy using the provided fallback data
+/// Join a capsule-supplied relative path onto `target`, rejecting anything that
+/// could escape it (absolute paths, prefixes, or `..` components).
+fn safe_join(target: &Path, rel_path: &str) -> Result<PathBuf, StoreError> {
+    let rel = Path::new(rel_path);
+    if rel.as_os_str().is_empty() || !rel.components().all(|c| matches!(c, std::path::Component::Normal(_))) {
+        return Err(StoreError::Backend(format!("unsafe path in capsule: {rel_path}")));
+    }
+    Ok(target.join(rel))
+}
+
 fn materialize_file(src: &Path, dst: &Path, fallback_data: &[u8]) -> Result<(), StoreError> {
     // Try reflink
     if try_reflink(src, dst) {
