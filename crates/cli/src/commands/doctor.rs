@@ -1,4 +1,4 @@
-//! `dash doctor` command
+//! `bnpm doctor` command
 
 use crate::commands::DoctorArgs;
 use crate::config::{CliConfig, ExitCode};

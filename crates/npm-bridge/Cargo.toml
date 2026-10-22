@@ -1,5 +1,5 @@
 [package]
-name = "dash-npm-bridge"
+name = "bnpm-npm-bridge"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -17,10 +17,10 @@ zstd = { workspace = true }
 ciborium = { workspace = true }
 thiserror = { workspace = true }
 semver = { workspace = true }
-dash-capsule = { workspace = true }
-dash-cid = { workspace = true }
-dash-manifest = { path = "../manifest" }
-dash-resolver = { path = "../resolver" }
+bnpm-capsule = { workspace = true }
+bnpm-cid = { workspace = true }
+bnpm-manifest = { path = "../manifest" }
+bnpm-resolver = { path = "../resolver" }
 tracing = { workspace = true }
 
 [dev-dependencies]

@@ -1,24 +1,24 @@
-//! `dash add` command
+//! `bnpm add` command
 
 use crate::commands::AddArgs;
 use crate::config::{CliConfig, ExitCode};
 use crate::output::*;
 use anyhow::{Context, Result};
-use dash_cache::{CacheConfig, create_cache};
-use dash_downloader::Downloader;
-use dash_downloader::DownloaderConfig;
-use dash_installer::{InstallStrategy, Installer, InstallerConfig};
-use dash_linker::Linker;
-use dash_linker::LinkerConfig;
-use dash_lockfile::Lockfile;
-use dash_manifest::{
+use bnpm_cache::{CacheConfig, create_cache};
+use bnpm_downloader::Downloader;
+use bnpm_downloader::DownloaderConfig;
+use bnpm_installer::{InstallStrategy, Installer, InstallerConfig};
+use bnpm_linker::Linker;
+use bnpm_linker::LinkerConfig;
+use bnpm_lockfile::Lockfile;
+use bnpm_manifest::{
     DependencyEntry, Manifest, PackageManifest, find_manifest,
     schema::Manifest as SchemaManifest,
 };
-use dash_resolver::RegistryConfig;
-use dash_resolver::ResolveOptions;
-use dash_resolver::Resolver;
-use dash_store::CasStore;
+use bnpm_resolver::RegistryConfig;
+use bnpm_resolver::ResolveOptions;
+use bnpm_resolver::Resolver;
+use bnpm_store::CasStore;
 use semver::VersionReq;
 use std::sync::Arc;
 use tokio::fs;
@@ -28,7 +28,7 @@ pub async fn run(args: &AddArgs, config: &CliConfig) -> Result<ExitCode> {
 
     // Find manifest
     let manifest_path = find_manifest(&cwd)
-        .context("no manifest found (dash.toml, dash.json, or package.json)")?;
+        .context("no manifest found (bnpm.toml, bnpm.json, or package.json)")?;
 
     // Load manifest
     let mut manifest: PackageManifest = {
@@ -69,8 +69,8 @@ pub async fn run(args: &AddArgs, config: &CliConfig) -> Result<ExitCode> {
     // Write updated manifest
     if manifest_path.extension().and_then(|s| s.to_str()) == Some("toml") {
         let json_str = serde_json::to_string_pretty(&manifest)?;
-        let dash_manifest = SchemaManifest::from_json_str(&json_str)?;
-        let toml_str = dash_manifest.to_toml_string()?;
+        let bnpm_manifest = SchemaManifest::from_json_str(&json_str)?;
+        let toml_str = bnpm_manifest.to_toml_string()?;
         fs::write(&manifest_path, toml_str).await?;
     } else {
         let json_str = serde_json::to_string_pretty(&manifest)?;
@@ -78,7 +78,7 @@ pub async fn run(args: &AddArgs, config: &CliConfig) -> Result<ExitCode> {
     }
 
     // Find lockfile
-    let lockfile_path = dash_lockfile::find_lockfile(&cwd).unwrap_or_else(|| cwd.join("dash.lock"));
+    let lockfile_path = bnpm_lockfile::find_lockfile(&cwd).unwrap_or_else(|| cwd.join("bnpm.lock"));
 
     // Load old lockfile
     let _old_lockfile = if lockfile_path.exists() {
@@ -162,7 +162,7 @@ pub async fn run(args: &AddArgs, config: &CliConfig) -> Result<ExitCode> {
         );
         let store = Arc::new(CasStore::new(config.store_dir()).await?);
         let linker = Linker::new(
-            store.clone() as Arc<dyn dash_store::StoreBackend>,
+            store.clone() as Arc<dyn bnpm_store::StoreBackend>,
             LinkerConfig { bin_dir: installer_config.bin_dir.clone(), ..Default::default() },
         );
         let resolver2 = create_resolver(&manifest, config)?;
@@ -241,7 +241,7 @@ fn create_resolver(manifest: &PackageManifest, config: &CliConfig) -> Result<Res
         timeout_secs: 30,
         verify_ssl: true,
     };
-    // Add npm registry as fallback upstream for packages not in Dash registry
+    // Add npm registry as fallback upstream for packages not in Bnpm registry
     let npm_registry = RegistryConfig {
         url: "https://registry.npmjs.org".to_string(),
         token: None,

@@ -1,4 +1,4 @@
-# dash-cache
+# bnpm-cache
 
 Multi-tier caching layer with in-memory (Moka) and optional Redis backends.
 
@@ -16,7 +16,7 @@ Provides a unified `CacheBackend` trait with interchangeable implementations for
 ## Usage
 
 ```rust
-use dash_cache::{CacheBackend, MemoryCache};
+use bnpm_cache::{CacheBackend, MemoryCache};
 
 let cache = MemoryCache::new(10_000);
 cache.set("key", value, Some(Duration::from_secs(300)))?;

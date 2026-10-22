@@ -1,4 +1,4 @@
-# dash-hashing
+# bnpm-hashing
 
 Unified hashing interface supporting SHA-2, SHA-3, and BLAKE3.
 
@@ -17,7 +17,7 @@ Provides a consistent API for computing hashes across multiple algorithms, with 
 ## Usage
 
 ```rust
-use dash_hashing::{Hasher, HashAlgorithm};
+use bnpm_hashing::{Hasher, HashAlgorithm};
 
 let hash = Hasher::new(HashAlgorithm::Blake3)
     .update(b"hello")

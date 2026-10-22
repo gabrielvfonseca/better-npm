@@ -1,10 +1,10 @@
-# dash-config
+# bnpm-config
 
 Configuration management: layered profiles, env overrides, CLI args.
 
 ## Overview
 
-Dash loads configuration from multiple sources in order of increasing priority: defaults → config files → environment variables → CLI args.
+Bnpm loads configuration from multiple sources in order of increasing priority: defaults → config files → environment variables → CLI args.
 
 ## Features
 
@@ -17,7 +17,7 @@ Dash loads configuration from multiple sources in order of increasing priority: 
 ## Usage
 
 ```rust
-use dash_config::{Config, ConfigBuilder};
+use bnpm_config::{Config, ConfigBuilder};
 
 let config = ConfigBuilder::new()
     .with_profile("production")

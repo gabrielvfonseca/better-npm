@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
-use dash_resolver::ResolvedGraph;
-use dash_store::CasStore;
+use bnpm_resolver::ResolvedGraph;
+use bnpm_store::CasStore;
 
 use crate::InstallError;
 
-const VIRTUAL_STORE_DIR: &str = ".dash";
+const VIRTUAL_STORE_DIR: &str = ".bnpm";
 
 /// Materialize a resolved graph into a strict, non-hoisted `node_modules` tree
 /// in the pnpm style. Each package's files are materialized from the CAS store
@@ -17,12 +17,12 @@ const VIRTUAL_STORE_DIR: &str = ".dash";
 ///
 /// ```text
 /// node_modules/
-///   .dash/
+///   .bnpm/
 ///     <name>@<version>/
 ///       node_modules/
 ///         <name>/            ← actual files (materialized from CAS)
 ///         <dep>/ -> ../../<dep>@<ver>/node_modules/<dep>/   ← symlink
-///   <root-dep>/ -> .dash/<dep>@<ver>/node_modules/<dep>/    ← symlink
+///   <root-dep>/ -> .bnpm/<dep>@<ver>/node_modules/<dep>/    ← symlink
 /// ```
 ///
 /// The root gets only its own direct dependencies at the top level.
@@ -81,8 +81,8 @@ pub async fn materialize_node_modules(
     Ok(())
 }
 
-fn build_direct_dep_map(graph: &ResolvedGraph) -> HashMap<String, Vec<dash_package::PackageId>> {
-    let mut map: HashMap<String, Vec<dash_package::PackageId>> = HashMap::new();
+fn build_direct_dep_map(graph: &ResolvedGraph) -> HashMap<String, Vec<bnpm_package::PackageId>> {
+    let mut map: HashMap<String, Vec<bnpm_package::PackageId>> = HashMap::new();
 
     for (from, to) in &graph.edges {
         map.entry(from.to_string()).or_default().push(to.clone());
@@ -139,12 +139,12 @@ fn compute_relative_path(from: &Path, to: &Path) -> PathBuf {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dash_capsule::Capsule;
-    use dash_cid::Cid;
-    use dash_graph::DependencyKind;
-    use dash_package::{PackageId, PackageName};
-    use dash_resolver::{DependencyEdge, ResolvedGraph, ResolvedNode};
-    use dash_store::CasStore;
+    use bnpm_capsule::Capsule;
+    use bnpm_cid::Cid;
+    use bnpm_graph::DependencyKind;
+    use bnpm_package::{PackageId, PackageName};
+    use bnpm_resolver::{DependencyEdge, ResolvedGraph, ResolvedNode};
+    use bnpm_store::CasStore;
     use semver::Version;
     use tempfile::TempDir;
 
@@ -253,17 +253,17 @@ mod tests {
         assert!(nm.join("a").is_symlink(), "top-level a should be a symlink");
         assert!(!nm.join("b").exists(), "top-level b must NOT exist (phantom dep prevention)");
 
-        // .dash/a@1.0.0/node_modules/a/ has actual files
-        let a_virtual = nm.join(".dash/a@1.0.0/node_modules/a");
+        // .bnpm/a@1.0.0/node_modules/a/ has actual files
+        let a_virtual = nm.join(".bnpm/a@1.0.0/node_modules/a");
         assert!(a_virtual.is_dir(), "virtual a dir should exist with actual files");
         assert!(a_virtual.join("index.js").exists(), "a should have index.js");
 
-        // .dash/a@1.0.0/node_modules/b/ -> symlink to b's virtual dir
-        let a_b_link = nm.join(".dash/a@1.0.0/node_modules/b");
+        // .bnpm/a@1.0.0/node_modules/b/ -> symlink to b's virtual dir
+        let a_b_link = nm.join(".bnpm/a@1.0.0/node_modules/b");
         assert!(a_b_link.is_symlink(), "a's node_modules/b should be a symlink to b");
 
-        // .dash/b@1.0.0/node_modules/b/ has actual files
-        let b_virtual = nm.join(".dash/b@1.0.0/node_modules/b");
+        // .bnpm/b@1.0.0/node_modules/b/ has actual files
+        let b_virtual = nm.join(".bnpm/b@1.0.0/node_modules/b");
         assert!(b_virtual.is_dir(), "virtual b dir should exist with actual files");
         assert!(b_virtual.join("index.js").exists(), "b should have index.js");
 
@@ -310,12 +310,12 @@ mod tests {
         assert!(!nm.join("dep-b").exists(), "phantom dep-b must NOT be visible at top level");
 
         // dep-a CAN see dep-b
-        let a_b_link = nm.join(".dash/dep-a@1.0.0/node_modules/dep-b");
+        let a_b_link = nm.join(".bnpm/dep-a@1.0.0/node_modules/dep-b");
         assert!(a_b_link.is_symlink(), "dep-a should see dep-b");
         assert!(a_b_link.canonicalize().unwrap().join("index.js").exists());
 
         // dep-b has only its own content, no deps
-        let b_nm = nm.join(".dash/dep-b@1.0.0/node_modules");
+        let b_nm = nm.join(".bnpm/dep-b@1.0.0/node_modules");
         let b_entries: Vec<_> = std::fs::read_dir(&b_nm)
             .unwrap()
             .map(|e| e.unwrap().file_name().to_string_lossy().to_string())
@@ -409,21 +409,21 @@ mod tests {
         let nm = project.path().join("node_modules");
 
         // Both a and b should see shared-lib
-        assert!(nm.join(".dash/a@1.0.0/node_modules/shared-lib").is_symlink());
-        assert!(nm.join(".dash/b@1.0.0/node_modules/shared-lib").is_symlink());
+        assert!(nm.join(".bnpm/a@1.0.0/node_modules/shared-lib").is_symlink());
+        assert!(nm.join(".bnpm/b@1.0.0/node_modules/shared-lib").is_symlink());
 
-        // shared-lib should exist exactly once in .dash
-        let shared_dir = nm.join(".dash/shared-lib@2.0.0/node_modules/shared-lib");
+        // shared-lib should exist exactly once in .bnpm
+        let shared_dir = nm.join(".bnpm/shared-lib@2.0.0/node_modules/shared-lib");
         assert!(shared_dir.is_dir());
         assert!(shared_dir.join("index.js").exists());
 
         // Verify both symlinks point to the same real dir
-        let resolved_a = nm.join(".dash/a@1.0.0/node_modules/shared-lib").canonicalize().unwrap();
-        let resolved_b = nm.join(".dash/b@1.0.0/node_modules/shared-lib").canonicalize().unwrap();
+        let resolved_a = nm.join(".bnpm/a@1.0.0/node_modules/shared-lib").canonicalize().unwrap();
+        let resolved_b = nm.join(".bnpm/b@1.0.0/node_modules/shared-lib").canonicalize().unwrap();
         assert_eq!(resolved_a, resolved_b, "shared dep should point to same underlying dir");
     }
 
-    /// Root has no dependencies: clean empty node_modules (just .dash dir, no top-level entries).
+    /// Root has no dependencies: clean empty node_modules (just .bnpm dir, no top-level entries).
     #[tokio::test]
     async fn test_empty_graph() {
         let root = make_id("root", "0.0.0");
@@ -435,12 +435,12 @@ mod tests {
         materialize_node_modules(&graph, &store, project.path()).await.unwrap();
 
         let nm = project.path().join("node_modules");
-        assert!(nm.join(".dash").is_dir());
+        assert!(nm.join(".bnpm").is_dir());
 
         let top_entries: Vec<_> = std::fs::read_dir(&nm)
             .unwrap()
             .map(|e| e.unwrap().file_name().to_string_lossy().to_string())
-            .filter(|n| n != ".dash")
+            .filter(|n| n != ".bnpm")
             .collect();
         assert!(top_entries.is_empty(), "no top-level symlinks for empty graph");
     }

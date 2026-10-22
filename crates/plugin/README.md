@@ -1,6 +1,6 @@
-# dash-plugin
+# bnpm-plugin
 
-Dynamic plugin system for extending Dash via shared libraries.
+Dynamic plugin system for extending Bnpm via shared libraries.
 
 ## Overview
 
@@ -16,7 +16,7 @@ Provides a trait-based plugin interface and a manager for loading, unloading, an
 ## Usage
 
 ```rust
-use dash_plugin::{PluginManager, Plugin};
+use bnpm_plugin::{PluginManager, Plugin};
 
 let mut manager = PluginManager::new(&config)?;
 let plugin = manager.load("my-plugin")?;

@@ -11,8 +11,8 @@ bench = "bench --workspace"
 outdated = "outdated --workspace"
 upgrade = "update --workspace"
 
-[registries.dash]
-index = "https://github.com/org/dash-registry"
+[registries.bnpm]
+index = "https://github.com/org/bnpm-registry"
 
 [net]
 git-fetch-with-cli = true
@@ -28,8 +28,8 @@ verbose = false
 progress.when = "auto"
 
 [env]
-DASH_LOG = "info"
-DASH_CACHE_DIR = { value = ".cache/dash", relative = true }
+BNPM_LOG = "info"
+BNPM_CACHE_DIR = { value = ".cache/bnpm", relative = true }
 
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
@@ -49,4 +49,4 @@ rustflags = ["-C", "link-arg=-fuse-ld=lld"]
 proxies = []
 ssl-version = "tlsv1.3"
 timeout = 30
-user-agent = "dash (cargo)"
+user-agent = "bnpm (cargo)"

@@ -1,5 +1,5 @@
 [package]
-name = "dash-filesystem"
+name = "bnpm-filesystem"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -19,4 +19,4 @@ regex = { workspace = true }
 glob = { workspace = true }
 uuid = { workspace = true }
 rayon = { workspace = true }
-dash-concurrency = { path = "../concurrency" }
+bnpm-concurrency = { path = "../concurrency" }

@@ -1,10 +1,10 @@
 [package]
-name = "dash-concurrency"
+name = "bnpm-concurrency"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
 publish = false
-description = "Async and parallel concurrency primitives for Dash workflows"
+description = "Async and parallel concurrency primitives for Bnpm workflows"
 
 [dependencies]
 tokio = { workspace = true }

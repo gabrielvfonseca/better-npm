@@ -1,5 +1,5 @@
 [package]
-name = "dash-runtime"
+name = "bnpm-runtime"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -12,8 +12,8 @@ tokio = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }
-dash-config = { path = "../config" }
-dash-telemetry = { path = "../telemetry" }
-dash-logger = { path = "../logger" }
-dash-concurrency = { path = "../concurrency" }
-dash-filesystem = { path = "../filesystem" }
+bnpm-config = { path = "../config" }
+bnpm-telemetry = { path = "../telemetry" }
+bnpm-logger = { path = "../logger" }
+bnpm-concurrency = { path = "../concurrency" }
+bnpm-filesystem = { path = "../filesystem" }

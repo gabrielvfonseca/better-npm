@@ -1,6 +1,6 @@
 //! Wire protocol types and serialization for registry communication.
 //!
-//! Defines the message format used between Dash clients and registries,
+//! Defines the message format used between Bnpm clients and registries,
 //! including framing, message types, and serialization helpers.
 
 use std::time::SystemTime;
@@ -24,8 +24,8 @@ pub enum ProtocolError {
     Io(#[from] std::io::Error),
 }
 
-/// Protocol magic bytes for identifying Dash messages.
-pub const PROTOCOL_MAGIC: &[u8; 4] = b"DASH";
+/// Protocol magic bytes for identifying Bnpm messages.
+pub const PROTOCOL_MAGIC: &[u8; 4] = b"BNPM";
 
 /// Current protocol version.
 pub const PROTOCOL_VERSION: u32 = 1;
@@ -33,7 +33,7 @@ pub const PROTOCOL_VERSION: u32 = 1;
 /// The maximum allowed message payload size (100 MB).
 pub const MAX_MESSAGE_SIZE: usize = 100 * 1024 * 1024;
 
-/// Types of messages in the Dash wire protocol.
+/// Types of messages in the Bnpm wire protocol.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum MessageType {
     /// A request message (client → server).
@@ -76,7 +76,7 @@ impl MessageType {
 /// A protocol message with framing and optional signature.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ProtocolMessage {
-    /// Magic bytes identifying this as a Dash protocol message.
+    /// Magic bytes identifying this as a Bnpm protocol message.
     pub magic: [u8; 4],
     /// Protocol version.
     pub version: u32,

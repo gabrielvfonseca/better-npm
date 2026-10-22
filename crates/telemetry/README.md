@@ -1,4 +1,4 @@
-# dash-telemetry
+# bnpm-telemetry
 
 Telemetry and observability: tracing, metrics, OpenTelemetry export.
 
@@ -17,10 +17,10 @@ Initializes and manages the tracing infrastructure with optional export to OpenT
 ## Usage
 
 ```rust
-use dash_telemetry::{Telemetry, TelemetryConfig};
+use bnpm_telemetry::{Telemetry, TelemetryConfig};
 
 let telemetry = Telemetry::new(TelemetryConfig {
-    service_name: "dash".into(),
+    service_name: "bnpm".into(),
     otlp_endpoint: Some("http://localhost:4317".into()),
     ..Default::default()
 })?;

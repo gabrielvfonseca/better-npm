@@ -1,4 +1,4 @@
-//! Dependency resolution algorithm for Dash package graphs.
+//! Dependency resolution algorithm for Bnpm package graphs.
 //!
 //! Implements version satisfiability checking, backtracking resolution,
 //! and dependency graph construction from package manifests.
@@ -16,13 +16,13 @@ pub enum ResolveError {
     #[error("circular dependency detected: {0:?}")]
     CircularDependency(Vec<String>),
     #[error("manifest parse error: {0}")]
-    Manifest(#[from] dash_manifest::ManifestError),
+    Manifest(#[from] bnpm_manifest::ManifestError),
     #[error("lockfile error: {0}")]
-    Lockfile(#[from] dash_lockfile::LockfileError),
+    Lockfile(#[from] bnpm_lockfile::LockfileError),
     #[error("cache error: {0}")]
-    Cache(#[from] dash_cache::CacheError),
+    Cache(#[from] bnpm_cache::CacheError),
     #[error("package error: {0}")]
-    Package(#[from] dash_package::PackageError),
+    Package(#[from] bnpm_package::PackageError),
     #[error("internal error: {0}")]
     Internal(String),
 }
@@ -202,11 +202,11 @@ impl ResolvedGraph {
     }
 
     /// Convert to a lockfile.
-    pub fn to_lockfile(&self) -> dash_lockfile::Lockfile {
-        let mut lockfile = dash_lockfile::Lockfile::new();
+    pub fn to_lockfile(&self) -> bnpm_lockfile::Lockfile {
+        let mut lockfile = bnpm_lockfile::Lockfile::new();
 
         for (name, version) in &self.nodes {
-            let mut entry = dash_lockfile::LockfileEntry::new(version.to_string());
+            let mut entry = bnpm_lockfile::LockfileEntry::new(version.to_string());
             if let Some(deps) = self.edges.get(name) {
                 for dep_name in deps {
                     if let Some(dep_version) = self.nodes.get(dep_name) {
@@ -229,18 +229,18 @@ impl Default for ResolvedGraph {
 
 /// The dependency resolver.
 pub struct Resolver {
-    cache: Arc<dyn dash_cache::CacheBackend>,
-    config: dash_config::Config,
+    cache: Arc<dyn bnpm_cache::CacheBackend>,
+    config: bnpm_config::Config,
     registries: Vec<String>,
 }
 
 impl Resolver {
     /// Create a new resolver.
-    pub fn new(config: dash_config::Config) -> Self {
-        let cache = dash_cache::create_cache(&dash_cache::CacheConfig::default());
+    pub fn new(config: bnpm_config::Config) -> Self {
+        let cache = bnpm_cache::create_cache(&bnpm_cache::CacheConfig::default());
         let registries: Vec<String> = config
             .get("registries")
-            .unwrap_or_else(|_| vec!["https://registry.dash.sh".to_string()]);
+            .unwrap_or_else(|_| vec!["https://registry.bnpm.sh".to_string()]);
 
         Self {
             cache,
@@ -250,10 +250,10 @@ impl Resolver {
     }
 
     /// Create a resolver with a custom cache.
-    pub fn new_with_cache(config: dash_config::Config, cache: Arc<dyn dash_cache::CacheBackend>) -> Self {
+    pub fn new_with_cache(config: bnpm_config::Config, cache: Arc<dyn bnpm_cache::CacheBackend>) -> Self {
         let registries: Vec<String> = config
             .get("registries")
-            .unwrap_or_else(|_| vec!["https://registry.dash.sh".to_string()]);
+            .unwrap_or_else(|_| vec!["https://registry.bnpm.sh".to_string()]);
 
         Self {
             cache,
@@ -384,7 +384,7 @@ impl Resolver {
     }
 
     /// Resolve from a manifest's dependencies.
-    pub fn resolve_from_manifest(&self, manifest: &dash_manifest::PackageManifest) -> Result<ResolvedGraph, ResolveError> {
+    pub fn resolve_from_manifest(&self, manifest: &bnpm_manifest::PackageManifest) -> Result<ResolvedGraph, ResolveError> {
         let mut deps = DependencySet::new();
 
         for (name, entry) in &manifest.dependencies {
@@ -398,7 +398,7 @@ impl Resolver {
     pub fn resolve_with_lockfile(
         &self,
         deps: &DependencySet,
-        lockfile: &dash_lockfile::Lockfile,
+        lockfile: &bnpm_lockfile::Lockfile,
     ) -> Result<ResolvedGraph, ResolveError> {
         let mut graph = self.resolve(deps)?;
 
@@ -417,7 +417,7 @@ impl Resolver {
 }
 
 /// Create a resolver from a configuration.
-pub fn create_resolver(config: &dash_config::Config) -> Resolver {
+pub fn create_resolver(config: &bnpm_config::Config) -> Resolver {
     Resolver::new(config.clone())
 }
 
@@ -443,14 +443,14 @@ mod tests {
 
     #[test]
     fn test_resolver_new() {
-        let config = dash_config::Config::empty();
+        let config = bnpm_config::Config::empty();
         let resolver = Resolver::new(config);
         assert!(!resolver.registries.is_empty());
     }
 
     #[test]
     fn test_resolve_empty() {
-        let config = dash_config::Config::empty();
+        let config = bnpm_config::Config::empty();
         let resolver = Resolver::new(config);
         let deps = DependencySet::new();
         let graph = resolver.resolve(&deps).unwrap();
@@ -459,7 +459,7 @@ mod tests {
 
     #[test]
     fn test_resolve_basic() {
-        let config = dash_config::Config::empty();
+        let config = bnpm_config::Config::empty();
         let resolver = Resolver::new(config);
         let mut deps = DependencySet::new();
         deps.add(Dependency::new("test-pkg", "^1.0.0"));
@@ -471,7 +471,7 @@ mod tests {
 
     #[test]
     fn test_resolve_conflict() {
-        let config = dash_config::Config::empty();
+        let config = bnpm_config::Config::empty();
         let resolver = Resolver::new(config);
         let mut deps = DependencySet::new();
         deps.add(Dependency::new("pkg-a", "=1.0.0"));

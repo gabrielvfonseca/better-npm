@@ -1,13 +1,13 @@
 [package]
-name = "dash-cli"
+name = "bnpm-cli"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
 publish = false
-description = "Dash package manager CLI - main binary entrypoint"
+description = "Bnpm package manager CLI - main binary entrypoint"
 
 [[bin]]
-name = "dash"
+name = "bnpm"
 path = "src/main.rs"
 
 [dependencies]
@@ -17,27 +17,27 @@ clap = { workspace = true }
 tokio = { workspace = true }
 tracing = { workspace = true }
 anyhow = { workspace = true }
-dash-resolver = { path = "../resolver" }
-dash-installer = { path = "../installer" }
-dash-downloader = { path = "../downloader" }
-dash-lockfile = { path = "../lockfile" }
-dash-config = { path = "../config" }
-dash-telemetry = { path = "../telemetry" }
-dash-logger = { path = "../logger" }
-dash-diagnostics = { path = "../diagnostics" }
-dash-progress = { path = "../progress" }
-dash-network = { path = "../network" }
-dash-package = { path = "../package" }
-dash-manifest = { path = "../manifest" }
-dash-store = { path = "../store" }
-dash-cache = { path = "../cache" }
-dash-concurrency = { path = "../concurrency" }
-dash-sandbox = { path = "../sandbox" }
-dash-plugin = { path = "../plugin" }
-dash-registry-client = { path = "../registry-client" }
-dash-runtime = { path = "../runtime" }
-dash-publisher = { path = "../publisher" }
-dash-workspace = { path = "../workspace" }
+bnpm-resolver = { path = "../resolver" }
+bnpm-installer = { path = "../installer" }
+bnpm-downloader = { path = "../downloader" }
+bnpm-lockfile = { path = "../lockfile" }
+bnpm-config = { path = "../config" }
+bnpm-telemetry = { path = "../telemetry" }
+bnpm-logger = { path = "../logger" }
+bnpm-diagnostics = { path = "../diagnostics" }
+bnpm-progress = { path = "../progress" }
+bnpm-network = { path = "../network" }
+bnpm-package = { path = "../package" }
+bnpm-manifest = { path = "../manifest" }
+bnpm-store = { path = "../store" }
+bnpm-cache = { path = "../cache" }
+bnpm-concurrency = { path = "../concurrency" }
+bnpm-sandbox = { path = "../sandbox" }
+bnpm-plugin = { path = "../plugin" }
+bnpm-registry-client = { path = "../registry-client" }
+bnpm-runtime = { path = "../runtime" }
+bnpm-publisher = { path = "../publisher" }
+bnpm-workspace = { path = "../workspace" }
 semver = { workspace = true }
 dirs = "6"
 

@@ -1,5 +1,5 @@
 [package]
-name = "dash-network"
+name = "bnpm-network"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -12,8 +12,8 @@ tokio = { workspace = true }
 tracing = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
-dash-config = { path = "../config" }
-dash-telemetry = { path = "../telemetry" }
+bnpm-config = { path = "../config" }
+bnpm-telemetry = { path = "../telemetry" }
 url = { workspace = true }
 bytes = { workspace = true }
 futures = { workspace = true }

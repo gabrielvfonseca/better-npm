@@ -1,5 +1,5 @@
 [package]
-name = "dash-store"
+name = "bnpm-store"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -19,10 +19,10 @@ tokio = { workspace = true }
 bytes = { workspace = true }
 dashmap = { workspace = true }
 hex = { workspace = true }
-dash-hashing = { path = "../hashing" }
-dash-filesystem = { path = "../filesystem" }
-dash-cache = { path = "../cache" }
-dash-config = { path = "../config" }
+bnpm-hashing = { path = "../hashing" }
+bnpm-filesystem = { path = "../filesystem" }
+bnpm-cache = { path = "../cache" }
+bnpm-config = { path = "../config" }
 moka = { workspace = true }
 uuid = { workspace = true }
 chrono = { workspace = true }

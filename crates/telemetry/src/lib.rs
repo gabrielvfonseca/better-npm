@@ -35,7 +35,7 @@ pub struct TelemetryConfig {
 impl Default for TelemetryConfig {
     fn default() -> Self {
         Self {
-            service_name: "dash".to_string(),
+            service_name: "bnpm".to_string(),
             endpoint: None,
             sampler_ratio: 0.1,
             log_level: "info".to_string(),
@@ -80,7 +80,7 @@ pub fn shutdown_tracing() -> Result<(), TelemetryError> {
 /// Record a custom event with attributes.
 pub fn record_event(name: &str, attributes: HashMap<String, String>) {
     tracing::info!(
-        target: "dash.telemetry.event",
+        target: "bnpm.telemetry.event",
         "event {}: {:?}",
         name,
         attributes,
@@ -90,7 +90,7 @@ pub fn record_event(name: &str, attributes: HashMap<String, String>) {
 /// Record a custom metric value.
 pub fn record_metric(name: &str, value: f64, attributes: HashMap<String, String>) {
     tracing::info!(
-        target: "dash.telemetry.metric",
+        target: "bnpm.telemetry.metric",
         "metric {} = {} ({:?})",
         name,
         value,
@@ -176,7 +176,7 @@ mod tests {
     #[test]
     fn test_config_default() {
         let config = TelemetryConfig::default();
-        assert_eq!(config.service_name, "dash");
+        assert_eq!(config.service_name, "bnpm");
         assert!((config.sampler_ratio - 0.1).abs() < f64::EPSILON);
     }
 

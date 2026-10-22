@@ -4,11 +4,11 @@ use bytes::Bytes;
 use tokio::sync::Mutex;
 use tonic::{Request, Response, Status};
 
-use dash_proto::dpr_v1::{
+use bnpm_proto::dpr_v1::{
     self, FetchResponse, InclusionProof, PublishResponse, ResolveResponse,
     dpr_service_server::DprService,
 };
-use dash_provenance::{Identity, KeylessSigner, ProvenanceService};
+use bnpm_provenance::{Identity, KeylessSigner, ProvenanceService};
 
 use crate::content_service::ContentService;
 use crate::name_service::{NameService, VersionRange};
@@ -133,7 +133,7 @@ where
             key_id: proto_identity.key_id,
         };
 
-        let capsule = dash_capsule::Capsule::from_bytes(&capsule_bytes)
+        let capsule = bnpm_capsule::Capsule::from_bytes(&capsule_bytes)
             .map_err(|e| Status::invalid_argument(format!("invalid capsule: {e}")))?;
         let cid = capsule.cid().to_string();
 
@@ -179,9 +179,9 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dash_capsule::Capsule;
-    use dash_provenance::DefaultKeylessSigner;
-    use dash_store::cas::CasStore;
+    use bnpm_capsule::Capsule;
+    use bnpm_provenance::DefaultKeylessSigner;
+    use bnpm_store::cas::CasStore;
 
     struct TestServices {
         registry: RegistryService<DefaultKeylessSigner>,

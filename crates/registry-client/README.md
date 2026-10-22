@@ -1,6 +1,6 @@
-# dash-registry-client
+# bnpm-registry-client
 
-HTTP client for communicating with Dash package registries.
+HTTP client for communicating with Bnpm package registries.
 
 ## Overview
 
@@ -17,9 +17,9 @@ Provides methods for fetching package metadata, searching, publishing packages, 
 ## Usage
 
 ```rust
-use dash_registry_client::RegistryClient;
+use bnpm_registry_client::RegistryClient;
 
-let client = RegistryClient::new("https://registry.dash.sh")?;
+let client = RegistryClient::new("https://registry.bnpm.sh")?;
 let pkg = client.get_package("react").await?;
 let versions = client.list_versions("react").await?;
 ```

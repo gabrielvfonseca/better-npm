@@ -1,4 +1,4 @@
-# dash-signatures
+# bnpm-signatures
 
 Cryptographic signature generation and verification (Ed25519 + RSA).
 
@@ -17,7 +17,7 @@ Provides high-level APIs for signing package payloads and verifying signatures a
 ## Usage
 
 ```rust
-use dash_signatures::{Signer, Verifier, KeyPair};
+use bnpm_signatures::{Signer, Verifier, KeyPair};
 
 let keypair = KeyPair::generate_ed25519()?;
 let signature = Signer::sign(b"package data", &keypair.secret)?;

@@ -1,5 +1,5 @@
 [package]
-name = "dash-linker"
+name = "bnpm-linker"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -14,7 +14,7 @@ tokio = { workspace = true }
 tracing = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
-dash-filesystem = { path = "../filesystem" }
-dash-package = { path = "../package" }
-dash-store = { path = "../store" }
-dash-hashing = { path = "../hashing" }
+bnpm-filesystem = { path = "../filesystem" }
+bnpm-package = { path = "../package" }
+bnpm-store = { path = "../store" }
+bnpm-hashing = { path = "../hashing" }

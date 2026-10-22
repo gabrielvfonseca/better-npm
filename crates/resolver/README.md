@@ -1,6 +1,6 @@
-# dash-resolver
+# bnpm-resolver
 
-Dependency resolution algorithm for Dash package graphs.
+Dependency resolution algorithm for Bnpm package graphs.
 
 ## Overview
 
@@ -17,7 +17,7 @@ Implements Minimal Version Selection (MVS) algorithm from Russ Cox / Go modules,
 ## Usage
 
 ```rust
-use dash_resolver::{Resolver, ResolveConfig};
+use bnpm_resolver::{Resolver, ResolveConfig};
 
 let resolver = Resolver::new(&config)?;
 let solution = resolver

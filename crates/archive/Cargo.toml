@@ -1,5 +1,5 @@
 [package]
-name = "dash-archive"
+name = "bnpm-archive"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -17,7 +17,7 @@ bytes = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
-dash-filesystem = { path = "../filesystem" }
-dash-compression = { path = "../compression" }
-dash-hashing = { path = "../hashing" }
+bnpm-filesystem = { path = "../filesystem" }
+bnpm-compression = { path = "../compression" }
+bnpm-hashing = { path = "../hashing" }
 tracing = { workspace = true }

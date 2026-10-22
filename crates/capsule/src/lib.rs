@@ -2,12 +2,12 @@ use std::io::{Cursor, Read};
 
 use ciborium::Value;
 use ciborium::value::Integer;
-use dash_cid::Cid;
+use bnpm_cid::Cid;
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
-pub const DASHCAP1_MAGIC: &[u8; 8] = b"DASHCAP1";
-pub const DASHCAP1_VERSION: u16 = 1;
+pub const BNPMCAP1_MAGIC: &[u8; 8] = b"BNPMCAP1";
+pub const BNPMCAP1_VERSION: u16 = 1;
 const COMPRESSION_LEVEL: i32 = 3;
 
 const FLAG_COMPRESSED_OBJECTS: u32 = 1 << 0;
@@ -432,7 +432,7 @@ pub struct CapsuleHeader {
 
 impl CapsuleHeader {
     pub fn new(flags: CapsuleFlags) -> Self {
-        Self { magic: *DASHCAP1_MAGIC, version: DASHCAP1_VERSION, flags }
+        Self { magic: *BNPMCAP1_MAGIC, version: BNPMCAP1_VERSION, flags }
     }
 
     fn to_bytes(&self) -> [u8; 13] {
@@ -447,7 +447,7 @@ impl CapsuleHeader {
         if data.len() < 13 {
             return Err(CapsuleError::InvalidMagic);
         }
-        if &data[0..8] != DASHCAP1_MAGIC {
+        if &data[0..8] != BNPMCAP1_MAGIC {
             return Err(CapsuleError::InvalidMagic);
         }
         let version = data[8] as u16;
@@ -459,7 +459,7 @@ impl CapsuleHeader {
         if !flags.compressed() {
             return Err(CapsuleError::InvalidFlags);
         }
-        Ok(Self { magic: *DASHCAP1_MAGIC, version, flags })
+        Ok(Self { magic: *BNPMCAP1_MAGIC, version, flags })
     }
 }
 
@@ -520,16 +520,16 @@ pub struct Capsule {
 }
 
 impl Capsule {
-    /// Pack source files into a DASHCAP1 capsule with an empty manifest.
+    /// Pack source files into a BNPMCAP1 capsule with an empty manifest.
     pub fn pack(files: Vec<(String, Vec<u8>)>) -> Result<Self, CapsuleError> {
         let empty_manifest = encode_manifest_cbor(&Value::Map(Vec::new()))?;
         Self::pack_with_manifest(empty_manifest, files)
     }
 
-    /// Pack source files into a DASHCAP1 capsule with the given canonical CBOR manifest.
+    /// Pack source files into a BNPMCAP1 capsule with the given canonical CBOR manifest.
     ///
     /// The caller is responsible for producing canonical manifest CBOR (e.g. via
-    /// `dash-manifest`). The manifest bytes are validated as well-formed CBOR
+    /// `bnpm-manifest`). The manifest bytes are validated as well-formed CBOR
     /// before packing.
     pub fn pack_with_manifest(
         manifest_cbor: Vec<u8>,
@@ -758,9 +758,9 @@ fn extract_bstr_payload(cbor_bytes: &[u8]) -> Result<Vec<u8>, CapsuleError> {
 
 #[derive(Debug, thiserror::Error)]
 pub enum CapsuleError {
-    #[error("invalid DASHCAP1 magic bytes")]
+    #[error("invalid BNPMCAP1 magic bytes")]
     InvalidMagic,
-    #[error("unsupported DASHCAP1 version: {0}")]
+    #[error("unsupported BNPMCAP1 version: {0}")]
     UnsupportedVersion(u16),
     #[error("invalid capsule flags")]
     InvalidFlags,
@@ -871,14 +871,14 @@ mod tests {
 
     #[test]
     fn test_invalid_magic() {
-        let err = Capsule::from_bytes(b"NOTDASHCAP1\x01\x00\x00\x00\x01\x00\x00\x00");
+        let err = Capsule::from_bytes(b"NOTBNPMCAP1\x01\x00\x00\x00\x01\x00\x00\x00");
         assert!(matches!(err, Err(CapsuleError::InvalidMagic)));
     }
 
     #[test]
     fn test_unsupported_version() {
         let mut data = vec![];
-        data.extend_from_slice(b"DASHCAP1");
+        data.extend_from_slice(b"BNPMCAP1");
         data.push(2u8); // version 2
         data.extend_from_slice(&99u32.to_be_bytes()); // flags
         let err = Capsule::from_bytes(&data);
@@ -986,7 +986,7 @@ mod tests {
 
     #[test]
     fn test_invalid_flags_no_compression() {
-        let header = CapsuleHeader::from_bytes(b"DASHCAP1\x01\x00\x00\x00\x00");
+        let header = CapsuleHeader::from_bytes(b"BNPMCAP1\x01\x00\x00\x00\x00");
         assert!(matches!(header, Err(CapsuleError::InvalidFlags)));
     }
 
@@ -1025,7 +1025,7 @@ mod tests {
     #[test]
     fn test_from_bytes_validates_version() {
         let mut data = vec![];
-        data.extend_from_slice(b"DASHCAP1");
+        data.extend_from_slice(b"BNPMCAP1");
         data.push(0xFFu8); // version 255
         data.extend_from_slice(&1u32.to_be_bytes());
         let err = Capsule::from_bytes(&data);

@@ -1,4 +1,4 @@
-//! Async and parallel concurrency primitives for Dash workflows.
+//! Async and parallel concurrency primitives for Bnpm workflows.
 //!
 //! Provides helpers for bounded parallelism, task groups,
 //! rate limiting, and parallel map/filter patterns.

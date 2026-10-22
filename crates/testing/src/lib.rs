@@ -1,7 +1,7 @@
 //! Integration test utilities: test fixtures, mock registries, helpers.
 //!
 //! Provides building blocks for writing comprehensive tests for
-//! Dash packages and subsystems.
+//! Bnpm packages and subsystems.
 
 use std::future::Future;
 use std::path::{Path, PathBuf};
@@ -13,7 +13,7 @@ pub enum TestError {
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
     #[error("config error: {0}")]
-    Config(#[from] dash_config::ConfigError),
+    Config(#[from] bnpm_config::ConfigError),
     #[error("assertion error: {0}")]
     Assertion(String),
     #[error("timeout: {0}")]
@@ -21,9 +21,9 @@ pub enum TestError {
 }
 
 /// Create a temporary test configuration with sensible defaults.
-pub fn create_test_config() -> dash_config::Config {
-    let mut config = dash_config::Config::empty();
-    config.set("registry.url", "https://test-registry.dash.sh");
+pub fn create_test_config() -> bnpm_config::Config {
+    let mut config = bnpm_config::Config::empty();
+    config.set("registry.url", "https://test-registry.bnpm.sh");
     config.set("store.backend", "local");
     config.set("store.path", "./test-store");
     config.set("cache.backend", "memory");
@@ -35,19 +35,19 @@ pub fn create_test_config() -> dash_config::Config {
 }
 
 /// Create a temporary directory that is cleaned up on drop.
-pub fn create_temp_dir() -> Result<dash_filesystem::TempDir, TestError> {
-    Ok(dash_filesystem::TempDir::new().map_err(|e| TestError::Io(std::io::Error::new(std::io::ErrorKind::Other, e.to_string())))?)
+pub fn create_temp_dir() -> Result<bnpm_filesystem::TempDir, TestError> {
+    Ok(bnpm_filesystem::TempDir::new().map_err(|e| TestError::Io(std::io::Error::new(std::io::ErrorKind::Other, e.to_string())))?)
 }
 
 /// Create a test package with the given name and version.
-pub fn create_test_package(name: &str, version: &str) -> dash_package::Package {
-    let pkg_name = dash_package::PackageName::new(name).unwrap_or_else(|_| {
-        dash_package::PackageName::new_unchecked(name)
+pub fn create_test_package(name: &str, version: &str) -> bnpm_package::Package {
+    let pkg_name = bnpm_package::PackageName::new(name).unwrap_or_else(|_| {
+        bnpm_package::PackageName::new_unchecked(name)
     });
     let pkg_version: semver::Version = version.parse().expect("valid semver");
-    let mut pkg = dash_package::Package::new(pkg_name, pkg_version);
+    let mut pkg = bnpm_package::Package::new(pkg_name, pkg_version);
     pkg.description = Some(format!("Test package {name}"));
-    pkg.author = Some("Dash Test Suite".to_string());
+    pkg.author = Some("Bnpm Test Suite".to_string());
     pkg.license = Some("MIT".to_string());
     pkg.add_file("index.js", b"module.exports = {};" .to_vec());
     pkg.add_file("package.json", format!("{{\"name\": \"{name}\", \"version\": \"{version}\"}}").into_bytes());
@@ -56,13 +56,13 @@ pub fn create_test_package(name: &str, version: &str) -> dash_package::Package {
 
 /// Run a closure with tracing initialized.
 pub fn with_tracing(f: impl FnOnce()) {
-    let config = dash_logger::LogConfig {
+    let config = bnpm_logger::LogConfig {
         level: "error".to_string(),
-        format: dash_logger::LogFormat::Text,
-        output: dash_logger::LogOutput::Stdout,
+        format: bnpm_logger::LogFormat::Text,
+        output: bnpm_logger::LogOutput::Stdout,
         include_spans: false,
     };
-    let _ = dash_logger::init(&config);
+    let _ = bnpm_logger::init(&config);
     f();
 }
 
@@ -125,19 +125,19 @@ where
 }
 
 /// Create a mock package store for testing.
-pub fn create_test_store() -> dash_store::Store {
+pub fn create_test_store() -> bnpm_store::Store {
     let dir = tempfile::tempdir().expect("failed to create temp dir");
-    let backend = std::sync::Arc::new(dash_store::LocalStore::new(dir.path().to_path_buf()));
-    dash_store::Store::new(backend)
+    let backend = std::sync::Arc::new(bnpm_store::LocalStore::new(dir.path().to_path_buf()));
+    bnpm_store::Store::new(backend)
 }
 
 /// Create a test cache backend.
-pub fn create_test_cache() -> std::sync::Arc<dyn dash_cache::CacheBackend> {
-    let config = dash_cache::CacheConfig {
+pub fn create_test_cache() -> std::sync::Arc<dyn bnpm_cache::CacheBackend> {
+    let config = bnpm_cache::CacheConfig {
         max_size: 1000,
         ..Default::default()
     };
-    dash_cache::create_cache(&config)
+    bnpm_cache::create_cache(&config)
 }
 
 /// Assert that two values are equal with a custom message.
@@ -156,7 +156,7 @@ pub fn read_fixture(path: &str) -> Result<Vec<u8>, TestError> {
 
 /// A mock registry for testing publish/fetch flows.
 pub struct MockRegistry {
-    packages: std::sync::Mutex<std::collections::HashMap<String, dash_registry_client::RegistryPackage>>,
+    packages: std::sync::Mutex<std::collections::HashMap<String, bnpm_registry_client::RegistryPackage>>,
 }
 
 impl MockRegistry {
@@ -168,13 +168,13 @@ impl MockRegistry {
     }
 
     /// Add a package to the mock registry.
-    pub fn add_package(&self, pkg: dash_registry_client::RegistryPackage) {
+    pub fn add_package(&self, pkg: bnpm_registry_client::RegistryPackage) {
         let mut packages = self.packages.lock().unwrap();
         packages.insert(pkg.name.clone(), pkg);
     }
 
     /// Get a package from the mock registry.
-    pub fn get_package(&self, name: &str) -> Option<dash_registry_client::RegistryPackage> {
+    pub fn get_package(&self, name: &str) -> Option<bnpm_registry_client::RegistryPackage> {
         let packages = self.packages.lock().unwrap();
         packages.get(name).cloned()
     }
@@ -201,7 +201,7 @@ mod tests {
         let config = create_test_config();
         assert_eq!(
             config.get::<String>("registry.url").unwrap(),
-            "https://test-registry.dash.sh"
+            "https://test-registry.bnpm.sh"
         );
     }
 
@@ -257,7 +257,7 @@ mod tests {
         let registry = MockRegistry::new();
         assert_eq!(registry.package_count(), 0);
 
-        let pkg = dash_registry_client::RegistryPackage {
+        let pkg = bnpm_registry_client::RegistryPackage {
             name: "mock-pkg".to_string(),
             scope: None,
             version: "1.0.0".to_string(),
@@ -290,7 +290,7 @@ mod tests {
         let cache = create_test_cache();
         let rt = tokio::runtime::Runtime::new().unwrap();
         rt.block_on(async {
-            dash_cache::cache_set(&*cache, "key", &"value".to_string(), None).await.unwrap();
+            bnpm_cache::cache_set(&*cache, "key", &"value".to_string(), None).await.unwrap();
             assert!(cache.exists("key").await.unwrap());
         });
     }

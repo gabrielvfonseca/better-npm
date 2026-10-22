@@ -1,4 +1,4 @@
-// dash-cid: BLAKE3 CID, multihash, and base32 canonical encoding
+// bnpm-cid: BLAKE3 CID, multihash, and base32 canonical encoding
 
 use ciborium::Value;
 use ciborium::de::from_reader;

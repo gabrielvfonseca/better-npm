@@ -1,6 +1,6 @@
-# dash-benchmark
+# bnpm-benchmark
 
-Benchmarking harness using Criterion for Dash subsystems.
+Benchmarking harness using Criterion for Bnpm subsystems.
 
 ## Overview
 
@@ -16,7 +16,7 @@ Provides a simple API for running benchmarks and collecting performance statisti
 ## Usage
 
 ```rust
-use dash_benchmark::{Benchmark, BenchmarkConfig};
+use bnpm_benchmark::{Benchmark, BenchmarkConfig};
 
 let mut bench = Benchmark::new("resolve_deps", config);
 bench.run(|| {

@@ -1,4 +1,4 @@
-# dash-publisher
+# bnpm-publisher
 
 Package publishing workflow: build, sign, upload to registry.
 
@@ -10,14 +10,14 @@ Orchestrates the complete publish pipeline: preparing the package tarball, compu
 
 - Package tarball preparation and compression
 - Integrity hash computation
-- Cryptographic signing (via `dash-signatures`)
+- Cryptographic signing (via `bnpm-signatures`)
 - Registry upload with authentication
 - Dry-run and validation modes
 
 ## Usage
 
 ```rust
-use dash_publisher::Publisher;
+use bnpm_publisher::Publisher;
 
 let publisher = Publisher::new(&config)?;
 let result = publisher

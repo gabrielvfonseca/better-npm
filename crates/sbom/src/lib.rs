@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use dash_lockfile::Lockfile;
+use bnpm_lockfile::Lockfile;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SbomFormat {
@@ -94,12 +94,12 @@ fn generate_spdx(lockfile: &Lockfile) -> String {
         "spdxVersion": "SPDX-2.3",
         "dataLicense": "CC0-1.0",
         "SPDXID": "SPDXRef-DOCUMENT",
-        "name": format!("dash.lock - {}", lockfile.root),
+        "name": format!("bnpm.lock - {}", lockfile.root),
         "creationInfo": {
             "created": created,
-            "creators": ["Tool: dash-sbom-1.0.0"]
+            "creators": ["Tool: bnpm-sbom-1.0.0"]
         },
-        "documentNamespace": format!("https://dash.dev/sbom/{}", lockfile.lock_digest),
+        "documentNamespace": format!("https://bnpm.dev/sbom/{}", lockfile.lock_digest),
         "packages": packages,
         "relationships": relationships
     });
@@ -130,7 +130,7 @@ fn generate_cyclonedx(lockfile: &Lockfile) -> String {
             "type": "library",
             "name": pkg.name,
             "version": pkg.version,
-            "bom-ref": format!("pkg:dash/{}{}", pkg.name, if pkg.version.starts_with('@') { "" } else { "@" }),
+            "bom-ref": format!("pkg:bnpm/{}{}", pkg.name, if pkg.version.starts_with('@') { "" } else { "@" }),
             "hashes": [{
                 "alg": "BLAKE3",
                 "content": pkg.cid.strip_prefix("b3:").unwrap_or(&pkg.cid)
@@ -161,8 +161,8 @@ fn generate_cyclonedx(lockfile: &Lockfile) -> String {
         "metadata": {
             "timestamp": created,
             "tools": [{
-                "vendor": "Dash",
-                "name": "dash-sbom",
+                "vendor": "Bnpm",
+                "name": "bnpm-sbom",
                 "version": "1.0.0"
             }],
             "component": {
@@ -233,7 +233,7 @@ pub fn detect_license_changes(
     new_lockfile: &Lockfile,
 ) -> Vec<LicenseChange> {
     let mut changes = Vec::new();
-    let old_map: BTreeMap<&str, &dash_lockfile::LockPackage> =
+    let old_map: BTreeMap<&str, &bnpm_lockfile::LockPackage> =
         old_lockfile.package.iter().map(|p| (p.name.as_str(), p)).collect();
 
     for new_pkg in &new_lockfile.package {
@@ -273,7 +273,7 @@ pub fn detect_license_changes(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dash_lockfile::{LockBuild, LockPackage, Provenance};
+    use bnpm_lockfile::{LockBuild, LockPackage, Provenance};
 
     fn fixture_lockfile() -> Lockfile {
         let mut lf = Lockfile::with_root("@acme/app@0.0.0");
@@ -282,11 +282,11 @@ mod tests {
             version: "3.23.8".into(),
             cid: "b3:qm7f2x3a4b5c6d7e8f9g0h1i2j3k4l5m6n7o8p9q0r1s2t3u4v5w6x7y8z".into(),
             resolved_from: "^3.23".into(),
-            registry: "dash:default".into(),
+            registry: "bnpm:default".into(),
             provenance: Some(Provenance {
                 log_index: 1,
                 slsa_level: 3,
-                publisher: "did:dash:zod".into(),
+                publisher: "did:bnpm:zod".into(),
             }),
             capabilities: None,
             build: None,
@@ -296,15 +296,15 @@ mod tests {
             version: "4.21.0".into(),
             cid: "b3:aa11bb22cc33dd44ee55ff66gg77hh88ii99jj00kk11ll22mm33nn44oo55pp".into(),
             resolved_from: "^4.21".into(),
-            registry: "dash:default".into(),
+            registry: "bnpm:default".into(),
             provenance: Some(Provenance {
                 log_index: 2,
                 slsa_level: 2,
-                publisher: "did:dash:express".into(),
+                publisher: "did:bnpm:express".into(),
             }),
             capabilities: None,
             build: Some(LockBuild {
-                tool: "dash:build@1.0.0".into(),
+                tool: "bnpm:build@1.0.0".into(),
                 output_cid: "b3:out123".into(),
                 hermetic: true,
             }),
@@ -388,7 +388,7 @@ mod tests {
             version: "1.0.0".into(),
             cid: "b3:new123".into(),
             resolved_from: "^1.0".into(),
-            registry: "dash:default".into(),
+            registry: "bnpm:default".into(),
             provenance: None,
             capabilities: None,
             build: None,

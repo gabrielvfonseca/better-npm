@@ -1,6 +1,6 @@
 //! Core package model: name, version, metadata, and identifier types.
 //!
-//! Defines the fundamental types used throughout Dash for representing
+//! Defines the fundamental types used throughout Bnpm for representing
 //! packages, their identifiers, distribution metadata, and versioning.
 
 use std::fmt;
@@ -186,8 +186,8 @@ impl Dist {
     }
 }
 
-// Forward Integrity type from dash-integrity crate
-pub use dash_integrity::Integrity;
+// Forward Integrity type from bnpm-integrity crate
+pub use bnpm_integrity::Integrity;
 
 /// A fully-resolved package with all metadata.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]

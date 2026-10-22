@@ -114,8 +114,8 @@ pub struct SystemInfo {
     pub disk_total: u64,
     /// Available disk space in bytes.
     pub disk_available: u64,
-    /// Dash version.
-    pub dash_version: String,
+    /// Bnpm version.
+    pub bnpm_version: String,
     /// Rust version (if known).
     pub rust_version: Option<String>,
     /// Hostname.
@@ -150,7 +150,7 @@ pub fn collect_system_info() -> Result<SystemInfo, DiagnosticError> {
         memory_available,
         disk_total,
         disk_available,
-        dash_version: env!("CARGO_PKG_VERSION").to_string(),
+        bnpm_version: env!("CARGO_PKG_VERSION").to_string(),
         rust_version: Some(format!("{}", rustc_version())),
         hostname,
         uptime_secs: None,
@@ -217,7 +217,7 @@ pub fn report_diagnostic(issue: &DiagnosticIssue) -> Result<(), DiagnosticError>
         .map_err(|e| DiagnosticError::Report(e.to_string()))?;
 
     tracing::error!(
-        target: "dash.diagnostics",
+        target: "bnpm.diagnostics",
         code = %issue.code,
         severity = %issue.severity,
         "{}", issue.message
@@ -225,7 +225,7 @@ pub fn report_diagnostic(issue: &DiagnosticIssue) -> Result<(), DiagnosticError>
 
     // Write to diagnostics log
     if let Some(config_dir) = dirs::config_dir() {
-        let log_dir = config_dir.join("dash").join("diagnostics");
+        let log_dir = config_dir.join("bnpm").join("diagnostics");
         std::fs::create_dir_all(&log_dir)?;
         let file_path = log_dir.join(format!("{}_{}.json", issue.code, chrono::Utc::now().timestamp()));
         std::fs::write(&file_path, &report)?;
@@ -283,15 +283,15 @@ mod tests {
 
     #[test]
     fn test_diagnostic_issue_new() {
-        let issue = DiagnosticIssue::new("DASH-001", DiagnosticSeverity::Error, "something went wrong");
-        assert_eq!(issue.code, "DASH-001");
+        let issue = DiagnosticIssue::new("BNPM-001", DiagnosticSeverity::Error, "something went wrong");
+        assert_eq!(issue.code, "BNPM-001");
         assert_eq!(issue.severity, DiagnosticSeverity::Error);
         assert_eq!(issue.message, "something went wrong");
     }
 
     #[test]
     fn test_diagnostic_issue_builder() {
-        let issue = DiagnosticIssue::new("DASH-002", DiagnosticSeverity::Warning, "disk space low")
+        let issue = DiagnosticIssue::new("BNPM-002", DiagnosticSeverity::Warning, "disk space low")
             .with_details("less than 1GB available")
             .with_suggested_action("free up disk space");
         assert_eq!(issue.details.unwrap(), "less than 1GB available");
@@ -308,8 +308,8 @@ mod tests {
     #[test]
     fn test_diagnostics_collector() {
         let mut collector = DiagnosticsCollector::new();
-        collector.add(DiagnosticIssue::new("DASH-001", DiagnosticSeverity::Info, "info"));
-        collector.add(DiagnosticIssue::new("DASH-002", DiagnosticSeverity::Error, "error"));
+        collector.add(DiagnosticIssue::new("BNPM-001", DiagnosticSeverity::Info, "info"));
+        collector.add(DiagnosticIssue::new("BNPM-002", DiagnosticSeverity::Error, "error"));
         assert_eq!(collector.issues().len(), 2);
         assert_eq!(collector.count_by_severity(DiagnosticSeverity::Error), 1);
         assert_eq!(collector.count_by_severity(DiagnosticSeverity::Info), 2);
@@ -329,6 +329,6 @@ mod tests {
         assert!(!info.os.is_empty());
         assert!(!info.cpu.is_empty());
         assert!(info.cpu_cores > 0);
-        assert!(!info.dash_version.is_empty());
+        assert!(!info.bnpm_version.is_empty());
     }
 }

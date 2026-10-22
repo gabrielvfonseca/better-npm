@@ -1,4 +1,4 @@
-//! `dash agent` command — stub for MVP.
+//! `bnpm agent` command — stub for MVP.
 
 use crate::commands::{AgentArgs, AgentSubcommand};
 use crate::config::{CliConfig, ExitCode};
@@ -8,9 +8,9 @@ use anyhow::Result;
 pub async fn run(args: &AgentArgs, config: &CliConfig) -> Result<ExitCode> {
     if config.json_output {
         let output = serde_json::json!({
-            "message": "agent mode requires @dash/agent SDK",
+            "message": "agent mode requires @better-npm/agent SDK",
             "subcommand": format!("{:?}", args.subcommand),
-            "docs": "https://dash.dev/docs/agent"
+            "docs": "https://bnpm.dev/docs/agent"
         });
         print_json(&output);
     } else {
@@ -43,9 +43,9 @@ pub async fn run(args: &AgentArgs, config: &CliConfig) -> Result<ExitCode> {
             },
         }
         println!();
-        print_warning("agent mode requires @dash/agent SDK — npm install @dash/agent");
+        print_warning("agent mode requires @better-npm/agent SDK — npm install @better-npm/agent");
         println!();
-        print_info("The @dash/agent SDK provides programmatic access to:");
+        print_info("The @better-npm/agent SDK provides programmatic access to:");
         print_kv("select", "search packages by intent + constraints");
         print_kv("explain", "explain why a package is installed");
         print_kv("plan-upgrade", "compute minimal safe upgrade plan");

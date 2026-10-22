@@ -1,6 +1,6 @@
-use dash_governance::{CapabilityAcl, Permission, Scope};
-use dash_policy::Policy;
-use dash_proto::dpr_v1::{Binding, Provenance};
+use bnpm_governance::{CapabilityAcl, Permission, Scope};
+use bnpm_policy::Policy;
+use bnpm_proto::dpr_v1::{Binding, Provenance};
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -224,7 +224,7 @@ impl PolicyBoundary {
 
         for rule in &policy.rules {
             match rule.action {
-                dash_policy::PolicyAction::Deny => {
+                bnpm_policy::PolicyAction::Deny => {
                     return Err(PolicyViolation {
                         violation_type: PolicyViolationType::PolicyDeny,
                         package: package.to_string(),
@@ -234,14 +234,14 @@ impl PolicyBoundary {
                             .unwrap_or("blocked by policy rule")
                             .to_string(),
                         severity: match rule.severity {
-                            dash_policy::PolicySeverity::Critical => ViolationSeverity::Critical,
-                            dash_policy::PolicySeverity::High => ViolationSeverity::High,
-                            dash_policy::PolicySeverity::Medium => ViolationSeverity::Medium,
-                            dash_policy::PolicySeverity::Low => ViolationSeverity::Low,
+                            bnpm_policy::PolicySeverity::Critical => ViolationSeverity::Critical,
+                            bnpm_policy::PolicySeverity::High => ViolationSeverity::High,
+                            bnpm_policy::PolicySeverity::Medium => ViolationSeverity::Medium,
+                            bnpm_policy::PolicySeverity::Low => ViolationSeverity::Low,
                         },
                     });
                 }
-                dash_policy::PolicyAction::Review => {
+                bnpm_policy::PolicyAction::Review => {
                     return Err(PolicyViolation {
                         violation_type: PolicyViolationType::PolicyReviewRequired,
                         package: package.to_string(),
@@ -251,14 +251,14 @@ impl PolicyBoundary {
                             .unwrap_or("needs review")
                             .to_string(),
                         severity: match rule.severity {
-                            dash_policy::PolicySeverity::Critical => ViolationSeverity::Critical,
-                            dash_policy::PolicySeverity::High => ViolationSeverity::High,
-                            dash_policy::PolicySeverity::Medium => ViolationSeverity::Medium,
-                            dash_policy::PolicySeverity::Low => ViolationSeverity::Low,
+                            bnpm_policy::PolicySeverity::Critical => ViolationSeverity::Critical,
+                            bnpm_policy::PolicySeverity::High => ViolationSeverity::High,
+                            bnpm_policy::PolicySeverity::Medium => ViolationSeverity::Medium,
+                            bnpm_policy::PolicySeverity::Low => ViolationSeverity::Low,
                         },
                     });
                 }
-                dash_policy::PolicyAction::Allow => {}
+                bnpm_policy::PolicyAction::Allow => {}
             }
         }
 
@@ -266,7 +266,7 @@ impl PolicyBoundary {
     }
 
     fn evaluate_acl(&self, identity: &str, scope: &ScopeWrapper, acl: &CapabilityAcl) -> Result<(), PolicyViolation> {
-        use dash_governance::check_permission;
+        use bnpm_governance::check_permission;
 
         let has_resolve = check_permission(acl, identity, &Permission::Resolve, &scope.0);
 
@@ -287,8 +287,8 @@ impl PolicyBoundary {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dash_governance::Scope;
-    use dash_policy::Policy;
+    use bnpm_governance::Scope;
+    use bnpm_policy::Policy;
 
     #[test]
     fn test_policy_boundary_allows_when_no_policy() {
@@ -300,7 +300,7 @@ mod tests {
             inclusion_proof: None,
             provenance: None,
         };
-        let result = boundary.evaluate(&binding, "did:dash:user", &Scope::All.into());
+        let result = boundary.evaluate(&binding, "did:bnpm:user", &Scope::All.into());
         assert!(result.is_ok());
     }
 
@@ -318,7 +318,7 @@ mod tests {
             inclusion_proof: None,
             provenance: None,
         };
-        let result = boundary.evaluate(&binding, "did:dash:user", &Scope::All.into());
+        let result = boundary.evaluate(&binding, "did:bnpm:user", &Scope::All.into());
         assert!(result.is_err());
         assert!(matches!(result.unwrap_err().violation_type, PolicyViolationType::BannedPackage));
     }

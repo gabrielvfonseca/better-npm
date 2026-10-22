@@ -1,4 +1,4 @@
-# dash-archive
+# bnpm-archive
 
 Package archive creation and extraction (tar/zip with optional compression).
 
@@ -11,12 +11,12 @@ Provides a unified interface for creating and extracting package archives in var
 - Tar and Zip archive creation and extraction
 - Optional compression (gzip, zstd) integration
 - Streaming archive processing
-- Integration with `dash-filesystem` and `dash-compression`
+- Integration with `bnpm-filesystem` and `bnpm-compression`
 
 ## Usage
 
 ```rust
-use dash_archive::{ArchiveBuilder, ArchiveFormat};
+use bnpm_archive::{ArchiveBuilder, ArchiveFormat};
 
 // Create a new archive
 let archive = ArchiveBuilder::new(ArchiveFormat::TarGz)

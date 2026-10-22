@@ -1,7 +1,7 @@
 use crate::semantic::{BasicSemanticIndex, EmbeddingEngine, SemanticIndexer, StubEmbeddingEngine};
 use crate::structural::StructuralIndexer;
 use crate::tool_interface::ToolInterfaceFile;
-use dash_manifest::schema::AiBlock;
+use bnpm_manifest::schema::AiBlock;
 
 /// A combined index that provides structural and semantic search over packages.
 pub struct AgentIndex {
@@ -56,7 +56,7 @@ impl Default for AgentIndex {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dash_manifest::schema::{SideEffect, StabilityLevel};
+    use bnpm_manifest::schema::{SideEffect, StabilityLevel};
 
     fn make_ai() -> AiBlock {
         AiBlock {

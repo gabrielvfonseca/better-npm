@@ -1,4 +1,4 @@
-//! Benchmarking harness using Criterion for Dash subsystems.
+//! Benchmarking harness using Criterion for Bnpm subsystems.
 //!
 //! Provides a simple API for running benchmarks and collecting
 //! performance statistics on sync and async operations.

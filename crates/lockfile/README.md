@@ -1,4 +1,4 @@
-# dash-lockfile
+# bnpm-lockfile
 
 Lockfile format parsing, generation, and resolution tracking.
 
@@ -17,10 +17,10 @@ The lockfile records the exact resolved versions and integrity hashes for all de
 ## Usage
 
 ```rust
-use dash_lockfile::{Lockfile, LockfileBuilder};
+use bnpm_lockfile::{Lockfile, LockfileBuilder};
 
 let lockfile = LockfileBuilder::new()
     .add_entry("react", "18.2.0", integrity_hash)?
     .build()?;
-lockfile.write_to("dash.lock")?;
+lockfile.write_to("bnpm.lock")?;
 ```

@@ -1,4 +1,4 @@
-//! `dash completions` command - generate shell completions
+//! `bnpm completions` command - generate shell completions
 
 use crate::config::ExitCode;
 use anyhow::Result;
@@ -7,7 +7,7 @@ use clap_complete::{Shell, generate};
 use std::io;
 
 pub fn run(shell: Shell, _config: &crate::config::CliConfig) -> Result<ExitCode> {
-    let mut cmd = Command::new("dash")
+    let mut cmd = Command::new("bnpm")
         .subcommand(Command::new("init"))
         .subcommand(Command::new("add"))
         .subcommand(Command::new("remove"))
@@ -21,6 +21,6 @@ pub fn run(shell: Shell, _config: &crate::config::CliConfig) -> Result<ExitCode>
         .subcommand(Command::new("completions"))
         .subcommand(Command::new("version"))
         .subcommand(Command::new("help"));
-    generate(shell, &mut cmd, "dash", &mut io::stdout());
+    generate(shell, &mut cmd, "bnpm", &mut io::stdout());
     Ok(ExitCode::Success)
 }

@@ -2,16 +2,16 @@ use crate::commands::PolicyCheckArgs;
 use crate::config::{CliConfig, ExitCode};
 use crate::output::*;
 use anyhow::{Context, Result};
-use dash_lockfile::Lockfile;
-use dash_policy::Policy;
+use bnpm_lockfile::Lockfile;
+use bnpm_policy::Policy;
 
 pub async fn run(args: &PolicyCheckArgs, config: &CliConfig) -> Result<ExitCode> {
     let cwd = std::env::current_dir().context("failed to get current directory")?;
 
     let policy_path = if args.policy_path.as_os_str().is_empty()
-        || args.policy_path.to_string_lossy() == "dash.policy.toml"
+        || args.policy_path.to_string_lossy() == "bnpm.policy.toml"
     {
-        cwd.join("dash.policy.toml")
+        cwd.join("bnpm.policy.toml")
     } else {
         args.policy_path.clone()
     };
@@ -24,10 +24,10 @@ pub async fn run(args: &PolicyCheckArgs, config: &CliConfig) -> Result<ExitCode>
     let content = std::fs::read_to_string(&policy_path).context("failed to read policy file")?;
     let policy = Policy::from_toml_str(&content).context("failed to parse policy file")?;
 
-    let lockfile_path = dash_lockfile::find_lockfile(&cwd).unwrap_or_else(|| cwd.join("dash.lock"));
+    let lockfile_path = bnpm_lockfile::find_lockfile(&cwd).unwrap_or_else(|| cwd.join("bnpm.lock"));
     let lockfile = Lockfile::load(&lockfile_path).context("failed to load lockfile")?;
 
-    let graph = dash_resolver::Resolver::from_lockfile(&lockfile)
+    let graph = bnpm_resolver::Resolver::from_lockfile(&lockfile)
         .context("failed to load lockfile into graph")?;
     let result = policy.evaluate(&graph);
 

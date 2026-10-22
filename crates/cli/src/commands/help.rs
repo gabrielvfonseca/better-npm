@@ -1,11 +1,11 @@
-//! `dash help` command
+//! `bnpm help` command
 
 use crate::config::{CliConfig, ExitCode};
 use anyhow::Result;
 
 pub fn run(_command: Option<String>, _config: &CliConfig) -> Result<ExitCode> {
-    println!("Dash - The JavaScript package manager");
-    println!("Usage: dash <command> [options]");
+    println!("Bnpm - The JavaScript package manager");
+    println!("Usage: bnpm <command> [options]");
     println!();
     println!("Commands:");
     println!("  init      Initialize a new package");

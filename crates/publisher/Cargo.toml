@@ -1,5 +1,5 @@
 [package]
-name = "dash-publisher"
+name = "bnpm-publisher"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -16,17 +16,17 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 chrono = { workspace = true }
 tempfile = { workspace = true }
-dash-package = { path = "../package" }
-dash-registry-client = { path = "../registry-client" }
-dash-config = { path = "../config" }
-dash-auth = { path = "../auth" }
-dash-integrity = { path = "../integrity" }
-dash-signatures = { path = "../signatures" }
-dash-hashing = { path = "../hashing" }
-dash-manifest = { path = "../manifest" }
-dash-compression = { path = "../compression" }
-dash-archive = { path = "../archive" }
-dash-filesystem = { path = "../filesystem" }
-dash-telemetry = { path = "../telemetry" }
-dash-progress = { path = "../progress" }
+bnpm-package = { path = "../package" }
+bnpm-registry-client = { path = "../registry-client" }
+bnpm-config = { path = "../config" }
+bnpm-auth = { path = "../auth" }
+bnpm-integrity = { path = "../integrity" }
+bnpm-signatures = { path = "../signatures" }
+bnpm-hashing = { path = "../hashing" }
+bnpm-manifest = { path = "../manifest" }
+bnpm-compression = { path = "../compression" }
+bnpm-archive = { path = "../archive" }
+bnpm-filesystem = { path = "../filesystem" }
+bnpm-telemetry = { path = "../telemetry" }
+bnpm-progress = { path = "../progress" }
 futures = { workspace = true }

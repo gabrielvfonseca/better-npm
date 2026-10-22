@@ -1,4 +1,4 @@
-# dash-workspace
+# bnpm-workspace
 
 Workspace-level discovery, configuration, and multi-package operations.
 
@@ -17,7 +17,7 @@ Manages a workspace of multiple packages, handling member discovery, filtering, 
 ## Usage
 
 ```rust
-use dash_workspace::Workspace;
+use bnpm_workspace::Workspace;
 
 let ws = Workspace::discover(".")?;
 for member in ws.members() {

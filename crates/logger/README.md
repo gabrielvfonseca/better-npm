@@ -1,4 +1,4 @@
-# dash-logger
+# bnpm-logger
 
 Structured logging with file rotation, JSON output, and env filtering.
 
@@ -12,12 +12,12 @@ Builds on `tracing` and `tracing-subscriber` to provide a flexible logging subsy
 - Human-readable text format
 - Auto-rotating log files
 - Environment-based log level filtering
-- Integration with `dash-telemetry`
+- Integration with `bnpm-telemetry`
 
 ## Usage
 
 ```rust
-use dash_logger::{Logger, LogConfig};
+use bnpm_logger::{Logger, LogConfig};
 
 let logger = Logger::new(LogConfig::from_env()?)?;
 logger.init()?;

@@ -270,7 +270,7 @@ impl Lockfile {
     /// Recompute the integrity hash for the lockfile itself.
     pub fn fingerprint(&self) -> Result<String, LockfileError> {
         let serialized = self.serialize()?;
-        let hash = dash_hashing::hash_sha256(serialized.as_bytes());
+        let hash = bnpm_hashing::hash_sha256(serialized.as_bytes());
         Ok(hex::encode(hash))
     }
 }
@@ -321,7 +321,7 @@ impl LockfileDiff {
 
 /// Find the lockfile in a directory.
 pub fn find_lockfile(path: &std::path::Path) -> Option<std::path::PathBuf> {
-    for name in &["dash.lock", "dash-lock.json", "package-lock.json", "dash-lock.yaml"] {
+    for name in &["bnpm.lock", "bnpm-lock.json", "package-lock.json", "bnpm-lock.yaml"] {
         let candidate = path.join(name);
         if candidate.exists() {
             return Some(candidate);

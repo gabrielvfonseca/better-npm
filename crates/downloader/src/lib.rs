@@ -18,11 +18,11 @@ pub enum DownloadError {
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
     #[error("cache error: {0}")]
-    Cache(#[from] dash_cache::CacheError),
+    Cache(#[from] bnpm_cache::CacheError),
     #[error("hashing error: {0}")]
-    Hash(#[from] dash_hashing::HashError),
+    Hash(#[from] bnpm_hashing::HashError),
     #[error("network error: {0}")]
-    Network(#[from] dash_network::NetworkError),
+    Network(#[from] bnpm_network::NetworkError),
     #[error("file not found in cache: {0}")]
     CacheMiss(String),
 }
@@ -31,11 +31,11 @@ pub enum DownloadError {
 #[derive(Debug, Clone)]
 pub struct DownloadedPackage {
     /// Package reference that was downloaded.
-    pub reference: dash_package::PackageRef,
+    pub reference: bnpm_package::PackageRef,
     /// Raw archive data.
     pub data: Vec<u8>,
     /// Verified integrity hash.
-    pub integrity: dash_integrity::Integrity,
+    pub integrity: bnpm_integrity::Integrity,
     /// Download duration.
     pub duration: Duration,
     /// Size of the downloaded data.
@@ -93,7 +93,7 @@ pub enum DownloadEvent {
 /// The download manager.
 pub struct Downloader {
     client: reqwest::Client,
-    cache: Arc<dyn dash_cache::CacheBackend>,
+    cache: Arc<dyn bnpm_cache::CacheBackend>,
     concurrency: usize,
     config: DownloaderConfig,
 }
@@ -121,7 +121,7 @@ impl Default for DownloaderConfig {
             concurrency: 4,
             verify_integrity: true,
             use_cache: true,
-            registry_url: "https://registry.dash.sh".to_string(),
+            registry_url: "https://registry.bnpm.sh".to_string(),
             timeout: Duration::from_secs(120),
             resume: false,
         }
@@ -132,7 +132,7 @@ impl Downloader {
     /// Create a new downloader.
     pub fn new(
         client: reqwest::Client,
-        cache: Arc<dyn dash_cache::CacheBackend>,
+        cache: Arc<dyn bnpm_cache::CacheBackend>,
         config: DownloaderConfig,
     ) -> Self {
         Self {
@@ -143,27 +143,27 @@ impl Downloader {
         }
     }
 
-    /// Create a downloader from dash configuration.
-    pub fn from_config(config: &dash_config::Config) -> Result<Self, DownloadError> {
+    /// Create a downloader from bnpm configuration.
+    pub fn from_config(config: &bnpm_config::Config) -> Result<Self, DownloadError> {
         let client = reqwest::Client::builder()
             .timeout(Duration::from_secs(config.get_or("download.timeout_secs", 120u64)))
-            .user_agent(dash_network::user_agent())
-            .default_headers(dash_network::default_headers())
+            .user_agent(bnpm_network::user_agent())
+            .default_headers(bnpm_network::default_headers())
             .build()
             .map_err(|e| DownloadError::Request(e.to_string()))?;
 
-        let cache_config = dash_cache::CacheConfig {
+        let cache_config = bnpm_cache::CacheConfig {
             backend: config.get_or("cache.backend", "memory".to_string()),
             max_size: config.get_or("cache.max_size", 10000u64),
             ..Default::default()
         };
-        let cache = dash_cache::create_cache(&cache_config);
+        let cache = bnpm_cache::create_cache(&cache_config);
 
         let download_config = DownloaderConfig {
             concurrency: config.get_or("download.concurrency", 4usize),
             verify_integrity: config.get_or("download.verify_integrity", true),
             use_cache: config.get_or("download.use_cache", true),
-            registry_url: config.get_or("registry.url", "https://registry.dash.sh".to_string()),
+            registry_url: config.get_or("registry.url", "https://registry.bnpm.sh".to_string()),
             ..Default::default()
         };
 
@@ -171,12 +171,12 @@ impl Downloader {
     }
 
     /// Download a single package.
-    pub async fn download(&self, pkg: &dash_package::PackageRef) -> Result<DownloadedPackage, DownloadError> {
+    pub async fn download(&self, pkg: &bnpm_package::PackageRef) -> Result<DownloadedPackage, DownloadError> {
         // Check cache
         if self.config.use_cache {
             let cache_key = format!("download:{}", pkg.id);
-            if let Ok(Some(data)) = dash_cache::cache_get::<Vec<u8>>(&*self.cache, &cache_key).await {
-                let integrity = dash_integrity::Integrity::hash(&data, dash_integrity::IntegrityAlgorithm::Sha256);
+            if let Ok(Some(data)) = bnpm_cache::cache_get::<Vec<u8>>(&*self.cache, &cache_key).await {
+                let integrity = bnpm_integrity::Integrity::hash(&data, bnpm_integrity::IntegrityAlgorithm::Sha256);
                 let size = data.len() as u64;
                 return Ok(DownloadedPackage {
                     reference: pkg.clone(),
@@ -220,7 +220,7 @@ impl Downloader {
         // Verify integrity
         if self.config.verify_integrity {
             if let Some(ref expected) = pkg.integrity {
-                let actual = dash_integrity::Integrity::hash(&data, expected.algorithm);
+                let actual = bnpm_integrity::Integrity::hash(&data, expected.algorithm);
                 if !expected.verify(&data) {
                     return Err(DownloadError::IntegrityMismatch {
                         expected: expected.to_string(),
@@ -233,11 +233,11 @@ impl Downloader {
         // Cache the result
         if self.config.use_cache {
             let cache_key = format!("download:{}", pkg.id);
-            let _ = dash_cache::cache_set(&*self.cache, &cache_key, &data, None).await;
+            let _ = bnpm_cache::cache_set(&*self.cache, &cache_key, &data, None).await;
         }
 
         let size = data.len() as u64;
-        let integrity = dash_integrity::Integrity::hash(&data, dash_integrity::IntegrityAlgorithm::Sha256);
+        let integrity = bnpm_integrity::Integrity::hash(&data, bnpm_integrity::IntegrityAlgorithm::Sha256);
 
         Ok(DownloadedPackage {
             reference: pkg.clone(),
@@ -251,7 +251,7 @@ impl Downloader {
     /// Download multiple packages concurrently with bounded parallelism.
     pub async fn download_batch(
         &self,
-        pkgs: &[dash_package::PackageRef],
+        pkgs: &[bnpm_package::PackageRef],
     ) -> Result<Vec<DownloadedPackage>, DownloadError> {
         use futures::stream::{self, StreamExt};
 
@@ -266,7 +266,7 @@ impl Downloader {
     }
 
     /// Check if a package is cached locally.
-    pub async fn is_cached(&self, pkg: &dash_package::PackageRef) -> bool {
+    pub async fn is_cached(&self, pkg: &bnpm_package::PackageRef) -> bool {
         if !self.config.use_cache {
             return false;
         }
@@ -327,8 +327,8 @@ mod tests {
             .build()
             .unwrap();
 
-        let cache_config = dash_cache::CacheConfig::default();
-        let cache = dash_cache::create_cache(&cache_config);
+        let cache_config = bnpm_cache::CacheConfig::default();
+        let cache = bnpm_cache::create_cache(&cache_config);
         let config = DownloaderConfig {
             registry_url: "http://localhost:1".to_string(),
             timeout: Duration::from_secs(1),
@@ -338,10 +338,10 @@ mod tests {
 
         let downloader = Downloader::new(client, cache, config);
 
-        let name = dash_package::PackageName::new_unchecked("test-pkg");
+        let name = bnpm_package::PackageName::new_unchecked("test-pkg");
         let version = semver::Version::new(1, 0, 0);
-        let id = dash_package::PackageId::new(name, version);
-        let pkg_ref = dash_package::PackageRef::new(id);
+        let id = bnpm_package::PackageId::new(name, version);
+        let pkg_ref = bnpm_package::PackageRef::new(id);
 
         let result = downloader.download(&pkg_ref).await;
         assert!(result.is_err());
@@ -409,13 +409,13 @@ mod tests {
 
     #[test]
     fn test_downloaded_package() {
-        let name = dash_package::PackageName::new_unchecked("test");
+        let name = bnpm_package::PackageName::new_unchecked("test");
         let version = semver::Version::new(1, 0, 0);
-        let id = dash_package::PackageId::new(name, version);
-        let pref = dash_package::PackageRef::new(id);
+        let id = bnpm_package::PackageId::new(name, version);
+        let pref = bnpm_package::PackageRef::new(id);
 
         let data = b"test package data".to_vec();
-        let integrity = dash_integrity::Integrity::hash(&data, dash_integrity::IntegrityAlgorithm::Sha256);
+        let integrity = bnpm_integrity::Integrity::hash(&data, bnpm_integrity::IntegrityAlgorithm::Sha256);
 
         let dpkg = DownloadedPackage {
             reference: pref,
@@ -432,17 +432,17 @@ mod tests {
     #[tokio::test]
     async fn test_is_cached() {
         let client = reqwest::Client::new();
-        let cache = dash_cache::create_cache(&Default::default());
+        let cache = bnpm_cache::create_cache(&Default::default());
         let config = DownloaderConfig {
             use_cache: true,
             ..Default::default()
         };
         let downloader = Downloader::new(client, cache, config);
 
-        let name = dash_package::PackageName::new_unchecked("test");
+        let name = bnpm_package::PackageName::new_unchecked("test");
         let version = semver::Version::new(1, 0, 0);
-        let id = dash_package::PackageId::new(name, version);
-        let pref = dash_package::PackageRef::new(id);
+        let id = bnpm_package::PackageId::new(name, version);
+        let pref = bnpm_package::PackageRef::new(id);
 
         assert!(!downloader.is_cached(&pref).await);
     }
@@ -450,7 +450,7 @@ mod tests {
     #[tokio::test]
     async fn test_download_batch_empty() {
         let client = reqwest::Client::new();
-        let cache = dash_cache::create_cache(&Default::default());
+        let cache = bnpm_cache::create_cache(&Default::default());
         let config = DownloaderConfig::default();
         let downloader = Downloader::new(client, cache, config);
 

@@ -1,10 +1,10 @@
-# dash-cli
+# bnpm-cli
 
-Dash package manager CLI — main binary entrypoint.
+Bnpm package manager CLI — main binary entrypoint.
 
 ## Overview
 
-Provides the CLI entrypoint for Dash, including subcommand dispatch, configuration loading, and exit code handling.
+Provides the CLI entrypoint for Bnpm, including subcommand dispatch, configuration loading, and exit code handling.
 
 ## Commands
 
@@ -17,7 +17,7 @@ Provides the CLI entrypoint for Dash, including subcommand dispatch, configurati
 ## Usage
 
 ```bash
-dash install <package>
-dash publish --path ./my-package
-dash resolve --check
+bnpm install <package>
+bnpm publish --path ./my-package
+bnpm resolve --check
 ```

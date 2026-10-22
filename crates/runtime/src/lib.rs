@@ -15,14 +15,14 @@ pub enum RuntimeError {
     #[error("runtime shutdown failed: {0}")]
     Shutdown(String),
     #[error("configuration error: {0}")]
-    Config(#[from] dash_config::ConfigError),
+    Config(#[from] bnpm_config::ConfigError),
     #[error("telemetry error: {0}")]
-    Telemetry(#[from] dash_telemetry::TelemetryError),
+    Telemetry(#[from] bnpm_telemetry::TelemetryError),
     #[error("logger error: {0}")]
-    Logger(#[from] dash_logger::LogError),
+    Logger(#[from] bnpm_logger::LogError),
 }
 
-/// Configuration for the Dash runtime.
+/// Configuration for the Bnpm runtime.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct RuntimeConfig {
     /// Number of worker threads for the tokio runtime.
@@ -46,26 +46,26 @@ impl Default for RuntimeConfig {
             max_blocking_threads: None,
             enable_io: true,
             enable_time: true,
-            thread_name: Some("dash-worker".to_string()),
+            thread_name: Some("bnpm-worker".to_string()),
             stack_size: None,
         }
     }
 }
 
-impl From<&dash_config::Config> for RuntimeConfig {
-    fn from(config: &dash_config::Config) -> Self {
+impl From<&bnpm_config::Config> for RuntimeConfig {
+    fn from(config: &bnpm_config::Config) -> Self {
         Self {
             worker_threads: config.get("runtime.worker_threads").ok(),
             max_blocking_threads: config.get("runtime.max_blocking_threads").ok(),
             enable_io: config.get_or("runtime.enable_io", true),
             enable_time: config.get_or("runtime.enable_time", true),
-            thread_name: config.get("runtime.thread_name").ok().or(Some("dash-worker".to_string())),
+            thread_name: config.get("runtime.thread_name").ok().or(Some("bnpm-worker".to_string())),
             stack_size: config.get("runtime.stack_size").ok(),
         }
     }
 }
 
-/// A handle to the Dash runtime, providing lifecycle management.
+/// A handle to the Bnpm runtime, providing lifecycle management.
 pub struct RuntimeHandle {
     /// The underlying tokio runtime.
     pub tokio_rt: Runtime,
@@ -79,20 +79,20 @@ impl RuntimeHandle {
         Self { tokio_rt, config }
     }
 
-    /// Initialize the full Dash runtime (tokio + logging + telemetry).
+    /// Initialize the full Bnpm runtime (tokio + logging + telemetry).
     pub fn init(config: &RuntimeConfig) -> Result<Self, RuntimeError> {
         let tokio_rt = build_tokio_runtime(config)?;
 
         // Initialize logging
-        let log_config = dash_logger::LogConfig::default();
+        let log_config = bnpm_logger::LogConfig::default();
         // Don't fail if already initialized
-        let _ = dash_logger::init(&log_config);
+        let _ = bnpm_logger::init(&log_config);
 
         Ok(Self::new(tokio_rt, config.clone()))
     }
 
     /// Initialize the runtime with a full application config.
-    pub fn from_config(config: &dash_config::Config) -> Result<Self, RuntimeError> {
+    pub fn from_config(config: &bnpm_config::Config) -> Result<Self, RuntimeError> {
         let runtime_config = RuntimeConfig::from(config);
         Self::init(&runtime_config)
     }
@@ -126,7 +126,7 @@ impl RuntimeHandle {
     /// Shutdown the runtime gracefully.
     pub fn shutdown(self) -> Result<(), RuntimeError> {
         // Shutdown telemetry
-        let _ = dash_telemetry::shutdown_tracing();
+        let _ = bnpm_telemetry::shutdown_tracing();
         Ok(())
     }
 
@@ -239,7 +239,7 @@ mod tests {
 
     #[test]
     fn test_runtime_config_from_config() {
-        let mut config = dash_config::Config::empty();
+        let mut config = bnpm_config::Config::empty();
         config.set("runtime.worker_threads", 4);
         let runtime_config = RuntimeConfig::from(&config);
         assert_eq!(runtime_config.worker_threads, Some(4));

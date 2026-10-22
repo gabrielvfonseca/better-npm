@@ -1,4 +1,4 @@
-# dash-sandbox
+# bnpm-sandbox
 
 Sandboxed execution environments for package build scripts.
 
@@ -17,7 +17,7 @@ Provides isolated execution contexts for running package install scripts with re
 ## Usage
 
 ```rust
-use dash_sandbox::{Sandbox, SandboxConfig};
+use bnpm_sandbox::{Sandbox, SandboxConfig};
 
 let sandbox = Sandbox::new(SandboxConfig {
     memory_limit: Some(512 * 1024 * 1024),

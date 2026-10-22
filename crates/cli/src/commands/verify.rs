@@ -2,15 +2,15 @@ use crate::commands::VerifyArgs;
 use crate::config::{CliConfig, ExitCode};
 use crate::output::*;
 use anyhow::{Context, Result};
-use dash_cid::Cid;
-use dash_lockfile::{Lockfile, find_lockfile};
-use dash_store::CasStore;
+use bnpm_cid::Cid;
+use bnpm_lockfile::{Lockfile, find_lockfile};
+use bnpm_store::CasStore;
 use std::sync::Arc;
 
 pub async fn run(args: &VerifyArgs, config: &CliConfig) -> Result<ExitCode> {
     let cwd = std::env::current_dir().context("failed to get current directory")?;
 
-    let lockfile_path = find_lockfile(&cwd).unwrap_or_else(|| cwd.join("dash.lock"));
+    let lockfile_path = find_lockfile(&cwd).unwrap_or_else(|| cwd.join("bnpm.lock"));
     let lockfile = Lockfile::load(&lockfile_path).context("failed to load lockfile")?;
 
     let store = Arc::new(CasStore::new(config.store_dir()).await.context("failed to open store")?);
@@ -67,7 +67,7 @@ pub async fn run(args: &VerifyArgs, config: &CliConfig) -> Result<ExitCode> {
             checkpoint_info = checkpoint;
         } else {
             print_info("Checkpoint: transparency log verification requires a running registry");
-            print_kv("Root hash", "pending (start dash-gateway for checkpoint)");
+            print_kv("Root hash", "pending (start bnpm-gateway for checkpoint)");
         }
     }
 

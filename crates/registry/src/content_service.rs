@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
-use dash_capsule::Capsule;
-use dash_cid::Cid;
-use dash_store::StoreError;
-use dash_store::cas::CasStore;
+use bnpm_capsule::Capsule;
+use bnpm_cid::Cid;
+use bnpm_store::StoreError;
+use bnpm_store::cas::CasStore;
 
 #[derive(Clone)]
 pub struct ContentService {
@@ -24,7 +24,7 @@ impl ContentService {
     pub async fn fetch(&self, cid_str: &str) -> Result<Vec<u8>, ContentServiceError> {
         let cid: Cid = cid_str
             .parse()
-            .map_err(|e: dash_cid::CidError| ContentServiceError::InvalidCid(e.to_string()))?;
+            .map_err(|e: bnpm_cid::CidError| ContentServiceError::InvalidCid(e.to_string()))?;
         let capsule = self.store.get_capsule(&cid).await?;
         capsule.to_bytes().map_err(|e| ContentServiceError::CapsuleError(e.to_string()))
     }
@@ -32,7 +32,7 @@ impl ContentService {
     pub async fn has(&self, cid_str: &str) -> Result<bool, ContentServiceError> {
         let cid: Cid = cid_str
             .parse()
-            .map_err(|e: dash_cid::CidError| ContentServiceError::InvalidCid(e.to_string()))?;
+            .map_err(|e: bnpm_cid::CidError| ContentServiceError::InvalidCid(e.to_string()))?;
         self.store.has_capsule(&cid).await.map_err(ContentServiceError::Store)
     }
 
@@ -53,8 +53,8 @@ pub enum ContentServiceError {
     NotFound(String),
 }
 
-impl From<dash_capsule::CapsuleError> for ContentServiceError {
-    fn from(e: dash_capsule::CapsuleError) -> Self {
+impl From<bnpm_capsule::CapsuleError> for ContentServiceError {
+    fn from(e: bnpm_capsule::CapsuleError) -> Self {
         ContentServiceError::CapsuleError(e.to_string())
     }
 }
@@ -62,7 +62,7 @@ impl From<dash_capsule::CapsuleError> for ContentServiceError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dash_capsule::Capsule;
+    use bnpm_capsule::Capsule;
 
     #[tokio::test]
     async fn test_store_and_fetch() {

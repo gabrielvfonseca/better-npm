@@ -46,7 +46,7 @@ impl<S: KeylessSigner> ProvenanceService<S> {
         let _ = self.signer.sign(&identity, &data_hash)?;
         let (log_index, inclusion_proof) = self.log.append(entry)?;
 
-        let attestation = build_attestation(&identity.oidc_subject, "1.0.0", &cid, "dash:registry");
+        let attestation = build_attestation(&identity.oidc_subject, "1.0.0", &cid, "bnpm:registry");
 
         Ok(PublishReceipt { log_index, inclusion_proof, attestation })
     }

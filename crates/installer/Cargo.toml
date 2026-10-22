@@ -1,5 +1,5 @@
 [package]
-name = "dash-installer"
+name = "bnpm-installer"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -13,24 +13,24 @@ tokio = { workspace = true }
 tracing = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
-dash-resolver = { path = "../resolver" }
-dash-downloader = { path = "../downloader" }
-dash-linker = { path = "../linker" }
-dash-config = { path = "../config" }
-dash-cache = { path = "../cache" }
-dash-store = { path = "../store" }
-dash-package = { path = "../package" }
-dash-manifest = { path = "../manifest" }
-dash-lockfile = { path = "../lockfile" }
-dash-progress = { path = "../progress" }
-dash-concurrency = { path = "../concurrency" }
-dash-integrity = { path = "../integrity" }
-dash-signatures = { path = "../signatures" }
-dash-filesystem = { path = "../filesystem" }
-dash-hashing = { path = "../hashing" }
-dash-compression = { path = "../compression" }
-dash-archive = { path = "../archive" }
-dash-sandbox = { path = "../sandbox" }
+bnpm-resolver = { path = "../resolver" }
+bnpm-downloader = { path = "../downloader" }
+bnpm-linker = { path = "../linker" }
+bnpm-config = { path = "../config" }
+bnpm-cache = { path = "../cache" }
+bnpm-store = { path = "../store" }
+bnpm-package = { path = "../package" }
+bnpm-manifest = { path = "../manifest" }
+bnpm-lockfile = { path = "../lockfile" }
+bnpm-progress = { path = "../progress" }
+bnpm-concurrency = { path = "../concurrency" }
+bnpm-integrity = { path = "../integrity" }
+bnpm-signatures = { path = "../signatures" }
+bnpm-filesystem = { path = "../filesystem" }
+bnpm-hashing = { path = "../hashing" }
+bnpm-compression = { path = "../compression" }
+bnpm-archive = { path = "../archive" }
+bnpm-sandbox = { path = "../sandbox" }
 
 [features]
 parallel = []

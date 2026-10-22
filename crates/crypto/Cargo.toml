@@ -1,5 +1,5 @@
 [package]
-name = "dash-crypto"
+name = "bnpm-crypto"
 edition.workspace = true
 version.workspace = true
 license.workspace = true

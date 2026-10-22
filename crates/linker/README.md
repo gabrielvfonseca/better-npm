@@ -1,4 +1,4 @@
-# dash-linker
+# bnpm-linker
 
 Symbolic and hard linking of installed packages into target directories.
 
@@ -16,7 +16,7 @@ Manages the creation and removal of binary symlinks, `.bin` entries, and other s
 ## Usage
 
 ```rust
-use dash_linker::Linker;
+use bnpm_linker::Linker;
 
 let linker = Linker::new(&config)?;
 linker.link_bin("my-package", "my-package-bin")?;

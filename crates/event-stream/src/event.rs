@@ -244,7 +244,7 @@ mod tests {
             package: "test".to_string(),
             version: "1.0.0".to_string(),
             cid: "b3:abc".to_string(),
-            publisher: "did:dash:test".to_string(),
+            publisher: "did:bnpm:test".to_string(),
             namespace: "test".to_string(),
         });
         let event = Event::new(EventType::PackagePublished, payload, source);
@@ -258,7 +258,7 @@ mod tests {
             package: "test".to_string(),
             version: "1.0.0".to_string(),
             cid: "b3:abc".to_string(),
-            publisher: "did:dash:test".to_string(),
+            publisher: "did:bnpm:test".to_string(),
             namespace: "test".to_string(),
         });
         assert_eq!(payload.event_type(), EventType::PackagePublished);

@@ -1,6 +1,6 @@
-# dash-concurrency
+# bnpm-concurrency
 
-Async and parallel concurrency primitives for Dash workflows.
+Async and parallel concurrency primitives for Bnpm workflows.
 
 ## Overview
 
@@ -17,7 +17,7 @@ Provides helpers for bounded parallelism, task groups, rate limiting, and parall
 ## Usage
 
 ```rust
-use dash_concurrency::{parallel_map, ParConfig};
+use bnpm_concurrency::{parallel_map, ParConfig};
 
 let results = parallel_map(
     items,

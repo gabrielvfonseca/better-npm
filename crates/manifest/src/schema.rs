@@ -1,11 +1,11 @@
-//! Dash manifest (dash.toml) — types, parsing, serialization, and validation
-//! for the canonical Dash package manifest format.
+//! Bnpm manifest (bnpm.toml) — types, parsing, serialization, and validation
+//! for the canonical Bnpm package manifest format.
 //!
 //! Supports:
 //! - TOML parsing/serialization (primary format)
 //! - JSON parsing/serialization (compat)
-//! - Canonical CBOR encoding (for DASHCAP1 capsules)
-//! - Validation per dash.toml.json schema
+//! - Canonical CBOR encoding (for BNPMCAP1 capsules)
+//! - Validation per bnpm.toml.json schema
 //! - Package.json import for M5 compat
 
 use std::collections::BTreeMap;
@@ -20,7 +20,7 @@ use crate::{DependencyKind, ManifestError};
 // Top-level Manifest
 // ---------------------------------------------------------------------------
 
-/// The Dash manifest root. Every field is optional — an absent JSON section
+/// The Bnpm manifest root. Every field is optional — an absent JSON section
 /// simply produces `None` (or defaults to empty for maps/vecs).
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct Manifest {
@@ -56,7 +56,7 @@ pub struct Manifest {
 }
 
 impl Manifest {
-    /// Parse a `dash.json` string.
+    /// Parse a `bnpm.json` string.
     pub fn from_json_str(input: &str) -> Result<Self, ManifestError> {
         let manifest: Manifest =
             serde_json::from_str(input).map_err(|e| ManifestError::Parse(e.to_string()))?;
@@ -64,7 +64,7 @@ impl Manifest {
         Ok(manifest)
     }
 
-    /// Load and parse a `dash.json` file from disk.
+    /// Load and parse a `bnpm.json` file from disk.
     pub fn from_json_path(path: &Path) -> Result<Self, ManifestError> {
         let content = std::fs::read_to_string(path)?;
         Self::from_json_str(&content)
@@ -75,7 +75,7 @@ impl Manifest {
         serde_json::to_string_pretty(self).map_err(|e| ManifestError::Parse(e.to_string()))
     }
 
-    /// Parse a `dash.toml` string.
+    /// Parse a `bnpm.toml` string.
     pub fn from_toml_str(input: &str) -> Result<Self, ManifestError> {
         let manifest: Manifest =
             toml::from_str(input).map_err(|e| ManifestError::Parse(e.to_string()))?;
@@ -83,7 +83,7 @@ impl Manifest {
         Ok(manifest)
     }
 
-    /// Load and parse a `dash.toml` file from disk.
+    /// Load and parse a `bnpm.toml` file from disk.
     pub fn from_toml_path(path: &Path) -> Result<Self, ManifestError> {
         let content = std::fs::read_to_string(path)?;
         Self::from_toml_str(&content)
@@ -150,7 +150,7 @@ impl Manifest {
         }
     }
 
-    /// Validate all fields against the dash.toml schema rules.
+    /// Validate all fields against the bnpm.toml schema rules.
     pub fn validate(&self) -> Result<(), ManifestError> {
         let pkg = self
             .package
@@ -360,7 +360,7 @@ fn validate_capabilities(caps: &Capabilities) -> Result<(), ManifestError> {
 // Package Identity
 // ---------------------------------------------------------------------------
 
-/// Core package metadata. Every `dash.json` must have this section.
+/// Core package metadata. Every `bnpm.json` must have this section.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct PackageIdentity {
     pub name: String,
@@ -647,10 +647,10 @@ pub struct Workspace {
 // ---------------------------------------------------------------------------
 
 impl Manifest {
-    /// Import a package.json value into a dash.json Manifest.
+    /// Import a package.json value into a bnpm.json Manifest.
     ///
-    /// This enables M5 compat — `dash init` reads package.json
-    /// and produces the equivalent `dash.json`.
+    /// This enables M5 compat — `bnpm init` reads package.json
+    /// and produces the equivalent `bnpm.json`.
     pub fn from_package_json(value: serde_json::Value) -> Result<Self, ManifestError> {
         let name = value.get("name").and_then(|v| v.as_str()).unwrap_or("").to_string();
         let version = value.get("version").and_then(|v| v.as_str()).unwrap_or("0.0.0").to_string();
@@ -775,7 +775,7 @@ mod tests {
             "subprocess": false,
             "build": { "network": false, "scripts": false }
         },
-        "build": { "tool": "dash:tsc", "inputs": ["src/**"], "outputs": ["dist/**"], "target": "node" },
+        "build": { "tool": "bnpm:tsc", "inputs": ["src/**"], "outputs": ["dist/**"], "target": "node" },
         "ai": {
             "summary": "HTTP client with automatic retries",
             "intent": "networking/http-client",
@@ -832,7 +832,7 @@ mod tests {
 
     #[test]
     fn test_validation_missing_package() {
-        let result = Manifest::from_json_str(r#"{"build": { "tool": "dash:tsc" }}"#);
+        let result = Manifest::from_json_str(r#"{"build": { "tool": "bnpm:tsc" }}"#);
         assert!(result.is_err());
     }
 
@@ -886,7 +886,7 @@ mod tests {
     fn test_build_declaration() {
         let manifest = Manifest::from_json_str(VALID_JSON).unwrap();
         let build = manifest.build.as_ref().unwrap();
-        assert_eq!(build.tool, "dash:tsc");
+        assert_eq!(build.tool, "bnpm:tsc");
     }
 
     #[test]
@@ -942,7 +942,7 @@ package = { name = "@acme/http-client", version = "2.3.0", license = "Apache-2.0
 exports = { "." = { types = "./dist/index.d.ts", import = "./dist/index.js" } }
 dependencies = { "@std/encoding" = "^1.0", zod = "^3.23" }
 capabilities = { net = ["https://api.acme.dev"], fs-read = ["./config"], fs-write = false, env = ["KEY"], subprocess = false }
-build = { tool = "dash:tsc", inputs = ["src/**"], outputs = ["dist/**"] }
+build = { tool = "bnpm:tsc", inputs = ["src/**"], outputs = ["dist/**"] }
 ai = { intent = "networking/http-client", stability = "stable", "side-effects" = "none" }
 "#;
 
@@ -995,7 +995,7 @@ package = { name = "InvalidName", version = "1.0.0" }
 
     #[test]
     fn test_validation_invalid_package_name_underscore_only() {
-        // underscore is allowed but must be lowercase/dash separated
+        // underscore is allowed but must be lowercase/bnpm separated
         let toml = r#"
 package = { name = "valid_name", version = "1.0.0" }
 "#;

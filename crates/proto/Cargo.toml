@@ -1,5 +1,5 @@
 [package]
-name = "dash-proto"
+name = "bnpm-proto"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -8,10 +8,10 @@ description = "DPR wire protocol client and server"
 build = "build.rs"
 
 [dependencies]
-dash-cid = { workspace = true }
-dash-capsule = { workspace = true }
-dash-provenance = { workspace = true }
-dash-lockfile = { workspace = true }
+bnpm-cid = { workspace = true }
+bnpm-capsule = { workspace = true }
+bnpm-provenance = { workspace = true }
+bnpm-lockfile = { workspace = true }
 serde = { workspace = true }
 thiserror = { workspace = true }
 bytes = { workspace = true }

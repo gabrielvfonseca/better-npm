@@ -1,10 +1,10 @@
-# dash-manifest
+# bnpm-manifest
 
-Package manifest (dash.json) schema, parsing, validation, and canonical CBOR encoding.
+Package manifest (bnpm.json) schema, parsing, validation, and canonical CBOR encoding.
 
 ## Overview
 
-Handles reading, writing, and validating package manifests (package.json, dash.json) which define package metadata, dependencies, entry points, and build configuration.
+Handles reading, writing, and validating package manifests (package.json, bnpm.json) which define package metadata, dependencies, entry points, and build configuration.
 
 ## Features
 
@@ -17,9 +17,9 @@ Handles reading, writing, and validating package manifests (package.json, dash.j
 ## Usage
 
 ```rust
-use dash_manifest::Manifest;
+use bnpm_manifest::Manifest;
 
-let manifest = Manifest::from_path("dash.json")?;
+let manifest = Manifest::from_path("bnpm.json")?;
 println!("Name: {}", manifest.name());
 println!("Dependencies: {:?}", manifest.dependencies());
 ```

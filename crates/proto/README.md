@@ -1,10 +1,10 @@
-# dash-proto
+# bnpm-proto
 
 DPR wire protocol client and server.
 
 ## Overview
 
-Implements the Dash Protocol (DPR) wire format for peer-to-peer package transfer between nodes.
+Implements the Bnpm Protocol (DPR) wire format for peer-to-peer package transfer between nodes.
 
 ## Features
 
@@ -16,8 +16,8 @@ Implements the Dash Protocol (DPR) wire format for peer-to-peer package transfer
 ## Usage
 
 ```rust
-use dash_proto::{DprClient, DprServer};
+use bnpm_proto::{DprClient, DprServer};
 
-let mut client = DprClient::connect("dpr://node.dash.sh").await?;
+let mut client = DprClient::connect("dpr://node.bnpm.sh").await?;
 let capsule = client.fetch_capsule(&cid).await?;
 ```

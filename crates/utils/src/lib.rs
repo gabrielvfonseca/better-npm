@@ -1,4 +1,4 @@
-//! General utility functions for Dash.
+//! General utility functions for Bnpm.
 //!
 //! Includes version comparison, glob matching, string formatting,
 //! slug generation, and byte/duration formatting.

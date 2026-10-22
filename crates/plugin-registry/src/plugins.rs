@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 use std::path::Path;
 
-use dash_capsule::Capsule;
-use dash_proto::dpr_v1::{Binding, VersionRange};
+use bnpm_capsule::Capsule;
+use bnpm_proto::dpr_v1::{Binding, VersionRange};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, thiserror::Error)]
@@ -48,7 +48,7 @@ pub struct PluginManifest {
     pub events: Vec<String>,
     pub config_schema: Option<serde_json::Value>,
     pub dependencies: Vec<String>,
-    pub min_dash_version: Option<String>,
+    pub min_bnpm_version: Option<String>,
 }
 
 impl PluginManifest {
@@ -285,7 +285,7 @@ impl Plugin for LicenseCheckPlugin {
     async fn on_pre_publish(&self, ctx: &PluginContext<'_>) -> PluginResult {
         if let Some(capsule) = ctx.capsule {
             let manifest_bytes = capsule.manifest_cbor();
-            if let Ok(manifest) = ciborium::de::from_reader::<dash_manifest::PackageManifest, _>(manifest_bytes) {
+            if let Ok(manifest) = ciborium::de::from_reader::<bnpm_manifest::PackageManifest, _>(manifest_bytes) {
                 let license = manifest.license.unwrap_or_else(|| "NOASSERTION".to_string());
                 let allowed = ["MIT", "Apache-2.0", "BSD-3-Clause", "BSD-2-Clause", "ISC", "MPL-2.0"];
                 if !allowed.contains(&license.as_str()) {

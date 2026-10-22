@@ -22,10 +22,10 @@ pub enum ArchiveError {
     #[error("invalid entry path: {0}")]
     InvalidEntryPath(String),
     #[error("compression error: {0}")]
-    Compression(#[from] dash_compression::CompressionError),
+    Compression(#[from] bnpm_compression::CompressionError),
 }
 
-use dash_compression::{CompressionAlgo, compress, decompress};
+use bnpm_compression::{CompressionAlgo, compress, decompress};
 
 /// Supported archive formats.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]

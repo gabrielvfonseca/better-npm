@@ -2,8 +2,8 @@ use crate::commands::PublishArgs;
 use crate::config::{CliConfig, ExitCode};
 use crate::output::*;
 use anyhow::{Context, Result};
-use dash_manifest::schema::Manifest;
-use dash_proto::DprClient;
+use bnpm_manifest::schema::Manifest;
+use bnpm_proto::DprClient;
 
 pub async fn run(args: &PublishArgs, config: &CliConfig) -> Result<ExitCode> {
     let cwd = if args.path.as_os_str().is_empty() {
@@ -12,19 +12,19 @@ pub async fn run(args: &PublishArgs, config: &CliConfig) -> Result<ExitCode> {
         args.path.clone()
     };
 
-    let manifest_path = cwd.join("dash.toml");
+    let manifest_path = cwd.join("bnpm.toml");
     if !manifest_path.exists() {
-        print_error("No dash.toml found in current directory");
+        print_error("No bnpm.toml found in current directory");
         return Ok(ExitCode::Error);
     }
 
-    let manifest = Manifest::from_toml_path(&manifest_path).context("failed to parse dash.toml")?;
-    let pkg = manifest.package.as_ref().context("dash.toml missing [package] section")?;
+    let manifest = Manifest::from_toml_path(&manifest_path).context("failed to parse bnpm.toml")?;
+    let pkg = manifest.package.as_ref().context("bnpm.toml missing [package] section")?;
     let name = &pkg.name;
     let version = &pkg.version;
 
     let files = collect_files(&cwd)?;
-    let capsule = dash_capsule::Capsule::pack(files).context("failed to pack capsule")?;
+    let capsule = bnpm_capsule::Capsule::pack(files).context("failed to pack capsule")?;
     let capsule_bytes = capsule.to_bytes().context("failed to serialize capsule")?;
     let _cid = capsule.cid().to_string();
 
@@ -34,8 +34,8 @@ pub async fn run(args: &PublishArgs, config: &CliConfig) -> Result<ExitCode> {
         .or_else(|| config.registry.first().cloned())
         .unwrap_or_else(|| "http://0.0.0.0:9481".to_string());
 
-    let identity = dash_proto::dpr_v1::Identity {
-        oidc_issuer: "https://dash.dev".to_string(),
+    let identity = bnpm_proto::dpr_v1::Identity {
+        oidc_issuer: "https://bnpm.dev".to_string(),
         oidc_subject: name.clone(),
         key_id: "dev-key".to_string(),
         public_key: vec![],
@@ -100,7 +100,7 @@ pub async fn run(args: &PublishArgs, config: &CliConfig) -> Result<ExitCode> {
                     }));
                 } else {
                     print_warning(&format!("Dual-publish to npm failed: {e}"));
-                    print_info("Dash registry publish was successful regardless.");
+                    print_info("Bnpm registry publish was successful regardless.");
                 }
             },
         }
@@ -146,7 +146,7 @@ fn collect_dir(
 fn npm_publish(
     name: &str,
     version: &str,
-    capsule: &dash_capsule::Capsule,
+    capsule: &bnpm_capsule::Capsule,
     npm_tag: &Option<String>,
 ) -> Result<(), anyhow::Error> {
     let token = std::env::var("NPM_TOKEN")
@@ -181,7 +181,7 @@ fn npm_publish(
     }
 
     let client = reqwest::blocking::Client::builder()
-        .user_agent(concat!("dash-cli/", env!("CARGO_PKG_VERSION")))
+        .user_agent(concat!("bnpm-cli/", env!("CARGO_PKG_VERSION")))
         .build()
         .context("failed to create npm publish client")?;
 

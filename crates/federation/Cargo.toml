@@ -1,20 +1,20 @@
 [package]
-name = "dash-federation"
+name = "bnpm-federation"
 version = { workspace = true }
 edition = "2024"
 license = "MIT"
-authors = ["Dash Team"]
+authors = ["Bnpm Team"]
 
 [dependencies]
-dash-capsule = { path = "../capsule" }
-dash-cid = { path = "../cid" }
-dash-governance = { path = "../governance" }
-dash-manifest = { path = "../manifest" }
-dash-policy = { path = "../policy" }
-dash-proto = { path = "../proto" }
-dash-provenance = { path = "../provenance" }
-dash-registry = { path = "../registry" }
-dash-store = { path = "../store" }
+bnpm-capsule = { path = "../capsule" }
+bnpm-cid = { path = "../cid" }
+bnpm-governance = { path = "../governance" }
+bnpm-manifest = { path = "../manifest" }
+bnpm-policy = { path = "../policy" }
+bnpm-proto = { path = "../proto" }
+bnpm-provenance = { path = "../provenance" }
+bnpm-registry = { path = "../registry" }
+bnpm-store = { path = "../store" }
 semver = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }

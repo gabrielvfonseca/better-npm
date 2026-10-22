@@ -44,10 +44,10 @@ impl FederatedRegistry {
         Ok(all_versions.into_iter().filter(|v| range.matches(v)).collect())
     }
 
-    pub async fn to_dash_index(
+    pub async fn to_bnpm_index(
         &self,
         name: &str,
-    ) -> Result<Vec<dash_resolver::RegistryIndexEntry>, NpmBridgeError> {
+    ) -> Result<Vec<bnpm_resolver::RegistryIndexEntry>, NpmBridgeError> {
         let metadata = fetch_npm_metadata(name).await?;
         let versions = metadata
             .get("versions")
@@ -76,7 +76,7 @@ impl FederatedRegistry {
                 })
                 .unwrap_or_default();
 
-            let entry = dash_resolver::RegistryIndexEntry {
+            let entry = bnpm_resolver::RegistryIndexEntry {
                 name: name.to_string(),
                 version: ver_str.clone(),
                 cid: None,

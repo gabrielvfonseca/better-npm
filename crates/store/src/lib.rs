@@ -12,7 +12,7 @@ pub enum StoreError {
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
     #[error("cache error: {0}")]
-    Cache(#[from] dash_cache::CacheError),
+    Cache(#[from] bnpm_cache::CacheError),
     #[error("key not found: {0}")]
     KeyNotFound(String),
     #[error("hash mismatch: expected {expected}, computed {computed}")]
@@ -45,7 +45,7 @@ pub trait StoreBackend: Send + Sync {
 /// Stores blobs at `{base_path}/{key_prefix}/{key}`.
 pub struct LocalStore {
     base_path: PathBuf,
-    cache: Arc<dyn dash_cache::CacheBackend>,
+    cache: Arc<dyn bnpm_cache::CacheBackend>,
 }
 
 impl LocalStore {
@@ -53,12 +53,12 @@ impl LocalStore {
     pub fn new(base_path: PathBuf) -> Self {
         Self {
             base_path,
-            cache: dash_cache::create_cache(&dash_cache::CacheConfig::default()),
+            cache: bnpm_cache::create_cache(&bnpm_cache::CacheConfig::default()),
         }
     }
 
     /// Create a new local store with a cache backend.
-    pub fn new_with_cache(base_path: PathBuf, cache: Arc<dyn dash_cache::CacheBackend>) -> Self {
+    pub fn new_with_cache(base_path: PathBuf, cache: Arc<dyn bnpm_cache::CacheBackend>) -> Self {
         Self { base_path, cache }
     }
 
@@ -76,7 +76,7 @@ impl LocalStore {
 impl StoreBackend for LocalStore {
     async fn get(&self, key: &str) -> Result<Vec<u8>, StoreError> {
         // Check cache first
-        if let Some(cached) = dash_cache::cache_get::<Vec<u8>>(&*self.cache, &format!("store:{}", key)).await? {
+        if let Some(cached) = bnpm_cache::cache_get::<Vec<u8>>(&*self.cache, &format!("store:{}", key)).await? {
             return Ok(cached);
         }
 
@@ -84,13 +84,13 @@ impl StoreBackend for LocalStore {
         let data = tokio::fs::read(&path).await?;
 
         // Cache for future lookups
-        let _ = dash_cache::cache_set(&*self.cache, &format!("store:{}", key), &data, None).await;
+        let _ = bnpm_cache::cache_set(&*self.cache, &format!("store:{}", key), &data, None).await;
 
         Ok(data)
     }
 
     async fn put(&self, data: &[u8]) -> Result<String, StoreError> {
-        let hash = dash_hashing::hash_sha256(data);
+        let hash = bnpm_hashing::hash_sha256(data);
         let key = hex::encode(hash);
         let path = self.key_to_path(&key);
 
@@ -102,7 +102,7 @@ impl StoreBackend for LocalStore {
         tokio::fs::write(&path, data).await?;
 
         // Update cache
-        let _ = dash_cache::cache_set(&*self.cache, &format!("store:{}", key), &data.to_vec(), None).await;
+        let _ = bnpm_cache::cache_set(&*self.cache, &format!("store:{}", key), &data.to_vec(), None).await;
 
         Ok(key)
     }
@@ -151,7 +151,7 @@ impl StoreBackend for LocalStore {
 pub struct ObjectStoreBackend {
     inner: Arc<dyn object_store::ObjectStore>,
     prefix: String,
-    cache: Arc<dyn dash_cache::CacheBackend>,
+    cache: Arc<dyn bnpm_cache::CacheBackend>,
 }
 
 impl ObjectStoreBackend {
@@ -163,7 +163,7 @@ impl ObjectStoreBackend {
         Self {
             inner,
             prefix: prefix.into(),
-            cache: dash_cache::create_cache(&dash_cache::CacheConfig::default()),
+            cache: bnpm_cache::create_cache(&bnpm_cache::CacheConfig::default()),
         }
     }
 
@@ -196,7 +196,7 @@ impl ObjectStoreBackend {
 impl StoreBackend for ObjectStoreBackend {
     async fn get(&self, key: &str) -> Result<Vec<u8>, StoreError> {
         // Check cache
-        if let Some(cached) = dash_cache::cache_get::<Vec<u8>>(&*self.cache, &format!("ostore:{}", key)).await? {
+        if let Some(cached) = bnpm_cache::cache_get::<Vec<u8>>(&*self.cache, &format!("ostore:{}", key)).await? {
             return Ok(cached);
         }
 
@@ -206,13 +206,13 @@ impl StoreBackend for ObjectStoreBackend {
         let data = result.bytes().await?.to_vec();
 
         // Cache
-        let _ = dash_cache::cache_set(&*self.cache, &format!("ostore:{}", key), &data, None).await;
+        let _ = bnpm_cache::cache_set(&*self.cache, &format!("ostore:{}", key), &data, None).await;
 
         Ok(data)
     }
 
     async fn put(&self, data: &[u8]) -> Result<String, StoreError> {
-        let hash = dash_hashing::hash_sha256(data);
+        let hash = bnpm_hashing::hash_sha256(data);
         let key = hex::encode(hash);
         let path = self.object_path(&key);
 
@@ -220,7 +220,7 @@ impl StoreBackend for ObjectStoreBackend {
         self.inner.put(&path, data.to_vec().into()).await?;
 
         // Cache
-        let _ = dash_cache::cache_set(&*self.cache, &format!("ostore:{}", key), &data.to_vec(), None).await;
+        let _ = bnpm_cache::cache_set(&*self.cache, &format!("ostore:{}", key), &data.to_vec(), None).await;
 
         Ok(key)
     }
@@ -303,7 +303,7 @@ impl Store {
     /// Verify that stored data matches its key (hash).
     pub async fn verify(&self, key: &str) -> Result<bool, StoreError> {
         let data = self.backend.get(key).await?;
-        let computed = dash_hashing::hash_sha256(&data);
+        let computed = bnpm_hashing::hash_sha256(&data);
         let computed_key = hex::encode(computed);
         Ok(computed_key == key)
     }
@@ -315,16 +315,16 @@ pub fn create_local_store(base_path: PathBuf) -> Store {
 }
 
 /// Create a store from a configuration.
-pub fn create_store_from_config(config: &dash_config::Config) -> Result<Store, StoreError> {
+pub fn create_store_from_config(config: &bnpm_config::Config) -> Result<Store, StoreError> {
     let backend: String = config.get_or("store.backend", "local".to_string());
 
     match backend.as_str() {
         "local" | "filesystem" => {
-            let path: String = config.get_or("store.path", "./dash-store".to_string());
+            let path: String = config.get_or("store.path", "./bnpm-store".to_string());
             Ok(Store::new(Arc::new(LocalStore::new(PathBuf::from(path)))))
         }
         "s3" => {
-            let bucket: String = config.get_or("store.bucket", "dash-packages".to_string());
+            let bucket: String = config.get_or("store.bucket", "bnpm-packages".to_string());
             let region: String = config.get_or("store.region", "us-east-1".to_string());
             let prefix: String = config.get_or("store.prefix", "packages".to_string());
             let rt = tokio::runtime::Runtime::new()

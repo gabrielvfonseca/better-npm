@@ -1,12 +1,12 @@
 [package]
-name = "dash-event-stream"
+name = "bnpm-event-stream"
 version = { workspace = true }
 edition = "2024"
 license = "MIT"
-authors = ["Dash Team"]
+authors = ["Bnpm Team"]
 
 [dependencies]
-dash-provenance = { path = "../provenance" }
+bnpm-provenance = { path = "../provenance" }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 thiserror = { workspace = true }

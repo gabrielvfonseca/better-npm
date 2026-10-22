@@ -1,6 +1,6 @@
 //! Configuration management: layered profiles, env overrides, CLI args.
 //!
-//! Dash loads configuration from multiple sources in order of increasing
+//! Bnpm loads configuration from multiple sources in order of increasing
 //! priority: defaults → config files → environment variables → CLI args.
 
 use std::collections::BTreeMap;
@@ -252,28 +252,28 @@ fn parse_config_content(content: &str, path: &Path) -> Result<serde_json::Value,
     }
 }
 
-/// Load the default configuration for Dash by searching standard locations.
+/// Load the default configuration for Bnpm by searching standard locations.
 pub fn load_config() -> Result<Config, ConfigError> {
     let mut config_files = Vec::new();
 
     // Standard config locations
     if let Some(config_dir) = dirs::config_dir() {
-        let dash_dir = config_dir.join("dash");
-        for filename in &["dash.json", "dash.yaml", "dash.yml", "dash.toml"] {
-            config_files.push(dash_dir.join(filename));
+        let bnpm_dir = config_dir.join("bnpm");
+        for filename in &["bnpm.json", "bnpm.yaml", "bnpm.yml", "bnpm.toml"] {
+            config_files.push(bnpm_dir.join(filename));
         }
     }
 
     // Project-local config files
-    for filename in &["dash.json", "dash.yaml", "dash.yml", "dash.toml", ".dash.json"] {
+    for filename in &["bnpm.json", "bnpm.yaml", "bnpm.yml", "bnpm.toml", ".bnpm.json"] {
         config_files.push(PathBuf::from(filename));
     }
 
     let mut config = Config::load(&config_files)?;
 
-    // Apply environment variable overrides (e.g. DASH_REGISTRY, DASH_CACHE_DIR)
+    // Apply environment variable overrides (e.g. BNPM_REGISTRY, BNPM_CACHE_DIR)
     for (key, value) in std::env::vars() {
-        if let Some(config_key) = key.strip_prefix("DASH_") {
+        if let Some(config_key) = key.strip_prefix("BNPM_") {
             let config_key = config_key.to_lowercase().replace('_', ".");
             config.set_with_source(&config_key, value.clone(), ConfigSource::Env(key, value));
         }

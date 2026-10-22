@@ -1,5 +1,5 @@
 [package]
-name = "dash-hashing"
+name = "bnpm-hashing"
 edition.workspace = true
 version.workspace = true
 license.workspace = true

@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use dash_proto::dpr_v1::Binding;
+use bnpm_proto::dpr_v1::Binding;
 use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
 use tracing::debug;
@@ -154,7 +154,7 @@ pub enum TransparencyLogError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dash_proto::dpr_v1::Binding;
+    use bnpm_proto::dpr_v1::Binding;
 
     #[tokio::test]
     async fn test_transparency_log_append() {

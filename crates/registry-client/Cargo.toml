@@ -1,10 +1,10 @@
 [package]
-name = "dash-registry-client"
+name = "bnpm-registry-client"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
 publish = false
-description = "HTTP client for communicating with Dash package registries"
+description = "HTTP client for communicating with Bnpm package registries"
 
 [dependencies]
 reqwest = { workspace = true }
@@ -14,13 +14,13 @@ anyhow = { workspace = true }
 thiserror = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-dash-package = { path = "../package" }
-dash-protocol = { path = "../protocol" }
-dash-config = { path = "../config" }
-dash-auth = { path = "../auth" }
-dash-telemetry = { path = "../telemetry" }
-dash-network = { path = "../network" }
-dash-cache = { path = "../cache" }
+bnpm-package = { path = "../package" }
+bnpm-protocol = { path = "../protocol" }
+bnpm-config = { path = "../config" }
+bnpm-auth = { path = "../auth" }
+bnpm-telemetry = { path = "../telemetry" }
+bnpm-network = { path = "../network" }
+bnpm-cache = { path = "../cache" }
 url = { workspace = true }
 bytes = { workspace = true }
 futures = { workspace = true }

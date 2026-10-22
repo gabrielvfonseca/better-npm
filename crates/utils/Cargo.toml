@@ -1,5 +1,5 @@
 [package]
-name = "dash-utils"
+name = "bnpm-utils"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -19,5 +19,5 @@ regex = { workspace = true }
 walkdir = { workspace = true }
 rand = { workspace = true }
 bytes = { workspace = true }
-dash-hashing = { path = "../hashing" }
-dash-concurrency = { path = "../concurrency" }
+bnpm-hashing = { path = "../hashing" }
+bnpm-concurrency = { path = "../concurrency" }

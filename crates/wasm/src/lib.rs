@@ -1,7 +1,7 @@
 //! WebAssembly runtime integration for running WASM-based packages.
 //!
 //! Provides compilation, validation, and execution of WebAssembly
-//! modules within the Dash environment.
+//! modules within the Bnpm environment.
 
 use std::collections::HashMap;
 

@@ -1,24 +1,24 @@
-//! `dash up` command
+//! `bnpm up` command
 
 use crate::commands::UpArgs;
 use crate::config::{CliConfig, ExitCode};
 use crate::output::*;
 use anyhow::{Context, Result};
-use dash_cache::{CacheConfig, create_cache};
-use dash_downloader::Downloader;
-use dash_downloader::DownloaderConfig;
-use dash_installer::{InstallStrategy, Installer, InstallerConfig};
-use dash_linker::Linker;
-use dash_linker::LinkerConfig;
-use dash_lockfile::Lockfile;
-use dash_manifest::{
+use bnpm_cache::{CacheConfig, create_cache};
+use bnpm_downloader::Downloader;
+use bnpm_downloader::DownloaderConfig;
+use bnpm_installer::{InstallStrategy, Installer, InstallerConfig};
+use bnpm_linker::Linker;
+use bnpm_linker::LinkerConfig;
+use bnpm_lockfile::Lockfile;
+use bnpm_manifest::{
     Manifest, PackageManifest, find_manifest,
     schema::Manifest as SchemaManifest,
 };
-use dash_resolver::RegistryConfig;
-use dash_resolver::ResolveOptions;
-use dash_resolver::Resolver;
-use dash_store::CasStore;
+use bnpm_resolver::RegistryConfig;
+use bnpm_resolver::ResolveOptions;
+use bnpm_resolver::Resolver;
+use bnpm_store::CasStore;
 use std::sync::Arc;
 use tokio::fs;
 
@@ -36,7 +36,7 @@ pub async fn run(args: &UpArgs, config: &CliConfig) -> Result<ExitCode> {
     };
 
     // Load lockfile
-    let lockfile_path = dash_lockfile::find_lockfile(&cwd).unwrap_or_else(|| cwd.join("dash.lock"));
+    let lockfile_path = bnpm_lockfile::find_lockfile(&cwd).unwrap_or_else(|| cwd.join("bnpm.lock"));
     let old_lockfile = Lockfile::load(&lockfile_path).context("failed to load lockfile")?;
 
     // Determine packages to upgrade
@@ -256,7 +256,7 @@ pub async fn run(args: &UpArgs, config: &CliConfig) -> Result<ExitCode> {
     );
     let store = Arc::new(CasStore::new(config.store_dir()).await?);
     let linker = Linker::new(
-        store.clone() as Arc<dyn dash_store::StoreBackend>,
+        store.clone() as Arc<dyn bnpm_store::StoreBackend>,
         LinkerConfig { bin_dir: installer_config.bin_dir.clone(), ..Default::default() },
     );
     let resolver2 = create_resolver(&manifest, config)?;

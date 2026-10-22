@@ -1,5 +1,5 @@
 [package]
-name = "dash-signatures"
+name = "bnpm-signatures"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -20,8 +20,8 @@ serde_json = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 rand = { workspace = true }
-dash-crypto = { path = "../crypto" }
-dash-hashing = { path = "../hashing" }
-dash-integrity = { path = "../integrity" }
-dash-filesystem = { path = "../filesystem" }
+bnpm-crypto = { path = "../crypto" }
+bnpm-hashing = { path = "../hashing" }
+bnpm-integrity = { path = "../integrity" }
+bnpm-filesystem = { path = "../filesystem" }
 tokio = { workspace = true }

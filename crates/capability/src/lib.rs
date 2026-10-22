@@ -1,4 +1,4 @@
-use dash_lockfile::{CapValue, LockCapabilities};
+use bnpm_lockfile::{CapValue, LockCapabilities};
 
 #[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct CapabilitySet {

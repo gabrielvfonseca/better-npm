@@ -7,9 +7,9 @@
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
-use dash_capsule::Capsule;
-use dash_cid::Cid;
-use dash_hashing::hash_blake3;
+use bnpm_capsule::Capsule;
+use bnpm_cid::Cid;
+use bnpm_hashing::hash_blake3;
 use sqlx::SqlitePool;
 
 use crate::StoreError;
@@ -43,7 +43,7 @@ pub struct GcReport {
 pub struct CasStore {
     base_path: PathBuf,
     pool: SqlitePool,
-    cache: Arc<dyn dash_cache::CacheBackend>,
+    cache: Arc<dyn bnpm_cache::CacheBackend>,
 }
 
 impl CasStore {
@@ -65,7 +65,7 @@ impl CasStore {
 
         Self::migrate(&pool).await?;
 
-        let cache = dash_cache::create_cache(&dash_cache::CacheConfig::default());
+        let cache = bnpm_cache::create_cache(&bnpm_cache::CacheConfig::default());
 
         Ok(Self { base_path, pool, cache })
     }
@@ -254,7 +254,7 @@ impl CasStore {
     /// Retrieve and parse a capsule by CID.
     pub async fn get_capsule(&self, cid: &Cid) -> Result<Capsule, StoreError> {
         let cache_key = format!("cas:capsule:{}", cid);
-        if let Some(cached) = dash_cache::cache_get::<Vec<u8>>(&*self.cache, &cache_key).await? {
+        if let Some(cached) = bnpm_cache::cache_get::<Vec<u8>>(&*self.cache, &cache_key).await? {
             return Capsule::from_bytes(&cached)
                 .map_err(|e| StoreError::Backend(format!("capsule deserialization failed: {e}")));
         }
@@ -262,7 +262,7 @@ impl CasStore {
         let path = self.capsule_path(cid);
         let data = tokio::fs::read(&path).await?;
 
-        let _ = dash_cache::cache_set(&*self.cache, &cache_key, &data, None).await;
+        let _ = bnpm_cache::cache_set(&*self.cache, &cache_key, &data, None).await;
 
         Capsule::from_bytes(&data)
             .map_err(|e| StoreError::Backend(format!("capsule deserialization failed: {e}")))
@@ -607,7 +607,7 @@ impl crate::StoreBackend for CasStore {
     async fn get(&self, key: &str) -> Result<Vec<u8>, StoreError> {
         let cid: Cid = key
             .parse()
-            .map_err(|e: dash_cid::CidError| StoreError::Backend(format!("invalid CID: {e}")))?;
+            .map_err(|e: bnpm_cid::CidError| StoreError::Backend(format!("invalid CID: {e}")))?;
         let capsule = self.get_capsule(&cid).await?;
         capsule
             .to_bytes()
@@ -624,14 +624,14 @@ impl crate::StoreBackend for CasStore {
     async fn exists(&self, key: &str) -> Result<bool, StoreError> {
         let cid: Cid = key
             .parse()
-            .map_err(|e: dash_cid::CidError| StoreError::Backend(format!("invalid CID: {e}")))?;
+            .map_err(|e: bnpm_cid::CidError| StoreError::Backend(format!("invalid CID: {e}")))?;
         self.has_capsule(&cid).await
     }
 
     async fn remove(&self, key: &str) -> Result<(), StoreError> {
         let cid: Cid = key
             .parse()
-            .map_err(|e: dash_cid::CidError| StoreError::Backend(format!("invalid CID: {e}")))?;
+            .map_err(|e: bnpm_cid::CidError| StoreError::Backend(format!("invalid CID: {e}")))?;
         let cid_str = cid.to_string();
         let path = self.capsule_path(&cid);
 
@@ -686,7 +686,7 @@ impl crate::StoreBackend for CasStore {
 mod tests {
     use super::*;
     use crate::StoreBackend;
-    use dash_capsule::Capsule;
+    use bnpm_capsule::Capsule;
 
     fn test_files() -> Vec<(String, Vec<u8>)> {
         vec![

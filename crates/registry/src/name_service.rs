@@ -4,7 +4,7 @@ use dashmap::DashMap;
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
-use dash_provenance::InclusionProof;
+use bnpm_provenance::InclusionProof;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Binding {
@@ -12,7 +12,7 @@ pub struct Binding {
     pub cid: String,
     pub log_index: u64,
     pub inclusion_proof: Option<InclusionProof>,
-    pub provenance: Option<dash_provenance::Attestation>,
+    pub provenance: Option<bnpm_provenance::Attestation>,
 }
 
 #[derive(Clone)]
@@ -33,7 +33,7 @@ impl NameService {
         cid: &str,
         log_index: u64,
         inclusion_proof: Option<InclusionProof>,
-        provenance: Option<dash_provenance::Attestation>,
+        provenance: Option<bnpm_provenance::Attestation>,
     ) -> Result<(), NameServiceError> {
         let binding = Binding {
             version: version.to_string(),
@@ -143,9 +143,9 @@ impl VersionRange {
     }
 }
 
-impl From<dash_proto::dpr_v1::VersionRange> for VersionRange {
-    fn from(vr: dash_proto::dpr_v1::VersionRange) -> Self {
-        use dash_proto::dpr_v1::version_range::Range;
+impl From<bnpm_proto::dpr_v1::VersionRange> for VersionRange {
+    fn from(vr: bnpm_proto::dpr_v1::VersionRange) -> Self {
+        use bnpm_proto::dpr_v1::version_range::Range;
         match vr.range {
             Some(Range::Exact(v)) => VersionRange::Exact(v),
             Some(Range::Constraint(c)) => {

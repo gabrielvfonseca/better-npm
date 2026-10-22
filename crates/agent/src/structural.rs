@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use dash_manifest::schema::AiBlock;
+use bnpm_manifest::schema::AiBlock;
 
 use crate::ToolInterfaceError;
 use crate::tool_interface::{ToolDefinition, ToolFingerprint, ToolInterfaceFile};
@@ -255,7 +255,7 @@ impl Default for ApiShapeQuery {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dash_manifest::schema::{AiBlock, SideEffect, StabilityLevel};
+    use bnpm_manifest::schema::{AiBlock, SideEffect, StabilityLevel};
 
     fn make_ai_block() -> AiBlock {
         AiBlock {

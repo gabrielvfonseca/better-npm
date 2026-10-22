@@ -6,5 +6,5 @@ pub use content_service::ContentService;
 pub use name_service::{Binding as NameBinding, NameService, VersionRange};
 pub use registry_service::RegistryService;
 
-pub use dash_proto::dpr_v1;
+pub use bnpm_proto::dpr_v1;
 pub use tonic::{Request, Response, Status};

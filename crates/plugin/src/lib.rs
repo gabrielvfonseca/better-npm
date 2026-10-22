@@ -1,4 +1,4 @@
-//! Dynamic plugin system for extending Dash via shared libraries.
+//! Dynamic plugin system for extending Bnpm via shared libraries.
 //!
 //! Provides a trait-based plugin interface and a manager for
 //! loading, unloading, and accessing plugins at runtime.
@@ -44,9 +44,9 @@ pub struct PluginManifest {
     /// Plugin dependencies.
     #[serde(default)]
     pub dependencies: Vec<String>,
-    /// Minimum Dash version required.
+    /// Minimum Bnpm version required.
     #[serde(default)]
-    pub min_dash_version: Option<String>,
+    pub min_bnpm_version: Option<String>,
     /// Plugin homepage.
     #[serde(default)]
     pub homepage: Option<String>,
@@ -77,8 +77,8 @@ impl PluginManifest {
     }
 }
 
-/// The trait that all Dash plugins must implement.
-pub trait DashPlugin: Send + Sync {
+/// The trait that all Bnpm plugins must implement.
+pub trait BnpmPlugin: Send + Sync {
     /// Return the plugin name.
     fn name(&self) -> &str;
     /// Return the plugin version.
@@ -139,7 +139,7 @@ impl PluginCommand {
 
 /// Manages loading, unloading, and access to plugins.
 pub struct PluginManager {
-    plugins: HashMap<String, Arc<dyn DashPlugin>>,
+    plugins: HashMap<String, Arc<dyn BnpmPlugin>>,
     manifests: HashMap<String, PluginManifest>,
 }
 
@@ -183,7 +183,7 @@ impl PluginManager {
             let lib = libloading::Library::new(path)
                 .map_err(|e| PluginError::Library(e.to_string()))?;
 
-            let constructor: libloading::Symbol<fn() -> Box<dyn DashPlugin>> = lib
+            let constructor: libloading::Symbol<fn() -> Box<dyn BnpmPlugin>> = lib
                 .get(b"create_plugin")
                 .map_err(|e| PluginError::Library(format!("symbol 'create_plugin' not found: {e}")))?;
 
@@ -210,7 +210,7 @@ impl PluginManager {
     }
 
     /// Get a reference to a loaded plugin by name.
-    pub fn get(&self, name: &str) -> Option<&dyn DashPlugin> {
+    pub fn get(&self, name: &str) -> Option<&dyn BnpmPlugin> {
         self.plugins.get(name).map(|p| p.as_ref())
     }
 
@@ -296,7 +296,7 @@ impl SimplePlugin {
     }
 }
 
-impl DashPlugin for SimplePlugin {
+impl BnpmPlugin for SimplePlugin {
     fn name(&self) -> &str {
         &self.name
     }
@@ -369,7 +369,7 @@ mod tests {
         assert!(manager.loaded_plugins().is_empty());
 
         // Add a plugin directly (simulating loading)
-        let plugin = Arc::new(SimplePlugin::new("inline-plugin", "1.0.0")) as Arc<dyn DashPlugin>;
+        let plugin = Arc::new(SimplePlugin::new("inline-plugin", "1.0.0")) as Arc<dyn BnpmPlugin>;
         // We can't use the typical load() since it requires a file path,
         // but we can insert directly into the hashmap for testing
         manager.plugins.insert("inline-plugin".to_string(), plugin);
@@ -392,10 +392,10 @@ mod tests {
             name: "test".to_string(),
             version: "1.0.0".to_string(),
             description: "Test plugin".to_string(),
-            author: "Dash Team".to_string(),
+            author: "Bnpm Team".to_string(),
             entry: "libtest.so".to_string(),
             dependencies: Vec::new(),
-            min_dash_version: None,
+            min_bnpm_version: None,
             homepage: None,
             license: None,
         };
@@ -412,7 +412,7 @@ mod tests {
             author: String::new(),
             entry: String::new(),
             dependencies: Vec::new(),
-            min_dash_version: None,
+            min_bnpm_version: None,
             homepage: None,
             license: None,
         };
@@ -432,9 +432,9 @@ mod tests {
     #[test]
     fn test_plugin_manager_unload_all() {
         let mut manager = PluginManager::new();
-        let plugin = Arc::new(SimplePlugin::new("p1", "1.0.0")) as Arc<dyn DashPlugin>;
+        let plugin = Arc::new(SimplePlugin::new("p1", "1.0.0")) as Arc<dyn BnpmPlugin>;
         manager.plugins.insert("p1".to_string(), plugin);
-        let plugin = Arc::new(SimplePlugin::new("p2", "1.0.0")) as Arc<dyn DashPlugin>;
+        let plugin = Arc::new(SimplePlugin::new("p2", "1.0.0")) as Arc<dyn BnpmPlugin>;
         manager.plugins.insert("p2".to_string(), plugin);
 
         assert_eq!(manager.loaded_plugins().len(), 2);

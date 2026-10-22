@@ -153,7 +153,7 @@ impl Sandbox {
     /// Create a new sandbox with the given configuration.
     pub fn new(config: SandboxConfig) -> Result<Self, SandboxError> {
         let temp_dir = tempfile::Builder::new()
-            .prefix("dash-sandbox-")
+            .prefix("bnpm-sandbox-")
             .tempdir()
             .map_err(|e| SandboxError::Setup(e.to_string()))?
             .into_path();

@@ -1,30 +1,30 @@
-// dash-proto: DPR wire protocol client and server
+// bnpm-proto: DPR wire protocol client and server
 
 use bytes::Bytes;
 use thiserror::Error;
 
 // Create the expected module hierarchy matching protobuf package structure:
-// dash.common.v1  -> common types
-// dash.dpr.v1     -> DPR protocol types
-pub mod dash {
+// bnpm.common.v1  -> common types
+// bnpm.dpr.v1     -> DPR protocol types
+pub mod bnpm {
     pub mod common {
         pub mod v1 {
-            include!(concat!(env!("OUT_DIR"), "/dash.common.v1.rs"));
+            include!(concat!(env!("OUT_DIR"), "/bnpm.common.v1.rs"));
         }
     }
     pub mod dpr {
         pub mod v1 {
-            include!(concat!(env!("OUT_DIR"), "/dash.dpr.v1.rs"));
+            include!(concat!(env!("OUT_DIR"), "/bnpm.dpr.v1.rs"));
         }
     }
 }
 
 // Re-export at crate root for convenience
-pub use dash::common::v1 as common_v1;
-pub use dash::dpr::v1 as dpr_v1;
+pub use bnpm::common::v1 as common_v1;
+pub use bnpm::dpr::v1 as dpr_v1;
 
 #[allow(unused_imports)]
-use dash::dpr::v1::{
+use bnpm::dpr::v1::{
     Attestation, Binding, FetchRequest, FetchResponse, Identity, InclusionProof, Provenance,
     PublishRequest, PublishResponse, ResolveRequest, ResolveResponse, VersionRange,
 };
@@ -81,7 +81,7 @@ impl From<DprError> for Status {
 /// DPR Client for communicating with the registry
 #[derive(Clone)]
 pub struct DprClient {
-    inner: dash::dpr::v1::dpr_service_client::DprServiceClient<tonic::transport::Channel>,
+    inner: bnpm::dpr::v1::dpr_service_client::DprServiceClient<tonic::transport::Channel>,
 }
 
 impl DprClient {
@@ -92,7 +92,7 @@ impl DprClient {
             .connect()
             .await
             .map_err(DprError::Transport)?;
-        Ok(Self { inner: dash::dpr::v1::dpr_service_client::DprServiceClient::new(channel) })
+        Ok(Self { inner: bnpm::dpr::v1::dpr_service_client::DprServiceClient::new(channel) })
     }
 
     /// Resolve a package name with version ranges
@@ -111,7 +111,7 @@ impl DprClient {
     pub async fn fetch(
         &mut self,
         cid: String,
-        ranges: Vec<dash::dpr::v1::Range>,
+        ranges: Vec<bnpm::dpr::v1::Range>,
     ) -> Result<FetchResponse, DprError> {
         let req = Request::new(FetchRequest { cid, ranges });
         let resp = self.inner.fetch(req).await?;
@@ -140,9 +140,9 @@ impl DprClient {
 /// Run the DPR gRPC server with the given implementation
 pub async fn run_server<D>(addr: std::net::SocketAddr, service: D) -> Result<(), DprError>
 where
-    D: dash::dpr::v1::dpr_service_server::DprService + Send + Sync + 'static,
+    D: bnpm::dpr::v1::dpr_service_server::DprService + Send + Sync + 'static,
 {
-    let svc = dash::dpr::v1::dpr_service_server::DprServiceServer::new(service);
+    let svc = bnpm::dpr::v1::dpr_service_server::DprServiceServer::new(service);
     tonic::transport::Server::builder().add_service(svc).serve(addr).await?;
     Ok(())
 }
@@ -152,7 +152,7 @@ where
 pub struct DefaultDprServer;
 
 #[tonic::async_trait]
-impl dash::dpr::v1::dpr_service_server::DprService for DefaultDprServer {
+impl bnpm::dpr::v1::dpr_service_server::DprService for DefaultDprServer {
     async fn resolve(
         &self,
         _request: Request<ResolveRequest>,
@@ -177,7 +177,7 @@ impl dash::dpr::v1::dpr_service_server::DprService for DefaultDprServer {
 
 /// Run the DPR gRPC server with the default implementation
 pub async fn run_default_server(addr: std::net::SocketAddr) -> Result<(), DprError> {
-    let svc = dash::dpr::v1::dpr_service_server::DprServiceServer::new(DefaultDprServer);
+    let svc = bnpm::dpr::v1::dpr_service_server::DprServiceServer::new(DefaultDprServer);
     tonic::transport::Server::builder().add_service(svc).serve(addr).await?;
     Ok(())
 }
@@ -218,7 +218,7 @@ mod tests {
                 tree_size: 10,
             }),
             provenance: Some(Provenance {
-                identity: "did:dash:test".to_string(),
+                identity: "did:bnpm:test".to_string(),
                 timestamp: 1234567890,
                 builder_id: "builder".to_string(),
                 source_repository: "https://github.com/test/repo".to_string(),

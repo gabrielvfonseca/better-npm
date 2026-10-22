@@ -1,4 +1,4 @@
-# dash-runtime
+# bnpm-runtime
 
 Application runtime initialization and lifecycle management.
 
@@ -17,7 +17,7 @@ Provides a unified runtime that sets up tokio, logging, telemetry, and configura
 ## Usage
 
 ```rust
-use dash_runtime::{Runtime, RuntimeConfig};
+use bnpm_runtime::{Runtime, RuntimeConfig};
 
 let rt = Runtime::new(RuntimeConfig::default())?;
 rt.run(async {

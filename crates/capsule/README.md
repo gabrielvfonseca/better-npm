@@ -1,10 +1,10 @@
-# dash-capsule
+# bnpm-capsule
 
-DASHCAP1 capsule pack/unpack, file table, and range read.
+BNPMCAP1 capsule pack/unpack, file table, and range read.
 
 ## Overview
 
-Implements the DASHCAP1 capsule format for efficient package storage and retrieval. Supports structured file tables and byte-range reads.
+Implements the BNPMCAP1 capsule format for efficient package storage and retrieval. Supports structured file tables and byte-range reads.
 
 ## Features
 
@@ -16,7 +16,7 @@ Implements the DASHCAP1 capsule format for efficient package storage and retriev
 ## Usage
 
 ```rust
-use dash_capsule::{Capsule, CapsuleBuilder};
+use bnpm_capsule::{Capsule, CapsuleBuilder};
 
 let capsule = CapsuleBuilder::new()
     .add_file("index.js", &bytes1)

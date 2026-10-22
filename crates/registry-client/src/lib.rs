@@ -1,4 +1,4 @@
-//! HTTP client for communicating with Dash package registries.
+//! HTTP client for communicating with Bnpm package registries.
 //!
 //! Provides methods for fetching package metadata, searching,
 //! publishing packages, and managing authentication with registries.
@@ -14,9 +14,9 @@ pub enum RegistryError {
     #[error("request failed: {0}")]
     Request(String),
     #[error("authentication error: {0}")]
-    Auth(#[from] dash_auth::AuthError),
+    Auth(#[from] bnpm_auth::AuthError),
     #[error("network error: {0}")]
-    Network(#[from] dash_network::NetworkError),
+    Network(#[from] bnpm_network::NetworkError),
     #[error("serialization error: {0}")]
     Serialization(#[from] serde_json::Error),
     #[error("parse error: {0}")]
@@ -143,7 +143,7 @@ pub struct RegistryClientConfig {
 impl Default for RegistryClientConfig {
     fn default() -> Self {
         Self {
-            base_url: "https://registry.dash.sh".to_string(),
+            base_url: "https://registry.bnpm.sh".to_string(),
             token: None,
             timeout_secs: 30,
             max_retries: 3,
@@ -152,11 +152,11 @@ impl Default for RegistryClientConfig {
     }
 }
 
-/// HTTP client for interacting with a Dash package registry.
+/// HTTP client for interacting with a Bnpm package registry.
 pub struct RegistryClient {
     client: reqwest::Client,
     base_url: String,
-    auth: Option<Arc<dash_auth::Authenticator>>,
+    auth: Option<Arc<bnpm_auth::Authenticator>>,
     config: RegistryClientConfig,
 }
 
@@ -165,8 +165,8 @@ impl RegistryClient {
     pub fn new(config: RegistryClientConfig) -> Result<Self, RegistryError> {
         let mut client_builder = reqwest::Client::builder()
             .timeout(Duration::from_secs(config.timeout_secs))
-            .user_agent(dash_network::user_agent())
-            .default_headers(dash_network::default_headers());
+            .user_agent(bnpm_network::user_agent())
+            .default_headers(bnpm_network::default_headers());
 
         if !config.verify_ssl {
             client_builder = client_builder.danger_accept_invalid_certs(true);
@@ -177,10 +177,10 @@ impl RegistryClient {
             .map_err(|e| RegistryError::Request(e.to_string()))?;
 
         let auth = config.token.as_ref().map(|_| {
-            let store = Arc::new(dash_auth::MemoryTokenStore::new());
+            let store = Arc::new(bnpm_auth::MemoryTokenStore::new());
             Arc::new(
-                dash_auth::Authenticator::new(
-                    dash_auth::AuthProvider::Jwt,
+                bnpm_auth::Authenticator::new(
+                    bnpm_auth::AuthProvider::Jwt,
                     None, // No JWT secret for client-side
                     store,
                 )
@@ -195,10 +195,10 @@ impl RegistryClient {
         })
     }
 
-    /// Create a new registry client from a dash config.
-    pub fn from_config(config: &dash_config::Config) -> Result<Self, RegistryError> {
+    /// Create a new registry client from a bnpm config.
+    pub fn from_config(config: &bnpm_config::Config) -> Result<Self, RegistryError> {
         let client_config = RegistryClientConfig {
-            base_url: config.get_or("registry.url", "https://registry.dash.sh".to_string()),
+            base_url: config.get_or("registry.url", "https://registry.bnpm.sh".to_string()),
             token: config.get("registry.token").ok(),
             timeout_secs: config.get_or("registry.timeout_secs", 30u64),
             max_retries: config.get_or("registry.max_retries", 3u32),
@@ -418,7 +418,7 @@ mod tests {
     #[test]
     fn test_registry_client_config_default() {
         let config = RegistryClientConfig::default();
-        assert_eq!(config.base_url, "https://registry.dash.sh");
+        assert_eq!(config.base_url, "https://registry.bnpm.sh");
         assert_eq!(config.timeout_secs, 30);
         assert!(config.verify_ssl);
     }

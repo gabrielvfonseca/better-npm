@@ -1,7 +1,7 @@
 //! Authentication and token management for registry access.
 //!
 //! Supports JWT-based authentication, OAuth2 flows, and
-//! basic token-based auth for Dash registry operations.
+//! basic token-based auth for Bnpm registry operations.
 
 use std::collections::HashSet;
 use std::sync::Arc;

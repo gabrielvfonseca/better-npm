@@ -1,4 +1,4 @@
-use dash_resolver::ResolvedGraph;
+use bnpm_resolver::ResolvedGraph;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Policy {
@@ -270,10 +270,10 @@ pub enum PolicyError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dash_lockfile::Provenance;
-    use dash_manifest::PackageManifest;
-    use dash_package::{PackageId, PackageName};
-    use dash_resolver::ResolvedNode;
+    use bnpm_lockfile::Provenance;
+    use bnpm_manifest::PackageManifest;
+    use bnpm_package::{PackageId, PackageName};
+    use bnpm_resolver::ResolvedNode;
     use semver::Version;
 
     fn make_graph(license: Option<&str>, provenance: Option<Provenance>) -> ResolvedGraph {
@@ -286,7 +286,7 @@ mod tests {
             license: license.map(|s| s.to_string()),
             ..Default::default()
         };
-        let cid: dash_cid::Cid =
+        let cid: bnpm_cid::Cid =
             "b3:d4qk6e2jxh27tingubae32rw3teutg6lexe23qisw7gjve6k4qpteyq".parse().unwrap();
         graph.nodes.insert(
             dep_id.clone(),
@@ -296,7 +296,7 @@ mod tests {
                 manifest,
                 cid: Some(cid),
                 dependencies: vec![],
-                registry: Some("dash:default".into()),
+                registry: Some("bnpm:default".into()),
                 provenance,
                 capabilities: None,
             },
@@ -326,7 +326,7 @@ mod tests {
     #[test]
     fn test_policy_pass_all_mit() {
         let prov =
-            Some(Provenance { log_index: 1, slsa_level: 3, publisher: "did:dash:trusted".into() });
+            Some(Provenance { log_index: 1, slsa_level: 3, publisher: "did:bnpm:trusted".into() });
         let graph = make_graph(Some("MIT"), prov);
         let policy = Policy {
             allow_licenses: vec!["MIT".into()],
@@ -341,7 +341,7 @@ mod tests {
     #[test]
     fn test_policy_copyleft_violation() {
         let prov =
-            Some(Provenance { log_index: 1, slsa_level: 3, publisher: "did:dash:trusted".into() });
+            Some(Provenance { log_index: 1, slsa_level: 3, publisher: "did:bnpm:trusted".into() });
         let graph = make_graph(Some("GPL-3.0-only"), prov);
         let policy = Policy {
             allow_licenses: vec!["MIT".into(), "Apache-2.0".into()],
@@ -378,7 +378,7 @@ mod tests {
     #[test]
     fn test_policy_slsa_level_too_low() {
         let prov =
-            Some(Provenance { log_index: 1, slsa_level: 1, publisher: "did:dash:trusted".into() });
+            Some(Provenance { log_index: 1, slsa_level: 1, publisher: "did:bnpm:trusted".into() });
         let graph = make_graph(Some("MIT"), prov);
         let policy =
             Policy { allow_licenses: vec!["MIT".into()], min_slsa_level: 3, ..Default::default() };
@@ -390,7 +390,7 @@ mod tests {
     #[test]
     fn test_policy_banned_publisher() {
         let prov =
-            Some(Provenance { log_index: 1, slsa_level: 3, publisher: "did:dash:evil".into() });
+            Some(Provenance { log_index: 1, slsa_level: 3, publisher: "did:bnpm:evil".into() });
         let graph = make_graph(Some("MIT"), prov);
         let policy = Policy {
             banned_publishers: vec!["evil".into()],
@@ -431,7 +431,7 @@ max-cve-severity = "high"
     #[test]
     fn test_policy_no_violations() {
         let prov =
-            Some(Provenance { log_index: 1, slsa_level: 3, publisher: "did:dash:trusted".into() });
+            Some(Provenance { log_index: 1, slsa_level: 3, publisher: "did:bnpm:trusted".into() });
         let graph = make_graph(Some("MIT"), prov);
         let policy = Policy { require_provenance: false, ..Default::default() };
         let result = policy.evaluate(&graph);

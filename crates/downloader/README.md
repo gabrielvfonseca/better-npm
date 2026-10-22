@@ -1,4 +1,4 @@
-# dash-downloader
+# bnpm-downloader
 
 Concurrent HTTP/registry download with streaming integrity verification.
 
@@ -10,14 +10,14 @@ Downloads packages from the registry with progress reporting, caching, integrity
 
 - Concurrent package downloads
 - Streaming integrity verification (BLAKE3/SHA-256)
-- Progress reporting via `dash-progress`
-- Caching with `dash-cache`
+- Progress reporting via `bnpm-progress`
+- Caching with `bnpm-cache`
 - Parallel batch download with backpressure
 
 ## Usage
 
 ```rust
-use dash_downloader::DownloadClient;
+use bnpm_downloader::DownloadClient;
 
 let client = DownloadClient::new(&config)?;
 let result = client

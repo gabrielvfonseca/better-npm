@@ -1,10 +1,10 @@
 [package]
-name = "dash-plugin"
+name = "bnpm-plugin"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
 publish = false
-description = "Dynamic plugin system for extending Dash via shared libraries"
+description = "Dynamic plugin system for extending Bnpm via shared libraries"
 
 [dependencies]
 serde = { workspace = true }
@@ -12,12 +12,12 @@ serde_json = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }
-dash-config = { path = "../config" }
-dash-filesystem = { path = "../filesystem" }
-dash-package = { path = "../package" }
-dash-manifest = { path = "../manifest" }
-dash-logger = { path = "../logger" }
-dash-concurrency = { path = "../concurrency" }
+bnpm-config = { path = "../config" }
+bnpm-filesystem = { path = "../filesystem" }
+bnpm-package = { path = "../package" }
+bnpm-manifest = { path = "../manifest" }
+bnpm-logger = { path = "../logger" }
+bnpm-concurrency = { path = "../concurrency" }
 tokio = { workspace = true }
 libloading = "0.8"
 dirs = "6"

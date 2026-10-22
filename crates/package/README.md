@@ -1,10 +1,10 @@
-# dash-package
+# bnpm-package
 
 Core package model: name, version, metadata, and identifier types.
 
 ## Overview
 
-Defines the fundamental types used throughout Dash for representing packages, their identifiers, distribution metadata, and versioning.
+Defines the fundamental types used throughout Bnpm for representing packages, their identifiers, distribution metadata, and versioning.
 
 ## Features
 
@@ -17,7 +17,7 @@ Defines the fundamental types used throughout Dash for representing packages, th
 ## Usage
 
 ```rust
-use dash_package::{PackageId, VersionReq};
+use bnpm_package::{PackageId, VersionReq};
 
 let id = PackageId::new("react", "18.2.0")?;
 let req = VersionReq::parse("^18.0.0")?;

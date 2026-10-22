@@ -1,4 +1,4 @@
-//! Cryptographic primitives and key management for Dash.
+//! Cryptographic primitives and key management for Bnpm.
 //!
 //! Provides key generation, symmetric encryption/decryption,
 //! and re-exports of common hash and signature algorithms.

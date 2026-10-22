@@ -1,5 +1,5 @@
 [package]
-name = "dash-integrity"
+name = "bnpm-integrity"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -17,7 +17,7 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
-dash-hashing = { path = "../hashing" }
-dash-filesystem = { path = "../filesystem" }
+bnpm-hashing = { path = "../hashing" }
+bnpm-filesystem = { path = "../filesystem" }
 tokio = { workspace = true }
 rayon = { workspace = true }

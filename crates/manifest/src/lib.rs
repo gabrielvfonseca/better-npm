@@ -1,7 +1,7 @@
-//! Package manifest (dash.json) schema, parsing, and validation.
+//! Package manifest (bnpm.json) schema, parsing, and validation.
 //!
 //! Handles reading, writing, and validating package manifests
-//! (package.json, dash.json) which define package metadata,
+//! (package.json, bnpm.json) which define package metadata,
 //! dependencies, entry points, and build configuration.
 
 use std::collections::BTreeMap;
@@ -339,9 +339,9 @@ pub fn detect_format(path: &Path) -> Result<&'static str, ManifestError> {
         .unwrap_or("");
 
     match filename {
-        "package.json" | "dash.json" => Ok("json"),
-        "dash.jsonc" => Ok("jsonc"),
-        "dash.toml" | "Package.toml" => Ok("toml"),
+        "package.json" | "bnpm.json" => Ok("json"),
+        "bnpm.jsonc" => Ok("jsonc"),
+        "bnpm.toml" | "Package.toml" => Ok("toml"),
         _ if filename.ends_with(".json") => Ok("json"),
         _ if filename.ends_with(".toml") => Ok("toml"),
         _ => Err(ManifestError::UnsupportedFormat(
@@ -352,7 +352,7 @@ pub fn detect_format(path: &Path) -> Result<&'static str, ManifestError> {
 
 /// Find a manifest file in the given directory.
 pub fn find_manifest(path: &Path) -> Option<std::path::PathBuf> {
-    for name in &["package.json", "dash.json", "dash.jsonc", "dash.toml"] {
+    for name in &["package.json", "bnpm.json", "bnpm.jsonc", "bnpm.toml"] {
         let candidate = path.join(name);
         if candidate.exists() {
             return Some(candidate);
@@ -438,7 +438,7 @@ serde = "1.0"
             "json"
         );
         assert_eq!(
-            detect_format(Path::new("dash.toml")).unwrap(),
+            detect_format(Path::new("bnpm.toml")).unwrap(),
             "toml"
         );
     }

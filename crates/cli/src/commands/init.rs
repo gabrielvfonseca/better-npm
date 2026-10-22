@@ -1,10 +1,10 @@
-//! `dash init` command - scaffold a new package
+//! `bnpm init` command - scaffold a new package
 
 use crate::commands::InitArgs;
 use crate::config::{CliConfig, ExitCode};
 use crate::output::*;
 use anyhow::Result;
-use dash_manifest::schema::Manifest;
+use bnpm_manifest::schema::Manifest;
 
 pub async fn run(args: &InitArgs, _config: &CliConfig) -> Result<ExitCode> {
     let path = if args.path.as_os_str().is_empty() {
@@ -12,13 +12,13 @@ pub async fn run(args: &InitArgs, _config: &CliConfig) -> Result<ExitCode> {
     } else {
         args.path.clone()
     };
-    let manifest_path = path.join("dash.toml");
+    let manifest_path = path.join("bnpm.toml");
 
     let manifest = Manifest {
-        package: Some(dash_manifest::schema::PackageIdentity {
+        package: Some(bnpm_manifest::schema::PackageIdentity {
             name: args.name.clone().unwrap_or_else(|| "my-package".to_string()),
             version: args.version.clone().unwrap_or_else(|| "0.0.1".parse().unwrap()),
-            description: Some("A Dash package".to_string()),
+            description: Some("A Bnpm package".to_string()),
             license: Some(args.license.clone()),
             ..Default::default()
         }),

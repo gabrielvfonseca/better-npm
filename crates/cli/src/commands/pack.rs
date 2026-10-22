@@ -1,4 +1,4 @@
-//! `dash pack` command
+//! `bnpm pack` command
 
 use crate::commands::PackArgs;
 use crate::config::{CliConfig, ExitCode};

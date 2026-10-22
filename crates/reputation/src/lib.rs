@@ -314,7 +314,7 @@ mod tests {
     #[test]
     fn test_sybil_detection_new_account() {
         let history = PublisherHistory {
-            publisher: "did:dash:user:suspicious".into(),
+            publisher: "did:bnpm:user:suspicious".into(),
             account_age_days: 5,
             package_count: 100,
             verified_identity: false,
@@ -327,7 +327,7 @@ mod tests {
     #[test]
     fn test_sybil_detection_legitimate() {
         let history = PublisherHistory {
-            publisher: "did:dash:user:trusted".into(),
+            publisher: "did:bnpm:user:trusted".into(),
             account_age_days: 800,
             package_count: 5,
             verified_identity: true,
@@ -340,7 +340,7 @@ mod tests {
     #[test]
     fn test_sybil_detection_many_incidents() {
         let history = PublisherHistory {
-            publisher: "did:dash:user:risky".into(),
+            publisher: "did:bnpm:user:risky".into(),
             account_age_days: 20,
             package_count: 10,
             verified_identity: false,
@@ -353,7 +353,7 @@ mod tests {
     #[test]
     fn test_sybil_detection_unverified_with_incidents() {
         let history = PublisherHistory {
-            publisher: "did:dash:user:risky".into(),
+            publisher: "did:bnpm:user:risky".into(),
             account_age_days: 500,
             package_count: 10,
             verified_identity: false,
@@ -366,7 +366,7 @@ mod tests {
     #[test]
     fn test_sybil_detection_no_packages() {
         let history = PublisherHistory {
-            publisher: "did:dash:user:empty".into(),
+            publisher: "did:bnpm:user:empty".into(),
             account_age_days: 100,
             package_count: 0,
             verified_identity: false,

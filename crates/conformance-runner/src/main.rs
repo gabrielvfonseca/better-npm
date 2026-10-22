@@ -3,7 +3,7 @@ use serde::Serialize;
 use std::process::ExitCode;
 
 #[derive(Parser)]
-#[command(name = "dash-conformance-runner")]
+#[command(name = "bnpm-conformance-runner")]
 struct Cli {
     #[command(subcommand)]
     command: Command,
@@ -62,7 +62,7 @@ fn run_cid() -> ConformanceReport {
         let expected_digest = v["blake3DigestHex"].as_str().unwrap();
 
         let canonical_bytes = hex::decode(canonical_hex).unwrap();
-        let cid = dash_cid::Cid::new(&canonical_bytes);
+        let cid = bnpm_cid::Cid::new(&canonical_bytes);
 
         let cid_match = cid.to_string() == expected_cid;
         let mh_match = cid.multihash_hex() == expected_multihash;
@@ -87,7 +87,7 @@ fn run_cid() -> ConformanceReport {
 
     {
         let non_canonical = hex::decode("a16161f93c00").unwrap();
-        let result = dash_cid::canonical_cbor_validate(&non_canonical);
+        let result = bnpm_cid::canonical_cbor_validate(&non_canonical);
         cases.push(CaseResult {
             name: "rejects non-canonical half-float encoding".into(),
             ok: result.is_err(),
@@ -99,8 +99,8 @@ fn run_cid() -> ConformanceReport {
     cases.push({
         let bytes = hex::decode("000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f")
             .unwrap();
-        let cid1 = dash_cid::Cid::new(&bytes);
-        let cid2 = dash_cid::Cid::new(&bytes);
+        let cid1 = bnpm_cid::Cid::new(&bytes);
+        let cid2 = bnpm_cid::Cid::new(&bytes);
         CaseResult {
             name: "deterministic across platforms: same input → same CID".into(),
             ok: cid1 == cid2 && cid1.to_string() == cid2.to_string(),
@@ -115,7 +115,7 @@ fn run_cid() -> ConformanceReport {
 }
 
 fn run_capsule() -> ConformanceReport {
-    use dash_capsule::{Attestation, AttestationType, Capsule};
+    use bnpm_capsule::{Attestation, AttestationType, Capsule};
 
     let mut cases = Vec::new();
 
@@ -227,8 +227,8 @@ fn run_store() -> ConformanceReport {
 }
 
 async fn run_store_async() -> ConformanceReport {
-    use dash_capsule::Capsule;
-    use dash_store::cas::CasStore;
+    use bnpm_capsule::Capsule;
+    use bnpm_store::cas::CasStore;
 
     let mut cases = Vec::new();
     let dir = tempfile::TempDir::new().unwrap();

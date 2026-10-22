@@ -1,10 +1,10 @@
-# dash-protocol
+# bnpm-protocol
 
 Wire protocol types and serialization for registry communication.
 
 ## Overview
 
-Defines the message format used between Dash clients and registries, including framing, message types, and serialization helpers.
+Defines the message format used between Bnpm clients and registries, including framing, message types, and serialization helpers.
 
 ## Features
 
@@ -16,7 +16,7 @@ Defines the message format used between Dash clients and registries, including f
 ## Usage
 
 ```rust
-use dash_protocol::{PackageMetadata, VersionInfo};
+use bnpm_protocol::{PackageMetadata, VersionInfo};
 
 let metadata = registry_client.get_package("react").await?;
 println!("Latest: {}", metadata.latest_version());

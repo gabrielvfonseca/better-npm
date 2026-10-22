@@ -1,10 +1,10 @@
-# dash-cid
+# bnpm-cid
 
 BLAKE3 CID, multihash, and base32 canonical encoding.
 
 ## Overview
 
-Content Identifiers (CIDs) based on BLAKE3 multihash with canonical base32 encoding for Dash packages.
+Content Identifiers (CIDs) based on BLAKE3 multihash with canonical base32 encoding for Bnpm packages.
 
 ## Features
 
@@ -17,7 +17,7 @@ Content Identifiers (CIDs) based on BLAKE3 multihash with canonical base32 encod
 ## Usage
 
 ```rust
-use dash_cid::Cid;
+use bnpm_cid::Cid;
 
 let cid = Cid::new(b"hello world");
 assert_eq!(cid, Cid::parse(&cid.to_string())?);

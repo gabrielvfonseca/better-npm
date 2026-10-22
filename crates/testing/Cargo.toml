@@ -1,5 +1,5 @@
 [package]
-name = "dash-testing"
+name = "bnpm-testing"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -14,16 +14,16 @@ anyhow = { workspace = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
-dash-package = { path = "../package" }
-dash-config = { path = "../config" }
-dash-concurrency = { path = "../concurrency" }
-dash-filesystem = { path = "../filesystem" }
-dash-store = { path = "../store" }
-dash-cache = { path = "../cache" }
-dash-crypto = { path = "../crypto" }
-dash-hashing = { path = "../hashing" }
-dash-logger = { path = "../logger" }
-dash-registry-client = { path = "../registry-client" }
+bnpm-package = { path = "../package" }
+bnpm-config = { path = "../config" }
+bnpm-concurrency = { path = "../concurrency" }
+bnpm-filesystem = { path = "../filesystem" }
+bnpm-store = { path = "../store" }
+bnpm-cache = { path = "../cache" }
+bnpm-crypto = { path = "../crypto" }
+bnpm-hashing = { path = "../hashing" }
+bnpm-logger = { path = "../logger" }
+bnpm-registry-client = { path = "../registry-client" }
 tempfile = { workspace = true }
 rand = { workspace = true }
 testcontainers = { workspace = true }

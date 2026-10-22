@@ -2,9 +2,9 @@ pub mod federated;
 
 use std::io::Read;
 
-use dash_capsule::Capsule;
-use dash_cid::Cid;
-use dash_manifest::PackageManifest;
+use bnpm_capsule::Capsule;
+use bnpm_cid::Cid;
+use bnpm_manifest::PackageManifest;
 use flate2::read::GzDecoder;
 
 #[derive(Debug, thiserror::Error)]
@@ -18,11 +18,11 @@ pub enum NpmBridgeError {
     #[error("JSON parse error: {0}")]
     Json(#[from] serde_json::Error),
     #[error("manifest error: {0}")]
-    Manifest(#[from] dash_manifest::ManifestError),
+    Manifest(#[from] bnpm_manifest::ManifestError),
     #[error("capsule error: {0}")]
-    Capsule(#[from] dash_capsule::CapsuleError),
+    Capsule(#[from] bnpm_capsule::CapsuleError),
     #[error("CID error: {0}")]
-    Cid(#[from] dash_cid::CidError),
+    Cid(#[from] bnpm_cid::CidError),
     #[error("CBOR error: {0}")]
     Cbor(String),
     #[error("package not found: {name}")]
@@ -35,7 +35,7 @@ pub enum NpmBridgeError {
 
 pub fn npm_registry_client() -> reqwest::Client {
     reqwest::Client::builder()
-        .user_agent(concat!("dash-npm-bridge/", env!("CARGO_PKG_VERSION")))
+        .user_agent(concat!("bnpm-npm-bridge/", env!("CARGO_PKG_VERSION")))
         .timeout(std::time::Duration::from_secs(60))
         .build()
         .expect("failed to create HTTP client")
@@ -151,7 +151,7 @@ pub async fn tarball_to_capsule(
     let cbor_value: ciborium::Value = serde_json::from_value(serde_json::to_value(&pkg_manifest)?)
         .map_err(|e| NpmBridgeError::Cbor(e.to_string()))?;
 
-    let manifest_cbor = dash_cid::canonical_cbor_encode(&cbor_value)?;
+    let manifest_cbor = bnpm_cid::canonical_cbor_encode(&cbor_value)?;
 
     let files = extract_tarball(tarball_bytes)?;
     let files = normalize_metadata(files);
@@ -159,7 +159,7 @@ pub async fn tarball_to_capsule(
     Ok(capsule)
 }
 
-pub async fn npm_to_dash_registry(
+pub async fn npm_to_bnpm_registry(
     name: &str,
     version: &str,
 ) -> Result<(Capsule, Cid), NpmBridgeError> {
@@ -229,7 +229,7 @@ mod tests {
         let manifest: PackageManifest = serde_json::from_value(normalized).unwrap();
         let cbor_val: ciborium::Value =
             serde_json::from_value(serde_json::to_value(&manifest).unwrap()).unwrap();
-        let cbor_bytes = dash_cid::canonical_cbor_encode(&cbor_val).unwrap();
+        let cbor_bytes = bnpm_cid::canonical_cbor_encode(&cbor_val).unwrap();
         assert!(!cbor_bytes.is_empty());
         assert_eq!(manifest.dependencies.len(), 1);
     }

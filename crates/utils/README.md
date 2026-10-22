@@ -1,6 +1,6 @@
-# dash-utils
+# bnpm-utils
 
-General utility functions for Dash.
+General utility functions for Bnpm.
 
 ## Overview
 
@@ -17,7 +17,7 @@ Includes version comparison, glob matching, string formatting, slug generation, 
 ## Usage
 
 ```rust
-use dash_utils::{format_bytes, slugify, glob_match};
+use bnpm_utils::{format_bytes, slugify, glob_match};
 
 println!("{}", format_bytes(1_500_000)); // "1.43 MB"
 println!("{}", slugify("Hello World")); // "hello-world"

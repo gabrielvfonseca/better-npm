@@ -6,17 +6,17 @@ use clap::Parser;
 use tokio::sync::Mutex;
 use tracing::info;
 
-use dash_provenance::{DefaultKeylessSigner, ProvenanceService};
-use dash_registry::{ContentService, NameService, RegistryService};
-use dash_store::cas::CasStore;
+use bnpm_provenance::{DefaultKeylessSigner, ProvenanceService};
+use bnpm_registry::{ContentService, NameService, RegistryService};
+use bnpm_store::cas::CasStore;
 
 #[derive(Parser)]
-#[command(name = "dash-gateway", about = "Dash DPR gRPC gateway server")]
+#[command(name = "bnpm-gateway", about = "Bnpm DPR gRPC gateway server")]
 struct Args {
     #[arg(long, default_value = "0.0.0.0:9481")]
     addr: String,
 
-    #[arg(long, default_value = "./dash-store")]
+    #[arg(long, default_value = "./bnpm-store")]
     store_path: String,
 }
 
@@ -36,9 +36,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let registry_service = RegistryService::new(name_service, content_service, provenance_service);
 
     let addr: SocketAddr = args.addr.parse()?;
-    info!("Starting Dash DPR gateway on {}", addr);
+    info!("Starting Bnpm DPR gateway on {}", addr);
 
-    dash_proto::run_server(addr, registry_service).await?;
+    bnpm_proto::run_server(addr, registry_service).await?;
 
     Ok(())
 }

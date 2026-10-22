@@ -50,9 +50,9 @@ pub fn build_attestation(
         "builder": {
             "id": builder_id
         },
-        "buildType": "https://dash.dev/build/tsc@1",
+        "buildType": "https://bnpm.dev/build/tsc@1",
         "recipe": {
-            "type": "dash-build",
+            "type": "bnpm-build",
             "version": version
         },
         "metadata": {
@@ -103,7 +103,7 @@ mod tests {
 
     #[test]
     fn test_build_attestation() {
-        let att = build_attestation("@scope/pkg", "1.2.3", "b3:abc123", "dash:registry");
+        let att = build_attestation("@scope/pkg", "1.2.3", "b3:abc123", "bnpm:registry");
         assert_eq!(att.type_url, "https://in-toto.io/Statement/v1");
         assert_eq!(att.predicate_type, "https://slsa.dev/provenance/v1");
         assert_eq!(att.subject.len(), 1);
@@ -113,7 +113,7 @@ mod tests {
 
     #[test]
     fn test_verify_attestation() {
-        let att = build_attestation("pkg", "0.1.0", "b3:def456", "dash:ci-builder");
+        let att = build_attestation("pkg", "0.1.0", "b3:def456", "bnpm:ci-builder");
         assert!(verify_attestation(&att));
     }
 

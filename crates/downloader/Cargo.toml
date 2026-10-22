@@ -1,5 +1,5 @@
 [package]
-name = "dash-downloader"
+name = "bnpm-downloader"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -14,13 +14,13 @@ anyhow = { workspace = true }
 thiserror = { workspace = true }
 futures = { workspace = true }
 futures-util = { workspace = true }
-dash-package = { path = "../package" }
-dash-network = { path = "../network" }
-dash-cache = { path = "../cache" }
-dash-progress = { path = "../progress" }
-dash-concurrency = { path = "../concurrency" }
-dash-integrity = { path = "../integrity" }
-dash-hashing = { path = "../hashing" }
-dash-filesystem = { path = "../filesystem" }
-dash-config = { path = "../config" }
-dash-telemetry = { path = "../telemetry" }
+bnpm-package = { path = "../package" }
+bnpm-network = { path = "../network" }
+bnpm-cache = { path = "../cache" }
+bnpm-progress = { path = "../progress" }
+bnpm-concurrency = { path = "../concurrency" }
+bnpm-integrity = { path = "../integrity" }
+bnpm-hashing = { path = "../hashing" }
+bnpm-filesystem = { path = "../filesystem" }
+bnpm-config = { path = "../config" }
+bnpm-telemetry = { path = "../telemetry" }

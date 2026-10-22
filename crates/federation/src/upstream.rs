@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use dash_proto::dpr_v1::{Binding, FetchRequest, FetchResponse, ResolveRequest, ResolveResponse, VersionRange};
+use bnpm_proto::dpr_v1::{Binding, FetchRequest, FetchResponse, ResolveRequest, ResolveResponse, VersionRange};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use tokio::time::timeout;
@@ -17,12 +17,12 @@ pub struct UpstreamConfig {
 }
 
 impl UpstreamConfig {
-    pub fn new_dash(name: impl Into<String>, url: impl Into<String>, priority: u32) -> Self {
+    pub fn new_bnpm(name: impl Into<String>, url: impl Into<String>, priority: u32) -> Self {
         Self {
             name: name.into(),
             url: url.into(),
             priority,
-            upstream_type: UpstreamType::Dash,
+            upstream_type: UpstreamType::Bnpm,
             namespace_filter: None,
             auth: None,
             timeout: Some(Duration::from_secs(30)),
@@ -55,7 +55,7 @@ impl UpstreamConfig {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum UpstreamType {
-    Dash,
+    Bnpm,
     NpmBridge,
     Custom,
 }
@@ -124,13 +124,13 @@ impl UpstreamClient {
         }
 
         match self.config.upstream_type {
-            UpstreamType::Dash => self.resolve_dash(name, ranges).await,
+            UpstreamType::Bnpm => self.resolve_bnpm(name, ranges).await,
             UpstreamType::NpmBridge => self.resolve_npm_bridge(name, ranges).await,
             UpstreamType::Custom => self.resolve_custom(name, ranges).await,
         }
     }
 
-    async fn resolve_dash(&self, name: &str, ranges: &[VersionRange]) -> Result<Vec<Binding>, UpstreamError> {
+    async fn resolve_bnpm(&self, name: &str, ranges: &[VersionRange]) -> Result<Vec<Binding>, UpstreamError> {
         let url = format!("{}/api/v1/resolve", self.config.url.trim_end_matches('/'));
         let req = ResolveRequest {
             name: name.to_string(),
@@ -203,7 +203,7 @@ impl UpstreamClient {
         Err(UpstreamError::Config("custom upstream not implemented".into()))
     }
 
-    pub async fn fetch(&self, cid: &str, ranges: &[dash_proto::dpr_v1::Range]) -> Result<FetchResponse, UpstreamError> {
+    pub async fn fetch(&self, cid: &str, ranges: &[bnpm_proto::dpr_v1::Range]) -> Result<FetchResponse, UpstreamError> {
         let url = format!("{}/api/v1/fetch", self.config.url.trim_end_matches('/'));
         let req = FetchRequest {
             cid: cid.to_string(),
@@ -235,7 +235,7 @@ impl UpstreamClient {
 }
 
 fn version_matches_range(version: &semver::Version, range: &VersionRange) -> bool {
-    use dash_proto::dpr_v1::version_range::Range;
+    use bnpm_proto::dpr_v1::version_range::Range;
     match &range.range {
         Some(Range::Exact(exact)) => semver::Version::parse(exact).map(|v| v == *version).unwrap_or(false),
         Some(Range::Constraint(c)) => {
@@ -258,10 +258,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_upstream_config_dash() {
-        let config = UpstreamConfig::new_dash("public", "https://reg.dash.dev", 1);
+    fn test_upstream_config_bnpm() {
+        let config = UpstreamConfig::new_bnpm("public", "https://reg.bnpm.dev", 1);
         assert_eq!(config.name, "public");
-        assert_eq!(config.upstream_type, UpstreamType::Dash);
+        assert_eq!(config.upstream_type, UpstreamType::Bnpm);
         assert_eq!(config.priority, 1);
     }
 
@@ -275,7 +275,7 @@ mod tests {
 
     #[test]
     fn test_upstream_config_with_namespace() {
-        let config = UpstreamConfig::new_dash("internal", "https://internal.dev", 0)
+        let config = UpstreamConfig::new_bnpm("internal", "https://internal.dev", 0)
             .with_namespace_filter("@internal");
         assert_eq!(config.namespace_filter, Some("@internal".to_string()));
     }
@@ -284,12 +284,12 @@ mod tests {
     fn test_version_matches_range_exact() {
         let v = semver::Version::parse("1.2.3").unwrap();
         let range = VersionRange {
-            range: Some(dash_proto::dpr_v1::version_range::Range::Exact("1.2.3".to_string())),
+            range: Some(bnpm_proto::dpr_v1::version_range::Range::Exact("1.2.3".to_string())),
         };
         assert!(version_matches_range(&v, &range));
 
         let range = VersionRange {
-            range: Some(dash_proto::dpr_v1::version_range::Range::Exact("1.2.4".to_string())),
+            range: Some(bnpm_proto::dpr_v1::version_range::Range::Exact("1.2.4".to_string())),
         };
         assert!(!version_matches_range(&v, &range));
     }
@@ -298,8 +298,8 @@ mod tests {
     fn test_version_matches_range_constraint() {
         let v = semver::Version::parse("1.5.0").unwrap();
         let range = VersionRange {
-            range: Some(dash_proto::dpr_v1::version_range::Range::Constraint(
-                dash_proto::dpr_v1::RangeConstraint {
+            range: Some(bnpm_proto::dpr_v1::version_range::Range::Constraint(
+                bnpm_proto::dpr_v1::RangeConstraint {
                     low: "1.0.0".to_string(),
                     high: "2.0.0".to_string(),
                     low_inclusive: true,

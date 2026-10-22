@@ -74,13 +74,13 @@ impl Default for LinkerConfig {
 
 /// The linker manages creation and removal of binary links.
 pub struct Linker {
-    store: std::sync::Arc<dyn dash_store::StoreBackend>,
-    fs: std::sync::Arc<dyn dash_filesystem::FsOps>,
+    store: std::sync::Arc<dyn bnpm_store::StoreBackend>,
+    fs: std::sync::Arc<dyn bnpm_filesystem::FsOps>,
     config: LinkerConfig,
 }
 
 // Simple FsOps trait for testability
-mod dash_filesystem {
+mod bnpm_filesystem {
     use std::path::Path;
 
     #[async_trait::async_trait]
@@ -140,27 +140,27 @@ mod dash_filesystem {
 impl Linker {
     /// Create a new linker.
     pub fn new(
-        store: std::sync::Arc<dyn dash_store::StoreBackend>,
+        store: std::sync::Arc<dyn bnpm_store::StoreBackend>,
         config: LinkerConfig,
     ) -> Self {
         Self {
             store,
-            fs: std::sync::Arc::new(dash_filesystem::RealFs),
+            fs: std::sync::Arc::new(bnpm_filesystem::RealFs),
             config,
         }
     }
 
     /// Create a new linker with a custom filesystem abstraction (for testing).
     pub fn new_with_fs(
-        store: std::sync::Arc<dyn dash_store::StoreBackend>,
-        fs: std::sync::Arc<dyn dash_filesystem::FsOps>,
+        store: std::sync::Arc<dyn bnpm_store::StoreBackend>,
+        fs: std::sync::Arc<dyn bnpm_filesystem::FsOps>,
         config: LinkerConfig,
     ) -> Self {
         Self { store, fs, config }
     }
 
     /// Link binaries for a package into the bin directory.
-    pub async fn link_binaries(&self, pkg: &dash_package::Package) -> Result<Vec<LinkedBinary>, LinkerError> {
+    pub async fn link_binaries(&self, pkg: &bnpm_package::Package) -> Result<Vec<LinkedBinary>, LinkerError> {
         let bin_map = self.extract_binaries(pkg)?;
         if bin_map.is_empty() {
             return Ok(Vec::new());
@@ -220,7 +220,7 @@ impl Linker {
     }
 
     /// Unlink binaries for a package.
-    pub async fn unlink_binaries(&self, name: &dash_package::PackageName) -> Result<(), LinkerError> {
+    pub async fn unlink_binaries(&self, name: &bnpm_package::PackageName) -> Result<(), LinkerError> {
         let bin_dir = &self.config.bin_dir;
 
         if !bin_dir.exists() {
@@ -286,7 +286,7 @@ impl Linker {
         Ok(linked)
     }
 
-    fn extract_binaries(&self, pkg: &dash_package::Package) -> Result<std::collections::HashMap<String, String>, LinkerError> {
+    fn extract_binaries(&self, pkg: &bnpm_package::Package) -> Result<std::collections::HashMap<String, String>, LinkerError> {
         let mut bins = std::collections::HashMap::new();
 
         // Parse the manifest for "bin" entries
@@ -319,7 +319,7 @@ impl Linker {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dash_package::{Package, PackageName};
+    use bnpm_package::{Package, PackageName};
     use std::sync::Arc;
 
     struct MockFs {
@@ -337,7 +337,7 @@ mod tests {
     }
 
     #[async_trait::async_trait]
-    impl dash_filesystem::FsOps for MockFs {
+    impl bnpm_filesystem::FsOps for MockFs {
         async fn symlink(&self, original: &Path, link: &Path) -> Result<(), std::io::Error> {
             self.created_symlinks.lock().unwrap().push((original.to_path_buf(), link.to_path_buf()));
             Ok(())
@@ -369,7 +369,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_link_binaries_single() {
-        let store = Arc::new(dash_store::LocalStore::new(PathBuf::from("/tmp/test-store")));
+        let store = Arc::new(bnpm_store::LocalStore::new(PathBuf::from("/tmp/test-store")));
         let mock_fs = Arc::new(MockFs::new());
 
         let config = LinkerConfig {
@@ -395,7 +395,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_link_binaries_multi() {
-        let store = Arc::new(dash_store::LocalStore::new(PathBuf::from("/tmp/test-store")));
+        let store = Arc::new(bnpm_store::LocalStore::new(PathBuf::from("/tmp/test-store")));
         let mock_fs = Arc::new(MockFs::new());
 
         let config = LinkerConfig {
@@ -423,7 +423,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_link_binaries_no_bin() {
-        let store = Arc::new(dash_store::LocalStore::new(PathBuf::from("/tmp/test-store")));
+        let store = Arc::new(bnpm_store::LocalStore::new(PathBuf::from("/tmp/test-store")));
         let mock_fs = Arc::new(MockFs::new());
 
         let config = LinkerConfig::default();
@@ -439,7 +439,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_unlink_binary() {
-        let store = Arc::new(dash_store::LocalStore::new(PathBuf::from("/tmp/test-store")));
+        let store = Arc::new(bnpm_store::LocalStore::new(PathBuf::from("/tmp/test-store")));
         let mock_fs = Arc::new(MockFs::new());
 
         let config = LinkerConfig::default();

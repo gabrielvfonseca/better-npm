@@ -12,19 +12,19 @@ pub enum PublishError {
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
     #[error("network error: {0}")]
-    Network(#[from] dash_registry_client::RegistryError),
+    Network(#[from] bnpm_registry_client::RegistryError),
     #[error("authentication error: {0}")]
-    Auth(#[from] dash_auth::AuthError),
+    Auth(#[from] bnpm_auth::AuthError),
     #[error("integrity error: {0}")]
-    Integrity(#[from] dash_integrity::IntegrityError),
+    Integrity(#[from] bnpm_integrity::IntegrityError),
     #[error("signature error: {0}")]
-    Signature(#[from] dash_signatures::SignatureError),
+    Signature(#[from] bnpm_signatures::SignatureError),
     #[error("compression error: {0}")]
-    Compression(#[from] dash_compression::CompressionError),
+    Compression(#[from] bnpm_compression::CompressionError),
     #[error("archive error: {0}")]
-    Archive(#[from] dash_archive::ArchiveError),
+    Archive(#[from] bnpm_archive::ArchiveError),
     #[error("manifest error: {0}")]
-    Manifest(#[from] dash_manifest::ManifestError),
+    Manifest(#[from] bnpm_manifest::ManifestError),
     #[error("validation error: {0}")]
     Validation(String),
     #[error("publish rejected: {0}")]
@@ -66,7 +66,7 @@ pub struct PublisherConfig {
     /// Path to the private key for signing.
     pub signing_key_path: Option<PathBuf>,
     /// Compression algorithm for the tarball.
-    pub compression: dash_compression::CompressionAlgo,
+    pub compression: bnpm_compression::CompressionAlgo,
     /// Whether to verify the package before publishing.
     pub verify: bool,
     /// Whether to include all files or only those in the manifest.
@@ -78,7 +78,7 @@ impl Default for PublisherConfig {
         Self {
             sign_packages: false,
             signing_key_path: None,
-            compression: dash_compression::CompressionAlgo::Gzip,
+            compression: bnpm_compression::CompressionAlgo::Gzip,
             verify: true,
             include_all_files: false,
         }
@@ -87,25 +87,25 @@ impl Default for PublisherConfig {
 
 /// The package publisher orchestrator.
 pub struct Publisher {
-    client: dash_registry_client::RegistryClient,
+    client: bnpm_registry_client::RegistryClient,
     config: PublisherConfig,
-    integrity: dash_integrity::Integrity,
-    signatures: Option<dash_signatures::KeyPair>,
+    integrity: bnpm_integrity::Integrity,
+    signatures: Option<bnpm_signatures::KeyPair>,
 }
 
 impl Publisher {
     /// Create a new publisher with a registry client and config.
     pub fn new(
-        client: dash_registry_client::RegistryClient,
+        client: bnpm_registry_client::RegistryClient,
         config: PublisherConfig,
     ) -> Result<Self, PublishError> {
         let signatures = if config.sign_packages {
             if let Some(key_path) = &config.signing_key_path {
                 let key_data = std::fs::read(key_path)?;
-                let kp = dash_signatures::KeyPair::new(
+                let kp = bnpm_signatures::KeyPair::new(
                     vec![], // public key would be loaded separately
                     key_data,
-                    dash_signatures::SignatureAlgorithm::Ed25519,
+                    bnpm_signatures::SignatureAlgorithm::Ed25519,
                 );
                 Some(kp)
             } else {
@@ -118,16 +118,16 @@ impl Publisher {
         Ok(Self {
             client,
             config,
-            integrity: dash_integrity::Integrity::hash(
+            integrity: bnpm_integrity::Integrity::hash(
                 b"placeholder",
-                dash_integrity::IntegrityAlgorithm::Sha256,
+                bnpm_integrity::IntegrityAlgorithm::Sha256,
             ),
             signatures,
         })
     }
 
     /// Publish a package to the registry.
-    pub async fn publish(&self, pkg: &dash_package::Package) -> Result<PublishResult, PublishError> {
+    pub async fn publish(&self, pkg: &bnpm_package::Package) -> Result<PublishResult, PublishError> {
         let name = pkg.name.as_str();
         let version = pkg.version.to_string();
 
@@ -135,9 +135,9 @@ impl Publisher {
         let tarball = self.build_tarball(pkg)?;
 
         // Compute integrity
-        let integrity = dash_integrity::Integrity::hash(
+        let integrity = bnpm_integrity::Integrity::hash(
             &tarball,
-            dash_integrity::IntegrityAlgorithm::Sha256,
+            bnpm_integrity::IntegrityAlgorithm::Sha256,
         );
 
         // Sign if configured
@@ -193,7 +193,7 @@ impl Publisher {
     }
 
     /// Verify the package before publishing.
-    pub fn verify_package(&self, pkg: &dash_package::Package) -> Result<(), PublishError> {
+    pub fn verify_package(&self, pkg: &bnpm_package::Package) -> Result<(), PublishError> {
         if pkg.name.as_str().is_empty() {
             return Err(PublishError::Validation("package name is required".to_string()));
         }
@@ -208,7 +208,7 @@ impl Publisher {
     }
 
     /// Build the tarball for a package.
-    fn build_tarball(&self, pkg: &dash_package::Package) -> Result<Vec<u8>, PublishError> {
+    fn build_tarball(&self, pkg: &bnpm_package::Package) -> Result<Vec<u8>, PublishError> {
         let dir = tempfile::tempdir()?;
 
         // Write package files to a temporary directory
@@ -221,14 +221,14 @@ impl Publisher {
         }
 
         // Create the archive
-        let format = dash_archive::ArchiveFormat::TarGz;
-        let tarball = dash_archive::create_archive(dir.path(), format)?;
+        let format = bnpm_archive::ArchiveFormat::TarGz;
+        let tarball = bnpm_archive::create_archive(dir.path(), format)?;
 
         Ok(tarball)
     }
 
     /// Get the registry client reference.
-    pub fn client(&self) -> &dash_registry_client::RegistryClient {
+    pub fn client(&self) -> &bnpm_registry_client::RegistryClient {
         &self.client
     }
 
@@ -238,9 +238,9 @@ impl Publisher {
     }
 }
 
-/// Create a publisher from a dash configuration.
-pub fn create_publisher_from_config(config: &dash_config::Config) -> Result<Publisher, PublishError> {
-    let registry_client = dash_registry_client::RegistryClient::from_config(config)?;
+/// Create a publisher from a bnpm configuration.
+pub fn create_publisher_from_config(config: &bnpm_config::Config) -> Result<Publisher, PublishError> {
+    let registry_client = bnpm_registry_client::RegistryClient::from_config(config)?;
 
     let publisher_config = PublisherConfig {
         sign_packages: config.get_or("publish.sign", false),
@@ -255,14 +255,14 @@ pub fn create_publisher_from_config(config: &dash_config::Config) -> Result<Publ
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dash_package::{Package, PackageName};
+    use bnpm_package::{Package, PackageName};
 
     #[test]
     fn test_publisher_config_default() {
         let config = PublisherConfig::default();
         assert!(!config.sign_packages);
         assert!(config.verify);
-        assert_eq!(config.compression, dash_compression::CompressionAlgo::Gzip);
+        assert_eq!(config.compression, bnpm_compression::CompressionAlgo::Gzip);
     }
 
     #[test]
@@ -299,12 +299,12 @@ mod tests {
     #[test]
     fn test_deprecate_error_without_registry() {
         // Test that operations fail gracefully without a registry
-        let config = dash_registry_client::RegistryClientConfig {
+        let config = bnpm_registry_client::RegistryClientConfig {
             base_url: "http://localhost:1".to_string(),
             timeout_secs: 1,
             ..Default::default()
         };
-        let client = dash_registry_client::RegistryClient::new(config).unwrap();
+        let client = bnpm_registry_client::RegistryClient::new(config).unwrap();
         let publisher_config = PublisherConfig::default();
         let publisher = Publisher::new(client, publisher_config).unwrap();
         let rt = tokio::runtime::Runtime::new().unwrap();
@@ -314,8 +314,8 @@ mod tests {
 
     #[test]
     fn test_unpublish_not_supported() {
-        let config = dash_registry_client::RegistryClientConfig::default();
-        let client = dash_registry_client::RegistryClient::new(config).unwrap();
+        let config = bnpm_registry_client::RegistryClientConfig::default();
+        let client = bnpm_registry_client::RegistryClient::new(config).unwrap();
         let publisher_config = PublisherConfig::default();
         let publisher = Publisher::new(client, publisher_config).unwrap();
         let rt = tokio::runtime::Runtime::new().unwrap();

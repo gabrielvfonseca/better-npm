@@ -1,10 +1,10 @@
 [package]
-name = "dash-benchmark"
+name = "bnpm-benchmark"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
 publish = false
-description = "Benchmarking harness using Criterion for Dash subsystems"
+description = "Benchmarking harness using Criterion for Bnpm subsystems"
 
 [dependencies]
 criterion = { workspace = true }
@@ -13,10 +13,10 @@ serde_json = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }
-dash-config = { path = "../config" }
-dash-logger = { path = "../logger" }
-dash-concurrency = { path = "../concurrency" }
-dash-hashing = { path = "../hashing" }
-dash-filesystem = { path = "../filesystem" }
+bnpm-config = { path = "../config" }
+bnpm-logger = { path = "../logger" }
+bnpm-concurrency = { path = "../concurrency" }
+bnpm-hashing = { path = "../hashing" }
+bnpm-filesystem = { path = "../filesystem" }
 tokio = { workspace = true }
 rand = { workspace = true }

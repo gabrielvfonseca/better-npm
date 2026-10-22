@@ -2,11 +2,11 @@ use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use chrono::{DateTime, Utc};
-use dash_cid::Cid;
-use dash_graph::DependencyKind;
-use dash_lockfile::Lockfile;
-use dash_manifest::{DependencyKind as ManifestDependencyKind, PackageManifest};
-use dash_package::PackageId;
+use bnpm_cid::Cid;
+use bnpm_graph::DependencyKind;
+use bnpm_lockfile::Lockfile;
+use bnpm_manifest::{DependencyKind as ManifestDependencyKind, PackageManifest};
+use bnpm_package::PackageId;
 use semver::Version;
 
 /// Configuration for a package registry.
@@ -42,7 +42,7 @@ pub struct ResolveOptions {
     /// Registry configurations in priority order.
     pub registries: Vec<RegistryConfig>,
     /// Cache backend for storing registry indices and manifests.
-    pub cache: Arc<dyn dash_cache::CacheBackend>,
+    pub cache: Arc<dyn bnpm_cache::CacheBackend>,
     /// Whether to run in offline mode (cache only).
     pub offline: bool,
     /// Maximum number of parallel registry requests.
@@ -61,7 +61,7 @@ impl Default for ResolveOptions {
         Self {
             root_manifest: PackageManifest::default(),
             registries: vec![],
-            cache: dash_cache::create_cache(&dash_cache::CacheConfig::default()),
+            cache: bnpm_cache::create_cache(&bnpm_cache::CacheConfig::default()),
             offline: false,
             max_parallel: 10,
             include_yanked: false,
@@ -87,10 +87,10 @@ pub struct ResolvedNode {
     pub registry: Option<String>,
     /// Provenance record from the transparency log.
     #[serde(default)]
-    pub provenance: Option<dash_lockfile::Provenance>,
+    pub provenance: Option<bnpm_lockfile::Provenance>,
     /// Capabilities declared by this package.
     #[serde(default)]
-    pub capabilities: Option<dash_lockfile::LockCapabilities>,
+    pub capabilities: Option<bnpm_lockfile::LockCapabilities>,
 }
 
 /// A dependency edge in the resolved graph.
@@ -228,12 +228,12 @@ impl ResolvedGraph {
         self.nodes.keys().cloned().collect()
     }
 
-    /// Convert to a dash-graph DependencyGraph.
-    pub fn to_dependency_graph(&self) -> dash_graph::DependencyGraph {
-        let mut graph = dash_graph::DependencyGraph::new();
+    /// Convert to a bnpm-graph DependencyGraph.
+    pub fn to_dependency_graph(&self) -> bnpm_graph::DependencyGraph {
+        let mut graph = bnpm_graph::DependencyGraph::new();
 
         for node in self.nodes.values() {
-            graph.add_node(dash_graph::Node::new(
+            graph.add_node(bnpm_graph::Node::new(
                 node.package_id.name.as_str(),
                 node.package_id.version.to_string(),
             ));
@@ -254,7 +254,7 @@ impl ResolvedGraph {
         graph
     }
 
-    pub fn to_lockfile(&self) -> Result<Lockfile, dash_lockfile::LockfileError> {
+    pub fn to_lockfile(&self) -> Result<Lockfile, bnpm_lockfile::LockfileError> {
         let mut lockfile = Lockfile::with_root(self.root.to_specifier());
 
         let mut packages = Vec::new();
@@ -263,7 +263,7 @@ impl ResolvedGraph {
             let cid = match &node.cid {
                 Some(c) => c.to_string(),
                 None => {
-                    return Err(dash_lockfile::LockfileError::InvalidEntry(format!(
+                    return Err(bnpm_lockfile::LockfileError::InvalidEntry(format!(
                         "missing CID for {}@{}",
                         node.package_id.name, node.version
                     )));
@@ -284,9 +284,9 @@ impl ResolvedGraph {
                 })
                 .unwrap_or_else(|| node.version.to_string());
 
-            let registry = node.registry.clone().unwrap_or_else(|| "dash:default".into());
+            let registry = node.registry.clone().unwrap_or_else(|| "bnpm:default".into());
 
-            let pkg = dash_lockfile::LockPackage {
+            let pkg = bnpm_lockfile::LockPackage {
                 name: node.package_id.name.to_string(),
                 version: node.version.to_string(),
                 cid,
@@ -404,19 +404,19 @@ pub enum ResolveError {
     #[error("circular dependency detected: {0:?}")]
     CircularDependency(Vec<String>),
     #[error("manifest parse error: {0}")]
-    Manifest(#[from] dash_manifest::ManifestError),
+    Manifest(#[from] bnpm_manifest::ManifestError),
     #[error("lockfile error: {0}")]
-    Lockfile(#[from] dash_lockfile::LockfileError),
+    Lockfile(#[from] bnpm_lockfile::LockfileError),
     #[error("cache error: {0}")]
-    Cache(#[from] dash_cache::CacheError),
+    Cache(#[from] bnpm_cache::CacheError),
     #[error("package error: {0}")]
-    Package(#[from] dash_package::PackageError),
+    Package(#[from] bnpm_package::PackageError),
     #[error("registry error: {0}")]
-    Registry(#[from] dash_registry_client::RegistryError),
+    Registry(#[from] bnpm_registry_client::RegistryError),
     #[error("CID error: {0}")]
-    Cid(#[from] dash_cid::CidError),
+    Cid(#[from] bnpm_cid::CidError),
     #[error("graph error: {0}")]
-    Graph(#[from] dash_graph::GraphError),
+    Graph(#[from] bnpm_graph::GraphError),
     #[error("semver error: {0}")]
     Semver(#[from] semver::Error),
     #[error("network error: {0}")]
@@ -466,7 +466,7 @@ impl ResolveOptions {
     }
 
     /// Set the cache backend.
-    pub fn with_cache(mut self, cache: Arc<dyn dash_cache::CacheBackend>) -> Self {
+    pub fn with_cache(mut self, cache: Arc<dyn bnpm_cache::CacheBackend>) -> Self {
         self.cache = cache;
         self
     }

@@ -1,17 +1,17 @@
 [package]
-name = "dash-plugin-registry"
+name = "bnpm-plugin-registry"
 version = { workspace = true }
 edition = "2024"
 license = "MIT"
-authors = ["Dash Team"]
+authors = ["Bnpm Team"]
 
 [dependencies]
-dash-capsule = { path = "../capsule" }
-dash-cid = { path = "../cid" }
-dash-manifest = { path = "../manifest" }
-dash-policy = { path = "../policy" }
-dash-proto = { path = "../proto" }
-dash-sandbox = { path = "../sandbox" }
+bnpm-capsule = { path = "../capsule" }
+bnpm-cid = { path = "../cid" }
+bnpm-manifest = { path = "../manifest" }
+bnpm-policy = { path = "../policy" }
+bnpm-proto = { path = "../proto" }
+bnpm-sandbox = { path = "../sandbox" }
 semver = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }

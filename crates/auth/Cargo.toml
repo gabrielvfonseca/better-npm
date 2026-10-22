@@ -1,5 +1,5 @@
 [package]
-name = "dash-auth"
+name = "bnpm-auth"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -13,9 +13,9 @@ serde_json = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }
-dash-crypto = { path = "../crypto" }
-dash-config = { path = "../config" }
-dash-network = { path = "../network" }
+bnpm-crypto = { path = "../crypto" }
+bnpm-config = { path = "../config" }
+bnpm-network = { path = "../network" }
 reqwest = { workspace = true }
 url = { workspace = true }
 tokio = { workspace = true }

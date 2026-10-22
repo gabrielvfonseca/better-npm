@@ -1,5 +1,5 @@
 [package]
-name = "dash-telemetry"
+name = "bnpm-telemetry"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -18,6 +18,6 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
-dash-config = { path = "../config" }
+bnpm-config = { path = "../config" }
 tokio = { workspace = true }
 chrono = { workspace = true }

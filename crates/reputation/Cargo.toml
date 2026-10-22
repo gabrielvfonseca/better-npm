@@ -1,5 +1,5 @@
 [package]
-name = "dash-reputation"
+name = "bnpm-reputation"
 edition.workspace = true
 version.workspace = true
 license.workspace = true

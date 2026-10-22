@@ -1,5 +1,5 @@
 [package]
-name = "dash-conformance-runner"
+name = "bnpm-conformance-runner"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -7,7 +7,7 @@ publish = false
 description = "Conformance test runner binary — runs CID/capsule/store spec tests from vitest"
 
 [[bin]]
-name = "dash-conformance-runner"
+name = "bnpm-conformance-runner"
 path = "src/main.rs"
 
 [dependencies]
@@ -18,6 +18,6 @@ hex = { workspace = true }
 tokio = { workspace = true }
 tempfile = { workspace = true }
 blake3 = { workspace = true }
-dash-cid = { workspace = true }
-dash-capsule = { workspace = true }
-dash-store = { path = "../store" }
+bnpm-cid = { workspace = true }
+bnpm-capsule = { workspace = true }
+bnpm-store = { path = "../store" }

@@ -1,5 +1,5 @@
 [package]
-name = "dash-agent"
+name = "bnpm-agent"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -12,9 +12,9 @@ serde_json = { workspace = true }
 schemars = { workspace = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }
-dash-manifest = { path = "../manifest" }
-dash-package = { path = "../package" }
-dash-cid = { workspace = true }
+bnpm-manifest = { path = "../manifest" }
+bnpm-package = { path = "../package" }
+bnpm-cid = { workspace = true }
 semver = { workspace = true }
 sha2 = { workspace = true }
 hex = { workspace = true }

@@ -1,4 +1,4 @@
-# dash-progress
+# bnpm-progress
 
 Terminal progress bars and spinners for long-running operations.
 
@@ -16,7 +16,7 @@ Wraps `indicatif` to provide a consistent progress-reporting API for downloads, 
 ## Usage
 
 ```rust
-use dash_progress::{ProgressBar, ProgressStyle};
+use bnpm_progress::{ProgressBar, ProgressStyle};
 
 let bar = ProgressBar::new(total_items);
 bar.set_style(ProgressStyle::default());

@@ -1,10 +1,10 @@
-# dash-testing
+# bnpm-testing
 
 Integration test utilities: test fixtures, mock registries, helpers.
 
 ## Overview
 
-Provides building blocks for writing comprehensive tests for Dash packages and subsystems.
+Provides building blocks for writing comprehensive tests for Bnpm packages and subsystems.
 
 ## Features
 
@@ -17,7 +17,7 @@ Provides building blocks for writing comprehensive tests for Dash packages and s
 ## Usage
 
 ```rust
-use dash_testing::{TestEnv, MockRegistry};
+use bnpm_testing::{TestEnv, MockRegistry};
 
 let mut env = TestEnv::new()?;
 let registry = MockRegistry::start().await?;

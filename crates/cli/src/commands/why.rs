@@ -1,15 +1,15 @@
-//! `dash why` command
+//! `bnpm why` command
 
 use crate::commands::WhyArgs;
 use crate::config::{CliConfig, ExitCode};
 use crate::output::*;
 use anyhow::{Context, Result};
-use dash_cache::{CacheConfig, create_cache};
-use dash_lockfile::Lockfile;
-use dash_manifest::{Manifest, PackageManifest, find_manifest};
-use dash_resolver::RegistryConfig;
-use dash_resolver::ResolveOptions;
-use dash_resolver::Resolver;
+use bnpm_cache::{CacheConfig, create_cache};
+use bnpm_lockfile::Lockfile;
+use bnpm_manifest::{Manifest, PackageManifest, find_manifest};
+use bnpm_resolver::RegistryConfig;
+use bnpm_resolver::ResolveOptions;
+use bnpm_resolver::Resolver;
 use serde_json;
 
 pub async fn run(args: &WhyArgs, config: &CliConfig) -> Result<ExitCode> {
@@ -26,7 +26,7 @@ pub async fn run(args: &WhyArgs, config: &CliConfig) -> Result<ExitCode> {
     };
 
     // Load lockfile
-    let lockfile_path = dash_lockfile::find_lockfile(&cwd).unwrap_or_else(|| cwd.join("dash.lock"));
+    let lockfile_path = bnpm_lockfile::find_lockfile(&cwd).unwrap_or_else(|| cwd.join("bnpm.lock"));
     let lockfile = Lockfile::load(&lockfile_path).context("failed to load lockfile")?;
 
     // Find package in lockfile

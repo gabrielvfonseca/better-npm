@@ -1,4 +1,4 @@
-# dash-graph
+# bnpm-graph
 
 Dependency graph data structures and traversal algorithms.
 
@@ -17,7 +17,7 @@ Builds on petgraph to provide a directed dependency graph with support for cycle
 ## Usage
 
 ```rust
-use dash_graph::{DependencyGraph, GraphBuilder};
+use bnpm_graph::{DependencyGraph, GraphBuilder};
 
 let mut graph = GraphBuilder::new();
 graph.add_dep("app", "react", "^18.0.0")?;

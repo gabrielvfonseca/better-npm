@@ -108,7 +108,7 @@ impl TempDir {
     /// Create a new temporary directory.
     pub fn new() -> Result<Self, FsError> {
         let dir = tempfile::Builder::new()
-            .prefix("dash-")
+            .prefix("bnpm-")
             .tempdir()
             .map_err(|e| FsError::Io(e))?;
         let path = dir.into_path();

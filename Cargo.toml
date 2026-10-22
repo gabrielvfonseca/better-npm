@@ -6,7 +6,7 @@ members = ["crates/*"]
 version = "0.0.0"
 edition = "2024"
 license = "MIT"
-authors = ["Dash Team"]
+authors = ["Bnpm Team"]
 
 [workspace.dependencies]
 serde = { version = "1", features = ["derive"] }
@@ -36,6 +36,7 @@ futures-util = "0.3"
 dashmap = "6"
 parking_lot = "0.12"
 once_cell = "1"
+arc-swap = "1"
 moka = { version = "0.12", features = ["sync"] }
 schemars = "0.8"
 semver = { version = "1", features = ["serde"] }
@@ -70,7 +71,13 @@ serde_yaml = "0.9"
 rand = "0.8"
 tempfile = "3"
 fs2 = "0.4"
-dash-cid = { version = "0.1.0" }
+ciborium = "0.2"
+ciborium-io = "0.2"
+bnpm-cid = { path = "crates/cid" }
+bnpm-capsule = { path = "crates/capsule" }
+bnpm-lockfile = { path = "crates/lockfile" }
+bnpm-proto = { path = "crates/proto" }
+bnpm-provenance = { path = "crates/provenance" }
 
 [profile.release]
 lto = "fat"

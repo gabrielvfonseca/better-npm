@@ -1,10 +1,10 @@
-# dash-filesystem
+# bnpm-filesystem
 
 Filesystem abstractions: path resolution, locking, atomic writes, and directory walks.
 
 ## Overview
 
-Safe, cross-platform filesystem operations for Dash including atomic file writes, directory walking, path resolution, and file locking.
+Safe, cross-platform filesystem operations for Bnpm including atomic file writes, directory walking, path resolution, and file locking.
 
 ## Features
 
@@ -17,7 +17,7 @@ Safe, cross-platform filesystem operations for Dash including atomic file writes
 ## Usage
 
 ```rust
-use dash_filesystem::{atomic_write, lock_file, walk_directory};
+use bnpm_filesystem::{atomic_write, lock_file, walk_directory};
 
 atomic_write("path/to/file.txt", b"content")?;
 let guard = lock_file("path/to/lock.lock")?;

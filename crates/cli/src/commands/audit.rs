@@ -2,17 +2,17 @@ use crate::commands::AuditArgs;
 use crate::config::{CliConfig, ExitCode};
 use crate::output::*;
 use anyhow::{Context, Result};
-use dash_governance::{
+use bnpm_governance::{
     AclEntry, Action, AuditEvent, CapabilityAcl, InMemoryGovernanceStore, Org, Permission, Scope,
     StoreGovernance,
 };
-use dash_lockfile::Lockfile;
-use dash_reputation::compute_full_score;
-use dash_sbom::{SbomFormat, generate_sbom};
+use bnpm_lockfile::Lockfile;
+use bnpm_reputation::compute_full_score;
+use bnpm_sbom::{SbomFormat, generate_sbom};
 
 pub async fn run(args: &AuditArgs, config: &CliConfig) -> Result<ExitCode> {
     let cwd = std::env::current_dir().context("failed to get current directory")?;
-    let lockfile_path = dash_lockfile::find_lockfile(&cwd).unwrap_or_else(|| cwd.join("dash.lock"));
+    let lockfile_path = bnpm_lockfile::find_lockfile(&cwd).unwrap_or_else(|| cwd.join("bnpm.lock"));
     let lockfile = Lockfile::load(&lockfile_path).context("failed to load lockfile")?;
 
     if let Some(ref sbom_fmt) = args.sbom {
@@ -30,18 +30,18 @@ pub async fn run(args: &AuditArgs, config: &CliConfig) -> Result<ExitCode> {
     }
 
     if args.policy {
-        let policy_path = cwd.join("dash.policy.toml");
+        let policy_path = cwd.join("bnpm.policy.toml");
         if !policy_path.exists() {
             print_error(
-                "No dash.policy.toml found. Run 'dash policy check <path>' with explicit path.",
+                "No bnpm.policy.toml found. Run 'bnpm policy check <path>' with explicit path.",
             );
             return Ok(ExitCode::Error);
         }
         let content =
-            std::fs::read_to_string(&policy_path).context("failed to read dash.policy.toml")?;
-        let policy = dash_policy::Policy::from_toml_str(&content)
-            .context("failed to parse dash.policy.toml")?;
-        let graph = dash_resolver::Resolver::from_lockfile(&lockfile)
+            std::fs::read_to_string(&policy_path).context("failed to read bnpm.policy.toml")?;
+        let policy = bnpm_policy::Policy::from_toml_str(&content)
+            .context("failed to parse bnpm.policy.toml")?;
+        let graph = bnpm_resolver::Resolver::from_lockfile(&lockfile)
             .context("failed to load lockfile into graph")?;
         let result = policy.evaluate(&graph);
 
@@ -141,11 +141,11 @@ async fn show_governance(
 ) -> Result<ExitCode> {
     let mut store = InMemoryGovernanceStore::new();
 
-    let org = Org::new("did:dash:org:local", "Local Org", "did:dash:user:admin");
+    let org = Org::new("did:bnpm:org:local", "Local Org", "did:bnpm:user:admin");
     store.save_org(org);
 
     let acl_entries = vec![AclEntry {
-        identity: "did:dash:user:admin".into(),
+        identity: "did:bnpm:user:admin".into(),
         permissions: vec![
             Permission::Admin,
             Permission::Read,
@@ -160,7 +160,7 @@ async fn show_governance(
     store.save_acl(CapabilityAcl { entries: acl_entries });
 
     store.log_audit_event(AuditEvent::new(
-        "did:dash:user:admin",
+        "did:bnpm:user:admin",
         Action::PolicyChange,
         "org:local",
         "Governance audit check",
@@ -183,7 +183,7 @@ async fn show_governance(
         let audit_events = store.query_audit_events(&Default::default());
         print_json(&serde_json::json!({
             "org": {
-                "id": store.get_org("did:dash:org:local").map(|o| serde_json::json!({
+                "id": store.get_org("did:bnpm:org:local").map(|o| serde_json::json!({
                     "id": o.id,
                     "name": o.name,
                     "owner": o.owner,
@@ -206,7 +206,7 @@ async fn show_governance(
         }));
     } else {
         print_info("Governance status:");
-        if let Some(o) = store.get_org("did:dash:org:local") {
+        if let Some(o) = store.get_org("did:bnpm:org:local") {
             print_kv("Org", &o.name);
             print_kv("Owner", &o.owner);
         }

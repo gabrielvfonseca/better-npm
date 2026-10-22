@@ -1,10 +1,10 @@
-# dash-network
+# bnpm-network
 
 HTTP networking layer: retry, backoff, rate limiting, middleware.
 
 ## Overview
 
-Provides utilities for URL handling, HTTP methods, retry logic, and default headers for Dash's registry communication.
+Provides utilities for URL handling, HTTP methods, retry logic, and default headers for Bnpm's registry communication.
 
 ## Features
 
@@ -17,11 +17,11 @@ Provides utilities for URL handling, HTTP methods, retry logic, and default head
 ## Usage
 
 ```rust
-use dash_network::{HttpClient, HttpClientConfig};
+use bnpm_network::{HttpClient, HttpClientConfig};
 
 let client = HttpClient::new(HttpClientConfig {
     retry_limit: 3,
     ..Default::default()
 })?;
-let response = client.get("https://registry.dash.sh/pkg/react").await?;
+let response = client.get("https://registry.bnpm.sh/pkg/react").await?;
 ```

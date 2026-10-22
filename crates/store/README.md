@@ -1,4 +1,4 @@
-# dash-store
+# bnpm-store
 
 Persistent and object storage abstraction with local and cloud backends.
 
@@ -12,13 +12,13 @@ Provides a content-addressable store where data is keyed by its hash, supporting
 - Local filesystem backend
 - S3-compatible object store backend
 - GCS and Azure Blob backend support
-- Caching layer integrated with `dash-cache`
+- Caching layer integrated with `bnpm-cache`
 - Concurrent read/write access
 
 ## Usage
 
 ```rust
-use dash_store::{Store, StoreConfig};
+use bnpm_store::{Store, StoreConfig};
 
 let store = Store::new(StoreConfig::default())?;
 let cid = store.put(b"package data")?;

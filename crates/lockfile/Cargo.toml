@@ -1,5 +1,5 @@
 [package]
-name = "dash-lockfile"
+name = "bnpm-lockfile"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -15,9 +15,9 @@ semver = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }
-dash-package = { path = "../package" }
-dash-manifest = { path = "../manifest" }
-dash-hashing = { path = "../hashing" }
+bnpm-package = { path = "../package" }
+bnpm-manifest = { path = "../manifest" }
+bnpm-hashing = { path = "../hashing" }
 hex = { workspace = true }
-dash-config = { path = "../config" }
+bnpm-config = { path = "../config" }
 chrono = { workspace = true }

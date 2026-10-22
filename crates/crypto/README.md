@@ -1,6 +1,6 @@
-# dash-crypto
+# bnpm-crypto
 
-Cryptographic primitives and key management for Dash.
+Cryptographic primitives and key management for Bnpm.
 
 ## Overview
 
@@ -16,7 +16,7 @@ Provides key generation, symmetric encryption/decryption, and re-exports of comm
 ## Usage
 
 ```rust
-use dash_crypto::{KeyPair, encrypt, decrypt};
+use bnpm_crypto::{KeyPair, encrypt, decrypt};
 
 let keypair = KeyPair::generate_ed25519()?;
 let ciphertext = encrypt(b"secret data", &keypair.secret)?;

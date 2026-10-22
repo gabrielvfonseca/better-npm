@@ -1,13 +1,13 @@
 [package]
-name = "dash-capsule"
+name = "bnpm-capsule"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 publish = false
-description = "DASHCAP1 capsule pack/unpack, file table, range read"
+description = "BNPMCAP1 capsule pack/unpack, file table, range read"
 
 [dependencies]
-dash-cid = { workspace = true }
+bnpm-cid = { workspace = true }
 blake3 = { workspace = true }
 ciborium = { workspace = true }
 zstd = { workspace = true }

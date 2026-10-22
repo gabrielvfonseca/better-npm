@@ -1,4 +1,4 @@
-# dash-compression
+# bnpm-compression
 
 Compression and decompression support (gzip, zstd, deflate).
 
@@ -17,7 +17,7 @@ Provides helpers for compressing and decompressing byte buffers and files using 
 ## Usage
 
 ```rust
-use dash_compression::{compress, decompress, CompressionFormat};
+use bnpm_compression::{compress, decompress, CompressionFormat};
 
 let compressed = compress(b"data", CompressionFormat::Zstd, 3)?;
 let original = decompress(&compressed, CompressionFormat::Zstd)?;

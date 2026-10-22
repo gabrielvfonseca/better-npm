@@ -1,13 +1,13 @@
-//! Dash package manager - main binary entrypoint.
+//! Bnpm package manager - main binary entrypoint.
 //!
 //! Parses command-line arguments, sets up logging and telemetry,
 //! and dispatches to the appropriate command handler.
 
 use clap::{Parser, Subcommand};
 
-/// Dash - The JavaScript package manager.
+/// Bnpm - The JavaScript package manager.
 #[derive(Parser)]
-#[command(name = "dash")]
+#[command(name = "bnpm")]
 #[command(version, about, long_about = None)]
 #[command(propagate_version = true)]
 struct Cli {
@@ -170,82 +170,82 @@ fn main() {
         _ => "trace",
     };
 
-    let log_config = dash_logger::LogConfig {
+    let log_config = bnpm_logger::LogConfig {
         level: log_level.to_string(),
-        format: dash_logger::LogFormat::Text,
-        output: dash_logger::LogOutput::Stdout,
+        format: bnpm_logger::LogFormat::Text,
+        output: bnpm_logger::LogOutput::Stdout,
         include_spans: true,
     };
 
-    if let Err(e) = dash_logger::init(&log_config) {
+    if let Err(e) = bnpm_logger::init(&log_config) {
         eprintln!("Warning: failed to initialize logger: {e}");
     }
 
     // Initialize telemetry
-    let telemetry_config = dash_telemetry::TelemetryConfig {
-        service_name: "dash-cli".to_string(),
+    let telemetry_config = bnpm_telemetry::TelemetryConfig {
+        service_name: "bnpm-cli".to_string(),
         log_level: log_level.to_string(),
         ..Default::default()
     };
 
-    if let Err(e) = dash_telemetry::init_tracing(&telemetry_config) {
+    if let Err(e) = bnpm_telemetry::init_tracing(&telemetry_config) {
         tracing::warn!("Failed to initialize telemetry: {e}");
     }
 
     // Build the command from CLI args
     let command = match cli.command {
         Some(Commands::Install { packages, production, save }) => {
-            dash_cli::Command::Install { packages, production, save }
+            bnpm_cli::Command::Install { packages, production, save }
         }
         Some(Commands::Remove { packages }) => {
-            dash_cli::Command::Remove { packages }
+            bnpm_cli::Command::Remove { packages }
         }
         Some(Commands::Publish { path, tag, access }) => {
-            dash_cli::Command::Publish { path, tag, access }
+            bnpm_cli::Command::Publish { path, tag, access }
         }
         Some(Commands::Search { query, limit }) => {
-            dash_cli::Command::Search { query, limit }
+            bnpm_cli::Command::Search { query, limit }
         }
         Some(Commands::Resolve { path, json }) => {
-            dash_cli::Command::Resolve { path, json }
+            bnpm_cli::Command::Resolve { path, json }
         }
         Some(Commands::Run { script, args }) => {
-            dash_cli::Command::Run { script, args }
+            bnpm_cli::Command::Run { script, args }
         }
         Some(Commands::Init { path, name, version, yes }) => {
-            dash_cli::Command::Init { path, name, version, yes }
+            bnpm_cli::Command::Init { path, name, version, yes }
         }
         Some(Commands::Plugin { name, args }) => {
-            dash_cli::Command::Plugin { name, args }
+            bnpm_cli::Command::Plugin { name, args }
         }
         Some(Commands::Cache { action }) => {
             let cache_action = match action {
-                CacheCommands::Clear => dash_cli::CacheAction::Clear,
-                CacheCommands::Stats => dash_cli::CacheAction::Stats,
-                CacheCommands::Prune => dash_cli::CacheAction::Prune,
+                CacheCommands::Clear => bnpm_cli::CacheAction::Clear,
+                CacheCommands::Stats => bnpm_cli::CacheAction::Stats,
+                CacheCommands::Prune => bnpm_cli::CacheAction::Prune,
             };
-            dash_cli::Command::Cache { action: cache_action }
+            bnpm_cli::Command::Cache { action: cache_action }
         }
         Some(Commands::Workspace { action }) => {
             let workspace_action = match action {
-                WorkspaceCommands::List => dash_cli::WorkspaceAction::List,
-                WorkspaceCommands::Info { member } => dash_cli::WorkspaceAction::Info { member },
-                WorkspaceCommands::Graph => dash_cli::WorkspaceAction::Graph,
+                WorkspaceCommands::List => bnpm_cli::WorkspaceAction::List,
+                WorkspaceCommands::Info { member } => bnpm_cli::WorkspaceAction::Info { member },
+                WorkspaceCommands::Graph => bnpm_cli::WorkspaceAction::Graph,
             };
-            dash_cli::Command::Workspace { action: workspace_action }
+            bnpm_cli::Command::Workspace { action: workspace_action }
         }
         None => {
             // No subcommand - show help
-            dash_cli::Command::Help { command: None }
+            bnpm_cli::Command::Help { command: None }
         }
     };
 
     // Load config and set verbosity
-    let mut cli_config = match dash_cli::CliConfig::load() {
+    let mut cli_config = match bnpm_cli::CliConfig::load() {
         Ok(config) => config,
         Err(e) => {
             tracing::error!("Failed to load config: {e}");
-            std::process::exit(dash_cli::ExitCode::Error.code());
+            std::process::exit(bnpm_cli::ExitCode::Error.code());
         }
     };
 
@@ -255,16 +255,16 @@ fn main() {
     cli_config.config_file = cli.config;
 
     // Execute the command
-    let exit_code = match dash_cli::run(&command) {
+    let exit_code = match bnpm_cli::run(&command) {
         Ok(code) => code,
         Err(e) => {
             tracing::error!("{e}");
-            dash_cli::ExitCode::Error
+            bnpm_cli::ExitCode::Error
         }
     };
 
     // Shutdown telemetry gracefully
-    let _ = dash_telemetry::shutdown_tracing();
+    let _ = bnpm_telemetry::shutdown_tracing();
 
     std::process::exit(exit_code.code());
 }

@@ -1,5 +1,5 @@
 [package]
-name = "dash-registry"
+name = "bnpm-registry"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -7,19 +7,19 @@ publish = false
 description = "DPR control-plane services: name service, content service, and DPR gRPC implementation"
 
 [[bin]]
-name = "dash-gateway"
+name = "bnpm-gateway"
 path = "src/bin/gateway.rs"
 
 [dependencies]
-dash-proto = { workspace = true }
-dash-provenance = { workspace = true }
-dash-store = { path = "../store" }
-dash-cid = { workspace = true }
-dash-capsule = { path = "../capsule" }
-dash-resolver = { path = "../resolver" }
-dash-lockfile = { workspace = true }
-dash-manifest = { path = "../manifest" }
-dash-hashing = { path = "../hashing" }
+bnpm-proto = { workspace = true }
+bnpm-provenance = { workspace = true }
+bnpm-store = { path = "../store" }
+bnpm-cid = { workspace = true }
+bnpm-capsule = { path = "../capsule" }
+bnpm-resolver = { path = "../resolver" }
+bnpm-lockfile = { workspace = true }
+bnpm-manifest = { path = "../manifest" }
+bnpm-hashing = { path = "../hashing" }
 tokio = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }

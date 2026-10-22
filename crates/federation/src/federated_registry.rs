@@ -1,15 +1,15 @@
-// dash-federation: Federated registry implementation
+// bnpm-federation: Federated registry implementation
 
 use std::sync::Arc;
 use std::time::{Duration as StdDuration, Instant};
 
-use dash_capsule::Capsule;
-use dash_cid::Cid;
-use dash_governance::{CapabilityAcl, Scope};
-use dash_manifest::Manifest as SchemaManifest;
-use dash_policy::Policy;
-use dash_proto::dpr_v1::{Binding, FetchResponse, MerkleProof, Range, VersionRange as ProtoVersionRange, version_range::Range as ProtoRange};
-use dash_registry::{ContentService, NameService, VersionRange as LocalVersionRange};
+use bnpm_capsule::Capsule;
+use bnpm_cid::Cid;
+use bnpm_governance::{CapabilityAcl, Scope};
+use bnpm_manifest::Manifest as SchemaManifest;
+use bnpm_policy::Policy;
+use bnpm_proto::dpr_v1::{Binding, FetchResponse, MerkleProof, Range, VersionRange as ProtoVersionRange, version_range::Range as ProtoRange};
+use bnpm_registry::{ContentService, NameService, VersionRange as LocalVersionRange};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
@@ -309,7 +309,7 @@ impl FederatedRegistry {
         version: &str,
         capsule_bytes: &[u8],
         _identity: &str,
-    ) -> Result<dash_proto::dpr_v1::PublishResponse, FederatedError> {
+    ) -> Result<bnpm_proto::dpr_v1::PublishResponse, FederatedError> {
         if let Some(policy) = &self.local_policy {
             if let Some(capsule) = Capsule::from_bytes(capsule_bytes).ok() {
                 let manifest_cbor = capsule.manifest_cbor();
@@ -364,7 +364,7 @@ impl FederatedRegistry {
         };
         self.transparency_log.write().await.append(entry).await?;
 
-        Ok(dash_proto::dpr_v1::PublishResponse {
+        Ok(bnpm_proto::dpr_v1::PublishResponse {
             cid,
             version: version.to_string(),
             log_index,
@@ -423,8 +423,8 @@ impl FederatedRegistry {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dash_capsule::Capsule;
-    use dash_store::cas::CasStore;
+    use bnpm_capsule::Capsule;
+    use bnpm_store::cas::CasStore;
     use tempfile::TempDir;
 
     async fn create_test_registry() -> (FederatedRegistry, TempDir) {
@@ -462,7 +462,7 @@ mod tests {
         let capsule = Capsule::pack(vec![("test.txt".to_string(), b"hello".to_vec())]).unwrap();
         let capsule_bytes = capsule.to_bytes().unwrap();
 
-        let publish_resp = registry.publish_local("test-pkg", "1.0.0", &capsule_bytes, "did:dash:test").await.unwrap();
+        let publish_resp = registry.publish_local("test-pkg", "1.0.0", &capsule_bytes, "did:bnpm:test").await.unwrap();
         assert!(!publish_resp.cid.is_empty());
 
         let result = registry.resolve("test-pkg", &[]).await.unwrap();

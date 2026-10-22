@@ -1,59 +1,59 @@
-//! Dash package manager CLI - main binary entrypoint.
+//! Bnpm package manager CLI - main binary entrypoint.
 //!
-//! This crate provides the CLI entrypoint for Dash, including
+//! This crate provides the CLI entrypoint for Bnpm, including
 //! subcommand dispatch, configuration loading, and exit code handling.
 
 use std::path::PathBuf;
 
 /// Re-export commonly used types for convenience.
-pub use dash_config::Config;
-pub use dash_package::{Package, PackageId, PackageName};
-pub use dash_resolver::Resolver;
-pub use dash_installer::Installer;
+pub use bnpm_config::Config;
+pub use bnpm_package::{Package, PackageId, PackageName};
+pub use bnpm_resolver::Resolver;
+pub use bnpm_installer::Installer;
 
 /// Error type for CLI operations.
 #[derive(Debug, thiserror::Error)]
 pub enum CliError {
     #[error("config error: {0}")]
-    Config(#[from] dash_config::ConfigError),
+    Config(#[from] bnpm_config::ConfigError),
     #[error("install error: {0}")]
-    Install(#[from] dash_installer::InstallError),
+    Install(#[from] bnpm_installer::InstallError),
     #[error("resolve error: {0}")]
-    Resolve(#[from] dash_resolver::ResolveError),
+    Resolve(#[from] bnpm_resolver::ResolveError),
     #[error("manifest error: {0}")]
-    Manifest(#[from] dash_manifest::ManifestError),
+    Manifest(#[from] bnpm_manifest::ManifestError),
     #[error("lockfile error: {0}")]
-    Lockfile(#[from] dash_lockfile::LockfileError),
+    Lockfile(#[from] bnpm_lockfile::LockfileError),
     #[error("network error: {0}")]
-    Network(#[from] dash_network::NetworkError),
+    Network(#[from] bnpm_network::NetworkError),
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
     #[error("logger error: {0}")]
-    Logger(#[from] dash_logger::LogError),
+    Logger(#[from] bnpm_logger::LogError),
     #[error("telemetry error: {0}")]
-    Telemetry(#[from] dash_telemetry::TelemetryError),
+    Telemetry(#[from] bnpm_telemetry::TelemetryError),
     #[error("diagnostic error: {0}")]
-    Diagnostic(#[from] dash_diagnostics::DiagnosticError),
+    Diagnostic(#[from] bnpm_diagnostics::DiagnosticError),
     #[error("plugin error: {0}")]
-    Plugin(#[from] dash_plugin::PluginError),
+    Plugin(#[from] bnpm_plugin::PluginError),
     #[error("sandbox error: {0}")]
-    Sandbox(#[from] dash_sandbox::SandboxError),
+    Sandbox(#[from] bnpm_sandbox::SandboxError),
     #[error("cache error: {0}")]
-    Cache(#[from] dash_cache::CacheError),
+    Cache(#[from] bnpm_cache::CacheError),
     #[error("store error: {0}")]
-    Store(#[from] dash_store::StoreError),
+    Store(#[from] bnpm_store::StoreError),
     #[error("concurrency error: {0}")]
-    Concurrency(#[from] dash_concurrency::ConcurrencyError),
+    Concurrency(#[from] bnpm_concurrency::ConcurrencyError),
     #[error("package error: {0}")]
-    Package(#[from] dash_package::PackageError),
+    Package(#[from] bnpm_package::PackageError),
     #[error("publisher error: {0}")]
-    Publisher(#[from] dash_publisher::PublishError),
+    Publisher(#[from] bnpm_publisher::PublishError),
     #[error("registry error: {0}")]
-    Registry(#[from] dash_registry_client::RegistryError),
+    Registry(#[from] bnpm_registry_client::RegistryError),
     #[error("runtime error: {0}")]
-    Runtime(#[from] dash_runtime::RuntimeError),
+    Runtime(#[from] bnpm_runtime::RuntimeError),
     #[error("workspace error: {0}")]
-    Workspace(#[from] dash_workspace::WorkspaceError),
+    Workspace(#[from] bnpm_workspace::WorkspaceError),
     #[error("serialization error: {0}")]
     Serialization(#[from] serde_json::Error),
     #[error("{0}")]
@@ -89,8 +89,8 @@ impl ExitCode {
 /// CLI configuration loaded from files and command-line arguments.
 #[derive(Debug, Clone)]
 pub struct CliConfig {
-    /// Global dash configuration.
-    pub config: dash_config::Config,
+    /// Global bnpm configuration.
+    pub config: bnpm_config::Config,
     /// Verbosity level (0 = default, 1 = verbose, 2 = debug).
     pub verbosity: u8,
     /// Whether to run in dry-run mode.
@@ -106,7 +106,7 @@ pub struct CliConfig {
 impl CliConfig {
     /// Load the CLI configuration.
     pub fn load() -> Result<Self, CliError> {
-        let mut config = dash_config::load_config()?;
+        let mut config = bnpm_config::load_config()?;
 
         let verbosity: u8 = config.get_or("cli.verbosity", 0u8);
         let dry_run: bool = config.get_or("cli.dry_run", false);
@@ -125,7 +125,7 @@ impl CliConfig {
     /// Create a new CLI config with defaults.
     pub fn new() -> Self {
         Self {
-            config: dash_config::Config::empty(),
+            config: bnpm_config::Config::empty(),
             verbosity: 0,
             dry_run: false,
             color: true,
@@ -258,13 +258,13 @@ pub fn run(command: &Command) -> Result<ExitCode, CliError> {
 }
 
 fn run_install(config: &CliConfig, packages: &[String], production: bool, _save: bool) -> Result<ExitCode, CliError> {
-    let installer = dash_installer::create_installer(&config.config)?;
+    let installer = bnpm_installer::create_installer(&config.config)?;
 
-    let rt = dash_runtime::init_default_runtime()?;
+    let rt = bnpm_runtime::init_default_runtime()?;
     rt.block_on(async {
-        let pkg_names: Vec<dash_package::PackageName> = packages
+        let pkg_names: Vec<bnpm_package::PackageName> = packages
             .iter()
-            .map(|p| dash_package::PackageName::new(p).unwrap_or_else(|_| dash_package::PackageName::new_unchecked(p)))
+            .map(|p| bnpm_package::PackageName::new(p).unwrap_or_else(|_| bnpm_package::PackageName::new_unchecked(p)))
             .collect();
 
         if production {
@@ -287,12 +287,12 @@ fn run_install(config: &CliConfig, packages: &[String], production: bool, _save:
 }
 
 fn run_remove(config: &CliConfig, packages: &[String]) -> Result<ExitCode, CliError> {
-    let installer = dash_installer::create_installer(&config.config)?;
+    let installer = bnpm_installer::create_installer(&config.config)?;
 
-    let rt = dash_runtime::init_default_runtime()?;
+    let rt = bnpm_runtime::init_default_runtime()?;
     rt.block_on(async {
         for pkg in packages {
-            let name = dash_package::PackageName::new(pkg)
+            let name = bnpm_package::PackageName::new(pkg)
                 .map_err(|e| CliError::Package(e))?;
             installer.remove(&name).await?;
             tracing::info!("Removed {pkg}");
@@ -309,20 +309,20 @@ fn run_publish(
     _tag: Option<&str>,
     _access: Option<&str>,
 ) -> Result<ExitCode, CliError> {
-    let publisher = dash_publisher::create_publisher_from_config(&config.config)?;
+    let publisher = bnpm_publisher::create_publisher_from_config(&config.config)?;
 
     let path = path.map_or_else(|| config.cwd.clone(), |p| p.to_path_buf());
-    let manifest_path = dash_manifest::find_manifest(&path)
+    let manifest_path = bnpm_manifest::find_manifest(&path)
         .ok_or_else(|| CliError::Other("manifest not found".to_string()))?;
 
-    let manifest = dash_manifest::Manifest::load(&manifest_path)?;
-    let name = dash_package::PackageName::new(manifest.name())?;
+    let manifest = bnpm_manifest::Manifest::load(&manifest_path)?;
+    let name = bnpm_package::PackageName::new(manifest.name())?;
     let version: semver::Version = manifest.version().parse()
         .map_err(|e| CliError::Other(format!("invalid version: {e}")))?;
 
-    let pkg = dash_package::Package::new(name, version);
+    let pkg = bnpm_package::Package::new(name, version);
 
-    let rt = dash_runtime::init_default_runtime()?;
+    let rt = bnpm_runtime::init_default_runtime()?;
     let result = rt.block_on(publisher.publish(&pkg))?;
 
     tracing::info!("Published {}@{} (revision: {:?})", result.name, result.version, result.revision);
@@ -330,9 +330,9 @@ fn run_publish(
 }
 
 fn run_search(config: &CliConfig, query: &str, limit: Option<u32>) -> Result<ExitCode, CliError> {
-    let client = dash_registry_client::RegistryClient::from_config(&config.config)?;
+    let client = bnpm_registry_client::RegistryClient::from_config(&config.config)?;
 
-    let rt = dash_runtime::init_default_runtime()?;
+    let rt = bnpm_runtime::init_default_runtime()?;
     let results = rt.block_on(client.search(query, limit, None))?;
 
     for result in &results.objects {
@@ -347,11 +347,11 @@ fn run_search(config: &CliConfig, query: &str, limit: Option<u32>) -> Result<Exi
 }
 
 fn run_resolve(config: &CliConfig, _path: Option<&std::path::Path>, json: bool) -> Result<ExitCode, CliError> {
-    let resolver = dash_resolver::create_resolver(&config.config);
+    let resolver = bnpm_resolver::create_resolver(&config.config);
 
     // Load manifest
-    let mut deps = dash_resolver::DependencySet::new();
-    deps.add(dash_resolver::Dependency::new("example-pkg", "*"));
+    let mut deps = bnpm_resolver::DependencySet::new();
+    deps.add(bnpm_resolver::Dependency::new("example-pkg", "*"));
 
     let graph = resolver.resolve(&deps)?;
 
@@ -405,24 +405,24 @@ fn run_init(
 }
 
 fn run_version() -> Result<ExitCode, CliError> {
-    println!("Dash v{}", env!("CARGO_PKG_VERSION"));
+    println!("Bnpm v{}", env!("CARGO_PKG_VERSION"));
     Ok(ExitCode::Success)
 }
 
 fn run_help(command: Option<&str>) -> Result<ExitCode, CliError> {
     match command {
-        Some("install") => println!("dash install [package...]  Install packages"),
-        Some("remove") => println!("dash remove [package...]   Remove packages"),
-        Some("publish") => println!("dash publish [path]        Publish a package"),
-        Some("search") => println!("dash search <query>        Search for packages"),
-        Some("init") => println!("dash init [path]            Initialize a new package"),
-        Some("run") => println!("dash run <script>           Run a script"),
-        Some("cache") => println!("dash cache <clear|stats|prune>  Manage cache"),
-        Some("workspace") => println!("dash workspace <list|info|graph>  Workspace operations"),
+        Some("install") => println!("bnpm install [package...]  Install packages"),
+        Some("remove") => println!("bnpm remove [package...]   Remove packages"),
+        Some("publish") => println!("bnpm publish [path]        Publish a package"),
+        Some("search") => println!("bnpm search <query>        Search for packages"),
+        Some("init") => println!("bnpm init [path]            Initialize a new package"),
+        Some("run") => println!("bnpm run <script>           Run a script"),
+        Some("cache") => println!("bnpm cache <clear|stats|prune>  Manage cache"),
+        Some("workspace") => println!("bnpm workspace <list|info|graph>  Workspace operations"),
         None => {
-            println!("Dash - The JavaScript package manager");
+            println!("Bnpm - The JavaScript package manager");
             println!();
-            println!("Usage: dash <command> [options]");
+            println!("Usage: bnpm <command> [options]");
             println!();
             println!("Commands:");
             println!("  install     Install packages");
@@ -437,7 +437,7 @@ fn run_help(command: Option<&str>) -> Result<ExitCode, CliError> {
             println!("  help        Show this help");
             println!("  version     Show version");
             println!();
-            println!("Use 'dash help <command>' for more details.");
+            println!("Use 'bnpm help <command>' for more details.");
         }
         Some(other) => println!("Unknown command: {other}"),
     }
@@ -445,19 +445,19 @@ fn run_help(command: Option<&str>) -> Result<ExitCode, CliError> {
 }
 
 fn run_plugin(config: &CliConfig, name: &str, args: &[String]) -> Result<ExitCode, CliError> {
-    let mut plugin_manager = dash_plugin::PluginManager::new();
+    let mut plugin_manager = bnpm_plugin::PluginManager::new();
 
     // Try to load plugin from standard directories
     let plugin_dirs = vec![
-        config.cwd.join(".dash").join("plugins"),
+        config.cwd.join(".bnpm").join("plugins"),
         dirs::config_dir()
-            .map(|p| p.join("dash").join("plugins"))
+            .map(|p| p.join("bnpm").join("plugins"))
             .unwrap_or_default(),
     ];
 
     for dir in &plugin_dirs {
         if dir.exists() {
-            dash_plugin::load_plugins_from_dir(&mut plugin_manager, dir)?;
+            bnpm_plugin::load_plugins_from_dir(&mut plugin_manager, dir)?;
         }
     }
 
@@ -474,8 +474,8 @@ fn run_plugin(config: &CliConfig, name: &str, args: &[String]) -> Result<ExitCod
 fn run_cache(config: &CliConfig, action: &CacheAction) -> Result<ExitCode, CliError> {
     match action {
         CacheAction::Clear => {
-            let cache = dash_cache::create_cache(&dash_cache::CacheConfig::default());
-            let rt = dash_runtime::init_default_runtime()?;
+            let cache = bnpm_cache::create_cache(&bnpm_cache::CacheConfig::default());
+            let rt = bnpm_runtime::init_default_runtime()?;
             rt.block_on(async {
                 cache.clear().await?;
                 tracing::info!("Cache cleared");
@@ -493,7 +493,7 @@ fn run_cache(config: &CliConfig, action: &CacheAction) -> Result<ExitCode, CliEr
 }
 
 fn run_workspace(config: &CliConfig, action: &WorkspaceAction) -> Result<ExitCode, CliError> {
-    let workspace = dash_workspace::discover_workspace()?;
+    let workspace = bnpm_workspace::discover_workspace()?;
 
     match action {
         WorkspaceAction::List => {

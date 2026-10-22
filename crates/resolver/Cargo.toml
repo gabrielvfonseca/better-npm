@@ -1,10 +1,10 @@
 [package]
-name = "dash-resolver"
+name = "bnpm-resolver"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
 publish = false
-description = "Dependency resolution algorithm for Dash package graphs"
+description = "Dependency resolution algorithm for Bnpm package graphs"
 
 [dependencies]
 serde = { workspace = true }
@@ -14,12 +14,12 @@ dashmap = { workspace = true }
 tracing = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
-dash-package = { path = "../package" }
-dash-graph = { path = "../graph" }
-dash-manifest = { path = "../manifest" }
-dash-lockfile = { path = "../lockfile" }
-dash-config = { path = "../config" }
-dash-cache = { path = "../cache" }
+bnpm-package = { path = "../package" }
+bnpm-graph = { path = "../graph" }
+bnpm-manifest = { path = "../manifest" }
+bnpm-lockfile = { path = "../lockfile" }
+bnpm-config = { path = "../config" }
+bnpm-cache = { path = "../cache" }
 futures = { workspace = true }
 rayon = { workspace = true }
 

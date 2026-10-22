@@ -214,7 +214,7 @@ impl Default for CacheConfig {
         Self {
             backend: "memory".to_string(),
             ttl_secs: 300,
-            namespace: "dash".to_string(),
+            namespace: "bnpm".to_string(),
             max_size: 10_000,
         }
     }
@@ -241,7 +241,7 @@ pub fn create_cache(config: &CacheConfig) -> Arc<dyn CacheBackend> {
 pub async fn create_cache_async(config: &CacheConfig) -> Arc<dyn CacheBackend> {
     match config.backend.as_str() {
         "redis" => {
-            let redis_url = std::env::var("DASH_REDIS_URL").unwrap_or_else(|_| "redis://127.0.0.1:6379".to_string());
+            let redis_url = std::env::var("BNPM_REDIS_URL").unwrap_or_else(|_| "redis://127.0.0.1:6379".to_string());
             match RedisCache::new(
                 &redis_url,
                 Duration::from_secs(config.ttl_secs),
@@ -316,7 +316,7 @@ mod tests {
         let config = CacheConfig::default();
         assert_eq!(config.backend, "memory");
         assert_eq!(config.ttl_secs, 300);
-        assert_eq!(config.namespace, "dash");
+        assert_eq!(config.namespace, "bnpm");
         assert_eq!(config.max_size, 10_000);
     }
 }

@@ -229,9 +229,9 @@ impl WebhookRegistry {
             let mut req = self.http_client
                 .post(&webhook.url)
                 .header("Content-Type", "application/json")
-                .header("X-Dash-Event", event.event_type.as_str())
-                .header("X-Dash-Signature", &signature)
-                .header("X-Dash-Delivery", delivery.id.to_string())
+                .header("X-Bnpm-Event", event.event_type.as_str())
+                .header("X-Bnpm-Signature", &signature)
+                .header("X-Bnpm-Delivery", delivery.id.to_string())
                 .body(payload.clone());
 
             if let Some(headers) = &webhook.headers {

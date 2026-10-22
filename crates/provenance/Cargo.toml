@@ -1,5 +1,5 @@
 [package]
-name = "dash-provenance"
+name = "bnpm-provenance"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -7,7 +7,7 @@ publish = false
 description = "Sigstore/OIDC keyless signing, in-toto/SLSA attestations, transparency log proofs"
 
 [dependencies]
-dash-cid = { workspace = true }
+bnpm-cid = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = { workspace = true }

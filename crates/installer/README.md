@@ -1,4 +1,4 @@
-# dash-installer
+# bnpm-installer
 
 Package installation orchestration with parallel extraction and verification.
 
@@ -17,7 +17,7 @@ Coordinates the full install pipeline: resolving dependencies, downloading packa
 ## Usage
 
 ```rust
-use dash_installer::Installer;
+use bnpm_installer::Installer;
 
 let installer = Installer::new(&config)?;
 let result = installer

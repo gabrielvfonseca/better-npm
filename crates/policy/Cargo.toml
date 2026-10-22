@@ -1,19 +1,19 @@
 [package]
-name = "dash-policy"
+name = "bnpm-policy"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
 publish = false
-description = "Policy engine — evaluate dash.policy.toml rules against a resolved dependency graph"
+description = "Policy engine — evaluate bnpm.policy.toml rules against a resolved dependency graph"
 
 [dependencies]
 serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = { workspace = true }
-dash-resolver = { path = "../resolver" }
-dash-lockfile = { path = "../lockfile" }
-dash-manifest = { path = "../manifest" }
-dash-cid = { path = "../cid" }
-dash-package = { path = "../package" }
+bnpm-resolver = { path = "../resolver" }
+bnpm-lockfile = { path = "../lockfile" }
+bnpm-manifest = { path = "../manifest" }
+bnpm-cid = { path = "../cid" }
+bnpm-package = { path = "../package" }
 toml = { workspace = true }
 semver = { workspace = true }

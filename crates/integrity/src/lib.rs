@@ -1,6 +1,6 @@
 //! Content hash verification and integrity checking for packages.
 //!
-//! Defines the `Integrity` type used throughout Dash for verifying
+//! Defines the `Integrity` type used throughout Bnpm for verifying
 //! that downloaded package contents match their expected hashes.
 
 use std::path::Path;
@@ -73,9 +73,9 @@ impl Integrity {
     /// Compute an integrity hash from the given data using the specified algorithm.
     pub fn hash(data: &[u8], algorithm: IntegrityAlgorithm) -> Self {
         let value = match algorithm {
-            IntegrityAlgorithm::Sha256 => dash_hashing::hash_sha256(data).to_vec(),
-            IntegrityAlgorithm::Sha512 => dash_hashing::hash_sha512(data).to_vec(),
-            IntegrityAlgorithm::Blake3 => dash_hashing::hash_blake3(data).to_vec(),
+            IntegrityAlgorithm::Sha256 => bnpm_hashing::hash_sha256(data).to_vec(),
+            IntegrityAlgorithm::Sha512 => bnpm_hashing::hash_sha512(data).to_vec(),
+            IntegrityAlgorithm::Blake3 => bnpm_hashing::hash_blake3(data).to_vec(),
         };
 
         Self {
@@ -89,9 +89,9 @@ impl Integrity {
     pub fn verify(&self, data: &[u8]) -> bool {
         let expected = &self.value;
         let actual = match self.algorithm {
-            IntegrityAlgorithm::Sha256 => dash_hashing::hash_sha256(data).to_vec(),
-            IntegrityAlgorithm::Sha512 => dash_hashing::hash_sha512(data).to_vec(),
-            IntegrityAlgorithm::Blake3 => dash_hashing::hash_blake3(data).to_vec(),
+            IntegrityAlgorithm::Sha256 => bnpm_hashing::hash_sha256(data).to_vec(),
+            IntegrityAlgorithm::Sha512 => bnpm_hashing::hash_sha512(data).to_vec(),
+            IntegrityAlgorithm::Blake3 => bnpm_hashing::hash_blake3(data).to_vec(),
         };
         expected == &actual
     }
@@ -101,7 +101,7 @@ impl Integrity {
         format!(
             "{}-{}",
             self.algorithm.as_str(),
-            dash_hashing::to_base64(&self.value)
+            bnpm_hashing::to_base64(&self.value)
         )
     }
 
@@ -114,7 +114,7 @@ impl Integrity {
             .ok_or_else(|| IntegrityError::InvalidFormat(s.to_string()))?;
 
         let algorithm = IntegrityAlgorithm::from_str(algo_str)?;
-        let value = dash_hashing::from_base64(b64_str)
+        let value = bnpm_hashing::from_base64(b64_str)
             .map_err(|_| IntegrityError::InvalidFormat(s.to_string()))?;
 
         if value.len() != algorithm.output_size() {

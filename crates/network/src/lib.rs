@@ -1,7 +1,7 @@
 //! HTTP networking layer: retry, backoff, rate limiting, middleware.
 //!
 //! Provides utilities for URL handling, HTTP methods, retry logic,
-//! and default headers for Dash's registry communication.
+//! and default headers for Bnpm's registry communication.
 
 use std::time::Duration;
 use url::Url;
@@ -19,7 +19,7 @@ pub enum NetworkError {
     Timeout(String),
 }
 
-/// HTTP methods supported by Dash's network layer.
+/// HTTP methods supported by Bnpm's network layer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum HttpMethod {
     Get,
@@ -64,7 +64,7 @@ pub fn is_valid_url(s: &str) -> bool {
     Url::parse(s).is_ok()
 }
 
-/// Return the default HTTP headers used by Dash clients.
+/// Return the default HTTP headers used by Bnpm clients.
 pub fn default_headers() -> http::HeaderMap {
     let mut headers = http::HeaderMap::new();
     headers.insert(
@@ -82,9 +82,9 @@ pub fn default_headers() -> http::HeaderMap {
     headers
 }
 
-/// Return the Dash user-agent string.
+/// Return the Bnpm user-agent string.
 pub fn user_agent() -> String {
-    format!("Dash/{}", env!("CARGO_PKG_VERSION"))
+    format!("Bnpm/{}", env!("CARGO_PKG_VERSION"))
 }
 
 /// Configuration for HTTP request retries with exponential backoff.
@@ -192,7 +192,7 @@ mod tests {
     #[test]
     fn test_user_agent() {
         let ua = user_agent();
-        assert!(ua.starts_with("Dash/"));
+        assert!(ua.starts_with("Bnpm/"));
     }
 
     #[test]

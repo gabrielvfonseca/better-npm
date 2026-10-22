@@ -1,5 +1,5 @@
 [package]
-name = "dash-wasm"
+name = "bnpm-wasm"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -11,8 +11,8 @@ serde = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }
-dash-runtime = { path = "../runtime" }
-dash-filesystem = { path = "../filesystem" }
-dash-cache = { path = "../cache" }
+bnpm-runtime = { path = "../runtime" }
+bnpm-filesystem = { path = "../filesystem" }
+bnpm-cache = { path = "../cache" }
 bytes = { workspace = true }
-dash-hashing = { path = "../hashing" }
+bnpm-hashing = { path = "../hashing" }

@@ -1,4 +1,4 @@
-# dash-provenance
+# bnpm-provenance
 
 Sigstore/OIDC keyless signing, in-toto/SLSA attestations, transparency log proofs.
 
@@ -16,7 +16,7 @@ Provides cryptographic provenance for packages using Sigstore's keyless signing,
 ## Usage
 
 ```rust
-use dash_provenance::{Provenance, Signer};
+use bnpm_provenance::{Provenance, Signer};
 
 let signer = Signer::from_oidc()?;
 let prov = Provenance::new(&package, &signer).await?;

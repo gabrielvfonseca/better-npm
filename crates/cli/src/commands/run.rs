@@ -1,4 +1,4 @@
-//! `dash run` command
+//! `bnpm run` command
 
 use crate::commands::RunArgs;
 use crate::config::{CliConfig, ExitCode};

@@ -1,10 +1,10 @@
-# dash-integrity
+# bnpm-integrity
 
 Content hash verification and integrity checking for packages.
 
 ## Overview
 
-Defines the `Integrity` type used throughout Dash for verifying that downloaded package contents match their expected hashes.
+Defines the `Integrity` type used throughout Bnpm for verifying that downloaded package contents match their expected hashes.
 
 ## Features
 
@@ -16,7 +16,7 @@ Defines the `Integrity` type used throughout Dash for verifying that downloaded 
 ## Usage
 
 ```rust
-use dash_integrity::{Integrity, IntegrityCheck};
+use bnpm_integrity::{Integrity, IntegrityCheck};
 
 let expected = Integrity::parse("sha256-abc123...")?;
 let check = IntegrityCheck::new(&expected);

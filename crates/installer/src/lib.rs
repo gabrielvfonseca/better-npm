@@ -14,33 +14,33 @@ pub enum InstallError {
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
     #[error("resolve error: {0}")]
-    Resolve(#[from] dash_resolver::ResolveError),
+    Resolve(#[from] bnpm_resolver::ResolveError),
     #[error("download error: {0}")]
-    Download(#[from] dash_downloader::DownloadError),
+    Download(#[from] bnpm_downloader::DownloadError),
     #[error("linker error: {0}")]
-    Linker(#[from] dash_linker::LinkerError),
+    Linker(#[from] bnpm_linker::LinkerError),
     #[error("cache error: {0}")]
-    Cache(#[from] dash_cache::CacheError),
+    Cache(#[from] bnpm_cache::CacheError),
     #[error("store error: {0}")]
-    Store(#[from] dash_store::StoreError),
+    Store(#[from] bnpm_store::StoreError),
     #[error("integrity error: {0}")]
-    Integrity(#[from] dash_integrity::IntegrityError),
+    Integrity(#[from] bnpm_integrity::IntegrityError),
     #[error("signature error: {0}")]
-    Signature(#[from] dash_signatures::SignatureError),
+    Signature(#[from] bnpm_signatures::SignatureError),
     #[error("compression error: {0}")]
-    Compression(#[from] dash_compression::CompressionError),
+    Compression(#[from] bnpm_compression::CompressionError),
     #[error("archive error: {0}")]
-    Archive(#[from] dash_archive::ArchiveError),
+    Archive(#[from] bnpm_archive::ArchiveError),
     #[error("manifest error: {0}")]
-    Manifest(#[from] dash_manifest::ManifestError),
+    Manifest(#[from] bnpm_manifest::ManifestError),
     #[error("package error: {0}")]
-    Package(#[from] dash_package::PackageError),
+    Package(#[from] bnpm_package::PackageError),
     #[error("lockfile error: {0}")]
-    Lockfile(#[from] dash_lockfile::LockfileError),
+    Lockfile(#[from] bnpm_lockfile::LockfileError),
     #[error("filesystem error: {0}")]
-    Filesystem(#[from] dash_filesystem::FsError),
+    Filesystem(#[from] bnpm_filesystem::FsError),
     #[error("sandbox error: {0}")]
-    Sandbox(#[from] dash_sandbox::SandboxError),
+    Sandbox(#[from] bnpm_sandbox::SandboxError),
     #[error("validation error: {0}")]
     Validation(String),
 }
@@ -62,7 +62,7 @@ pub struct InstallSummary {
     /// List of packages that were installed.
     pub installed: Vec<String>,
     /// List of binaries that were linked.
-    pub linked: Vec<dash_linker::LinkedBinary>,
+    pub linked: Vec<bnpm_linker::LinkedBinary>,
     /// List of packages that were cached.
     pub cached: Vec<String>,
     /// Total installation duration.
@@ -130,7 +130,7 @@ impl Default for InstallerConfig {
     fn default() -> Self {
         Self {
             target_dir: PathBuf::from("node_modules"),
-            store_dir: PathBuf::from(".dash/store"),
+            store_dir: PathBuf::from(".bnpm/store"),
             bin_dir: PathBuf::from("node_modules/.bin"),
             strategy: InstallStrategy::Copy,
             verify_integrity: true,
@@ -144,24 +144,24 @@ impl Default for InstallerConfig {
 
 /// The package installer orchestrator.
 pub struct Installer {
-    resolver: dash_resolver::Resolver,
-    downloader: dash_downloader::Downloader,
-    linker: dash_linker::Linker,
-    cache: Arc<dyn dash_cache::CacheBackend>,
-    store: dash_store::Store,
+    resolver: bnpm_resolver::Resolver,
+    downloader: bnpm_downloader::Downloader,
+    linker: bnpm_linker::Linker,
+    cache: Arc<dyn bnpm_cache::CacheBackend>,
+    store: bnpm_store::Store,
     config: InstallerConfig,
 }
 
 impl Installer {
     /// Create a new installer.
     pub fn new(
-        resolver: dash_resolver::Resolver,
-        downloader: dash_downloader::Downloader,
-        linker: dash_linker::Linker,
-        store: dash_store::Store,
+        resolver: bnpm_resolver::Resolver,
+        downloader: bnpm_downloader::Downloader,
+        linker: bnpm_linker::Linker,
+        store: bnpm_store::Store,
         config: InstallerConfig,
     ) -> Self {
-        let cache = dash_cache::create_cache(&dash_cache::CacheConfig::default());
+        let cache = bnpm_cache::create_cache(&bnpm_cache::CacheConfig::default());
         Self {
             resolver,
             downloader,
@@ -173,21 +173,21 @@ impl Installer {
     }
 
     /// Install a single package and all its dependencies.
-    pub async fn install(&self, pkg_name: &dash_package::PackageName) -> Result<InstallSummary, InstallError> {
+    pub async fn install(&self, pkg_name: &bnpm_package::PackageName) -> Result<InstallSummary, InstallError> {
         let start = Instant::now();
         let mut summary = InstallSummary::new();
 
         // Create a dependency set from the package name
-        let mut deps = dash_resolver::DependencySet::new();
-        deps.add(dash_resolver::Dependency::new(pkg_name.as_str(), "*"));
+        let mut deps = bnpm_resolver::DependencySet::new();
+        deps.add(bnpm_resolver::Dependency::new(pkg_name.as_str(), "*"));
 
         // Resolve dependencies
         tracing::info!("Resolving dependencies for '{}'...", pkg_name);
         let resolved = self.resolver.resolve(&deps)?;
 
         // Create target directories
-        dash_filesystem::ensure_dir(&self.config.target_dir)?;
-        dash_filesystem::ensure_dir(&self.config.store_dir)?;
+        bnpm_filesystem::ensure_dir(&self.config.target_dir)?;
+        bnpm_filesystem::ensure_dir(&self.config.store_dir)?;
 
         // Process each resolved package
         let packages: Vec<String> = resolved.nodes.keys().cloned().collect();
@@ -197,9 +197,9 @@ impl Installer {
         for pkg_name in &packages {
             let version = resolved.get(pkg_name).unwrap();
 
-            let pkg_ref = dash_package::PackageRef::new(
-                dash_package::PackageId::new(
-                    dash_package::PackageName::new_unchecked(pkg_name),
+            let pkg_ref = bnpm_package::PackageRef::new(
+                bnpm_package::PackageId::new(
+                    bnpm_package::PackageName::new_unchecked(pkg_name),
                     version.clone(),
                 ),
             );
@@ -214,7 +214,7 @@ impl Installer {
                 if let Some(ref expected) = pkg_ref.integrity {
                     if !expected.verify(&downloaded.data) {
                         return Err(InstallError::Integrity(
-                            dash_integrity::IntegrityError::HashMismatch {
+                            bnpm_integrity::IntegrityError::HashMismatch {
                                 expected: expected.to_string(),
                                 actual: downloaded.integrity.to_string(),
                             },
@@ -228,10 +228,10 @@ impl Installer {
 
             // Extract to target directory
             let pkg_dir = self.config.target_dir.join(pkg_name);
-            let entries = dash_archive::extract_archive(
+            let entries = bnpm_archive::extract_archive(
                 &downloaded.data,
                 &pkg_dir,
-                dash_archive::ArchiveFormat::TarGz,
+                bnpm_archive::ArchiveFormat::TarGz,
             )?;
             summary.installed.push(pkg_name.clone());
 
@@ -241,8 +241,8 @@ impl Installer {
         // Link binaries
         for pkg_name in &packages {
             if let Some(version) = resolved.get(pkg_name) {
-                let pkg = dash_package::Package::new(
-                    dash_package::PackageName::new_unchecked(pkg_name),
+                let pkg = bnpm_package::Package::new(
+                    bnpm_package::PackageName::new_unchecked(pkg_name),
                     version.clone(),
                 );
                 let linked = self.linker.link_binaries(&pkg).await?;
@@ -259,7 +259,7 @@ impl Installer {
     /// Install a set of packages in parallel.
     pub async fn install_many(
         &self,
-        packages: &[dash_package::PackageName],
+        packages: &[bnpm_package::PackageName],
     ) -> Result<Vec<InstallSummary>, InstallError> {
         use futures::stream::{self, StreamExt, TryStreamExt};
 
@@ -275,24 +275,24 @@ impl Installer {
     /// Install from a lockfile (reproducible install).
     pub async fn install_from_lockfile(
         &self,
-        lockfile: &dash_lockfile::Lockfile,
+        lockfile: &bnpm_lockfile::Lockfile,
     ) -> Result<InstallSummary, InstallError> {
         let start = Instant::now();
         let mut summary = InstallSummary::new();
 
         for (name, entry) in lockfile.iter() {
-            let pkg_ref = dash_package::PackageRef::new(
-                dash_package::PackageId::parse(name, &entry.version)?,
+            let pkg_ref = bnpm_package::PackageRef::new(
+                bnpm_package::PackageId::parse(name, &entry.version)?,
             );
 
             let downloaded = self.downloader.download(&pkg_ref).await?;
             let _hash = self.store.put(&downloaded.data).await?;
 
             let pkg_dir = self.config.target_dir.join(name);
-            let entries = dash_archive::extract_archive(
+            let entries = bnpm_archive::extract_archive(
                 &downloaded.data,
                 &pkg_dir,
-                dash_archive::ArchiveFormat::TarGz,
+                bnpm_archive::ArchiveFormat::TarGz,
             )?;
 
             summary.installed.push(name.to_string());
@@ -307,10 +307,10 @@ impl Installer {
     }
 
     /// Remove an installed package.
-    pub async fn remove(&self, name: &dash_package::PackageName) -> Result<(), InstallError> {
+    pub async fn remove(&self, name: &bnpm_package::PackageName) -> Result<(), InstallError> {
         let pkg_dir = self.config.target_dir.join(name.as_str());
         if pkg_dir.exists() {
-            dash_filesystem::remove_dir(&pkg_dir)?;
+            bnpm_filesystem::remove_dir(&pkg_dir)?;
         }
 
         self.linker.unlink_binaries(name).await?;
@@ -331,26 +331,26 @@ impl Installer {
 }
 
 /// Create an installer from a configuration.
-pub fn create_installer(config: &dash_config::Config) -> Result<Installer, InstallError> {
-    let resolver = dash_resolver::create_resolver(config);
+pub fn create_installer(config: &bnpm_config::Config) -> Result<Installer, InstallError> {
+    let resolver = bnpm_resolver::create_resolver(config);
 
-    let downloader = dash_downloader::Downloader::from_config(config)?;
+    let downloader = bnpm_downloader::Downloader::from_config(config)?;
 
-    let store = dash_store::create_store_from_config(config)?;
+    let store = bnpm_store::create_store_from_config(config)?;
 
-    let linker_config = dash_linker::LinkerConfig {
+    let linker_config = bnpm_linker::LinkerConfig {
         bin_dir: config
             .get("install.bin_dir")
             .unwrap_or_else(|_| PathBuf::from("node_modules/.bin")),
         ..Default::default()
     };
 
-    let store_backend = Arc::new(dash_store::LocalStore::new(
+    let store_backend = Arc::new(bnpm_store::LocalStore::new(
         config
             .get("store.path")
-            .unwrap_or_else(|_| PathBuf::from(".dash/store")),
+            .unwrap_or_else(|_| PathBuf::from(".bnpm/store")),
     ));
-    let linker = dash_linker::Linker::new(store_backend, linker_config);
+    let linker = bnpm_linker::Linker::new(store_backend, linker_config);
 
     let installer_config = InstallerConfig {
         target_dir: config
@@ -358,7 +358,7 @@ pub fn create_installer(config: &dash_config::Config) -> Result<Installer, Insta
             .unwrap_or_else(|_| PathBuf::from("node_modules")),
         store_dir: config
             .get("install.store_dir")
-            .unwrap_or_else(|_| PathBuf::from(".dash/store")),
+            .unwrap_or_else(|_| PathBuf::from(".bnpm/store")),
         bin_dir: config
             .get("install.bin_dir")
             .unwrap_or_else(|_| PathBuf::from("node_modules/.bin")),
@@ -416,7 +416,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_install_nonexistent_package() {
-        let config = dash_config::Config::empty();
+        let config = bnpm_config::Config::empty();
         let installer = create_installer(&config);
 
         // Should fail gracefully without a registry
@@ -438,7 +438,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_is_installed() {
-        let config = dash_config::Config::empty();
+        let config = bnpm_config::Config::empty();
         match create_installer(&config) {
             Ok(installer) => {
                 let installed = installer.is_installed("nonexistent").await;
@@ -452,10 +452,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_remove_nonexistent() {
-        let config = dash_config::Config::empty();
+        let config = bnpm_config::Config::empty();
         match create_installer(&config) {
             Ok(installer) => {
-                let name = dash_package::PackageName::new_unchecked("nonexistent");
+                let name = bnpm_package::PackageName::new_unchecked("nonexistent");
                 let result = installer.remove(&name).await;
                 assert!(result.is_ok());
             }

@@ -1,10 +1,10 @@
-# dash-auth
+# bnpm-auth
 
 Authentication and token management for registry access.
 
 ## Overview
 
-Supports JWT-based authentication, OAuth2 flows, and basic token-based auth for Dash registry operations.
+Supports JWT-based authentication, OAuth2 flows, and basic token-based auth for Bnpm registry operations.
 
 ## Features
 
@@ -16,7 +16,7 @@ Supports JWT-based authentication, OAuth2 flows, and basic token-based auth for 
 ## Usage
 
 ```rust
-use dash_auth::{AuthProvider, Credentials};
+use bnpm_auth::{AuthProvider, Credentials};
 
 let provider = AuthProvider::new(registry_url);
 let token = provider.authenticate(Credentials::Token("my_token")).await?;

@@ -1,5 +1,5 @@
 [package]
-name = "dash-workspace"
+name = "bnpm-workspace"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -13,14 +13,14 @@ toml = { workspace = true }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }
-dash-config = { path = "../config" }
-dash-manifest = { path = "../manifest" }
-dash-package = { path = "../package" }
-dash-lockfile = { path = "../lockfile" }
-dash-filesystem = { path = "../filesystem" }
-dash-graph = { path = "../graph" }
+bnpm-config = { path = "../config" }
+bnpm-manifest = { path = "../manifest" }
+bnpm-package = { path = "../package" }
+bnpm-lockfile = { path = "../lockfile" }
+bnpm-filesystem = { path = "../filesystem" }
+bnpm-graph = { path = "../graph" }
 glob = { workspace = true }
 walkdir = { workspace = true }
 regex = { workspace = true }
-dash-concurrency = { path = "../concurrency" }
+bnpm-concurrency = { path = "../concurrency" }
 semver = { workspace = true }

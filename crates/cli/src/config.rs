@@ -57,7 +57,7 @@ impl CliConfig {
         self.store_dir.clone().unwrap_or_else(|| {
             dirs::home_dir()
                 .unwrap_or_else(|| PathBuf::from("."))
-                .join(".dash")
+                .join(".bnpm")
                 .join("store")
         })
     }
@@ -65,14 +65,14 @@ impl CliConfig {
     pub fn cache_dir(&self) -> PathBuf {
         self.cache_dir
             .clone()
-            .unwrap_or_else(|| dirs::cache_dir().unwrap_or_else(|| PathBuf::from(".")).join("dash"))
+            .unwrap_or_else(|| dirs::cache_dir().unwrap_or_else(|| PathBuf::from(".")).join("bnpm"))
     }
 
     pub fn registry_url(&self) -> String {
         self.registry
             .first()
             .cloned()
-            .unwrap_or_else(|| "https://registry.dashjs.dev".to_string())
+            .unwrap_or_else(|| "https://registry.bnpmjs.dev".to_string())
     }
 }
 

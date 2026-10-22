@@ -55,12 +55,12 @@ pub fn check_permission(
 ) -> bool {
     acl.entries.iter().any(|entry| {
         entry.identity == identity
-            || entry.identity == "did:dash:any"
+            || entry.identity == "did:bnpm:any"
             || (entry.identity.starts_with("role:") && identity.contains(&entry.identity[5..]))
             || (entry.identity.starts_with("team:") && identity.contains(&entry.identity[5..]))
     }) && acl.entries.iter().any(|entry| {
         (entry.identity == identity
-            || entry.identity == "did:dash:any"
+            || entry.identity == "did:bnpm:any"
             || (entry.identity.starts_with("role:") && identity.contains(&entry.identity[5..]))
             || (entry.identity.starts_with("team:") && identity.contains(&entry.identity[5..])))
             && entry.permissions.contains(permission)
@@ -312,20 +312,20 @@ mod tests {
     fn test_check_permission_allows() {
         let acl = CapabilityAcl {
             entries: vec![AclEntry {
-                identity: "did:dash:user:alice".into(),
+                identity: "did:bnpm:user:alice".into(),
                 permissions: vec![Permission::Read, Permission::Publish],
                 scope: Scope::Namespace("@acme".into()),
             }],
         };
         assert!(check_permission(
             &acl,
-            "did:dash:user:alice",
+            "did:bnpm:user:alice",
             &Permission::Read,
             &Scope::Namespace("@acme".into())
         ));
         assert!(check_permission(
             &acl,
-            "did:dash:user:alice",
+            "did:bnpm:user:alice",
             &Permission::Publish,
             &Scope::Package("@acme/http-client".into())
         ));
@@ -335,14 +335,14 @@ mod tests {
     fn test_check_permission_denies_wrong_permission() {
         let acl = CapabilityAcl {
             entries: vec![AclEntry {
-                identity: "did:dash:user:alice".into(),
+                identity: "did:bnpm:user:alice".into(),
                 permissions: vec![Permission::Read],
                 scope: Scope::Namespace("@acme".into()),
             }],
         };
         assert!(!check_permission(
             &acl,
-            "did:dash:user:alice",
+            "did:bnpm:user:alice",
             &Permission::Admin,
             &Scope::Namespace("@acme".into())
         ));
@@ -352,26 +352,26 @@ mod tests {
     fn test_check_permission_denies_unknown_identity() {
         let acl = CapabilityAcl {
             entries: vec![AclEntry {
-                identity: "did:dash:user:alice".into(),
+                identity: "did:bnpm:user:alice".into(),
                 permissions: vec![Permission::Read],
                 scope: Scope::All,
             }],
         };
-        assert!(!check_permission(&acl, "did:dash:user:bob", &Permission::Read, &Scope::All));
+        assert!(!check_permission(&acl, "did:bnpm:user:bob", &Permission::Read, &Scope::All));
     }
 
     #[test]
     fn test_check_permission_scope_mismatch() {
         let acl = CapabilityAcl {
             entries: vec![AclEntry {
-                identity: "did:dash:user:alice".into(),
+                identity: "did:bnpm:user:alice".into(),
                 permissions: vec![Permission::Publish],
                 scope: Scope::Package("@acme/foo".into()),
             }],
         };
         assert!(!check_permission(
             &acl,
-            "did:dash:user:alice",
+            "did:bnpm:user:alice",
             &Permission::Publish,
             &Scope::Package("@acme/bar".into())
         ));
@@ -407,14 +407,14 @@ mod tests {
     fn test_audit_log_event() {
         let mut log = AuditLog::new();
         let event = AuditEvent::new(
-            "did:dash:user:alice",
+            "did:bnpm:user:alice",
             Action::Publish,
             "@acme/pkg@1.0.0",
             "published version 1.0.0",
         );
         log.log_event(event);
         assert_eq!(log.events.len(), 1);
-        assert_eq!(log.events[0].actor, "did:dash:user:alice");
+        assert_eq!(log.events[0].actor, "did:bnpm:user:alice");
     }
 
     #[test]
@@ -463,9 +463,9 @@ mod tests {
     #[test]
     fn test_in_memory_store() {
         let mut store = InMemoryGovernanceStore::new();
-        let org = Org::new("did:dash:org:acme", "Acme Corp", "did:dash:user:alice");
+        let org = Org::new("did:bnpm:org:acme", "Acme Corp", "did:bnpm:user:alice");
         store.save_org(org);
-        assert!(store.get_org("did:dash:org:acme").is_some());
+        assert!(store.get_org("did:bnpm:org:acme").is_some());
         assert!(store.get_org("nonexistent").is_none());
     }
 
@@ -474,7 +474,7 @@ mod tests {
         let mut store = InMemoryGovernanceStore::new();
         let acl = CapabilityAcl {
             entries: vec![AclEntry {
-                identity: "did:dash:user:alice".into(),
+                identity: "did:bnpm:user:alice".into(),
                 permissions: vec![Permission::Admin],
                 scope: Scope::All,
             }],

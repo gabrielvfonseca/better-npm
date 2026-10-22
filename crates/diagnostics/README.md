@@ -1,4 +1,4 @@
-# dash-diagnostics
+# bnpm-diagnostics
 
 Error diagnostics, reporting, and structured diagnostic data.
 
@@ -16,7 +16,7 @@ Provides infrastructure for collecting system information, reporting diagnostic 
 ## Usage
 
 ```rust
-use dash_diagnostics::{Diagnostics, Report};
+use bnpm_diagnostics::{Diagnostics, Report};
 
 let diag = Diagnostics::new();
 let report: Report = diag.collect()?;

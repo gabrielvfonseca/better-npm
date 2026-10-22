@@ -12,9 +12,9 @@ pub enum WorkspaceError {
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
     #[error("manifest error: {0}")]
-    Manifest(#[from] dash_manifest::ManifestError),
+    Manifest(#[from] bnpm_manifest::ManifestError),
     #[error("config error: {0}")]
-    Config(#[from] dash_config::ConfigError),
+    Config(#[from] bnpm_config::ConfigError),
     #[error("member not found: {0}")]
     MemberNotFound(String),
     #[error("invalid workspace root: {0}")]
@@ -26,7 +26,7 @@ pub enum WorkspaceError {
     #[error("walk error: {0}")]
     Walk(#[from] walkdir::Error),
     #[error("lockfile error: {0}")]
-    Lockfile(#[from] dash_lockfile::LockfileError),
+    Lockfile(#[from] bnpm_lockfile::LockfileError),
 }
 
 /// A single member package within a workspace.
@@ -39,7 +39,7 @@ pub struct WorkspaceMember {
     /// Path to the package directory (relative to workspace root).
     pub path: PathBuf,
     /// The parsed package manifest.
-    pub manifest: dash_manifest::PackageManifest,
+    pub manifest: bnpm_manifest::PackageManifest,
     /// Whether this is the root package.
     pub is_root: bool,
 }
@@ -50,7 +50,7 @@ impl WorkspaceMember {
         name: impl Into<String>,
         version: impl Into<String>,
         path: PathBuf,
-        manifest: dash_manifest::PackageManifest,
+        manifest: bnpm_manifest::PackageManifest,
     ) -> Self {
         Self {
             name: name.into(),
@@ -67,12 +67,12 @@ impl WorkspaceMember {
     }
 
     /// Get the member's package identifier.
-    pub fn package_id(&self) -> Result<dash_package::PackageId, dash_package::PackageError> {
-        let name = dash_package::PackageName::new(&self.name)?;
+    pub fn package_id(&self) -> Result<bnpm_package::PackageId, bnpm_package::PackageError> {
+        let name = bnpm_package::PackageName::new(&self.name)?;
         let version: semver::Version = self.version.parse().map_err(|e| {
-            dash_package::PackageError::InvalidVersion(e)
+            bnpm_package::PackageError::InvalidVersion(e)
         })?;
-        Ok(dash_package::PackageId::new(name, version))
+        Ok(bnpm_package::PackageId::new(name, version))
     }
 }
 
@@ -84,7 +84,7 @@ pub struct WorkspaceConfig {
     /// Exclude patterns.
     pub exclude: Vec<String>,
     /// Shared configuration that applies to all members.
-    pub shared_config: Option<dash_config::Config>,
+    pub shared_config: Option<bnpm_config::Config>,
 }
 
 impl Default for WorkspaceConfig {
@@ -106,13 +106,13 @@ pub struct Workspace {
     /// Workspace configuration.
     pub config: WorkspaceConfig,
     /// Shared lockfile (if any).
-    pub lockfile: Option<dash_lockfile::Lockfile>,
+    pub lockfile: Option<bnpm_lockfile::Lockfile>,
 }
 
 impl Workspace {
     /// Discover a workspace starting from the given path.
     ///
-    /// Searches upward for workspace configuration files (dash.json, package.json
+    /// Searches upward for workspace configuration files (bnpm.json, package.json
     /// with "workspaces" field) and discovers all member packages.
     pub fn discover(path: &Path) -> Result<Self, WorkspaceError> {
         let root = find_workspace_root(path)?;
@@ -120,8 +120,8 @@ impl Workspace {
         let members = discover_members(&root, &config)?;
 
         // Try to load a lockfile
-        let lockfile = dash_lockfile::find_lockfile(&root)
-            .and_then(|p| dash_lockfile::Lockfile::load(&p).ok());
+        let lockfile = bnpm_lockfile::find_lockfile(&root)
+            .and_then(|p| bnpm_lockfile::Lockfile::load(&p).ok());
 
         Ok(Self {
             root,
@@ -183,22 +183,22 @@ impl Workspace {
     }
 
     /// Return the workspace-level dependency graph.
-    pub fn dependency_graph(&self) -> dash_graph::DependencyGraph {
-        let mut graph = dash_graph::DependencyGraph::new();
+    pub fn dependency_graph(&self) -> bnpm_graph::DependencyGraph {
+        let mut graph = bnpm_graph::DependencyGraph::new();
 
         for member in self.members.values() {
-            graph.add_node(dash_graph::Node::new(&member.name, &member.version));
+            graph.add_node(bnpm_graph::Node::new(&member.name, &member.version));
 
             for (dep_name, dep_entry) in &member.manifest.dependencies {
                 if self.members.contains_key(dep_name) {
-                    let kind = dash_graph::DependencyKind::Prod;
+                    let kind = bnpm_graph::DependencyKind::Prod;
                     let _ = graph.add_edge(&member.name, dep_name, kind);
                 }
             }
 
             for (dep_name, _) in &member.manifest.dev_dependencies {
                 if self.members.contains_key(dep_name) {
-                    let kind = dash_graph::DependencyKind::Dev;
+                    let kind = bnpm_graph::DependencyKind::Dev;
                     let _ = graph.add_edge(&member.name, dep_name, kind);
                 }
             }
@@ -208,7 +208,7 @@ impl Workspace {
     }
 
     /// Get the workspace lockfile.
-    pub fn lockfile(&self) -> Option<&dash_lockfile::Lockfile> {
+    pub fn lockfile(&self) -> Option<&bnpm_lockfile::Lockfile> {
         self.lockfile.as_ref()
     }
 
@@ -224,10 +224,10 @@ fn find_workspace_root(path: &Path) -> Result<PathBuf, WorkspaceError> {
 
     while let Some(dir) = current {
         // Check for workspace markers
-        let dash_json = dir.join("dash.json");
+        let bnpm_json = dir.join("bnpm.json");
         let package_json = dir.join("package.json");
 
-        if dash_json.exists() || package_json.exists() {
+        if bnpm_json.exists() || package_json.exists() {
             // Check if it has workspace configuration
             if has_workspace_config(&dir) {
                 return Ok(dir);
@@ -252,8 +252,8 @@ fn find_workspace_root(path: &Path) -> Result<PathBuf, WorkspaceError> {
 }
 
 fn has_workspace_config(path: &Path) -> bool {
-    let dash_json = path.join("dash.json");
-    if let Ok(content) = std::fs::read_to_string(&dash_json) {
+    let bnpm_json = path.join("bnpm.json");
+    if let Ok(content) = std::fs::read_to_string(&bnpm_json) {
         if content.contains("\"workspaces\"") || content.contains("\"members\"") {
             return true;
         }
@@ -270,12 +270,12 @@ fn has_workspace_config(path: &Path) -> bool {
 }
 
 fn load_workspace_config(root: &Path) -> Result<WorkspaceConfig, WorkspaceError> {
-    // Try dash.json or package.json for workspace config
-    let dash_json = root.join("dash.json");
+    // Try bnpm.json or package.json for workspace config
+    let bnpm_json = root.join("bnpm.json");
 
-    if dash_json.exists() {
-        let content = std::fs::read_to_string(&dash_json)?;
-        let manifest = dash_manifest::Manifest::parse(&content)?;
+    if bnpm_json.exists() {
+        let content = std::fs::read_to_string(&bnpm_json)?;
+        let manifest = bnpm_manifest::Manifest::parse(&content)?;
 
         if let Some(workspaces) = manifest.get_raw("workspaces") {
             if let Some(members) = workspaces.as_array() {
@@ -318,7 +318,7 @@ fn discover_members(root: &Path, config: &WorkspaceConfig) -> Result<HashMap<Str
     let root_manifest = root.join("package.json");
     if root_manifest.exists() {
         let content = std::fs::read_to_string(&root_manifest)?;
-        if let Ok(manifest) = dash_manifest::Manifest::parse(&content) {
+        if let Ok(manifest) = bnpm_manifest::Manifest::parse(&content) {
             let member = WorkspaceMember {
                 name: manifest.name().to_string(),
                 version: manifest.version().to_string(),
@@ -356,10 +356,10 @@ fn discover_members(root: &Path, config: &WorkspaceConfig) -> Result<HashMap<Str
                 }
 
                 // Look for manifest files
-                let manifest_file = dash_manifest::find_manifest(entry.path());
+                let manifest_file = bnpm_manifest::find_manifest(entry.path());
                 if let Some(manifest_path) = manifest_file {
                     let content = std::fs::read_to_string(&manifest_path)?;
-                    if let Ok(manifest) = dash_manifest::Manifest::parse(&content) {
+                    if let Ok(manifest) = bnpm_manifest::Manifest::parse(&content) {
                         let name = manifest.name().to_string();
 
                         if members.contains_key(&name) {
@@ -403,7 +403,7 @@ mod tests {
 
     #[test]
     fn test_workspace_member_new() {
-        let manifest = dash_manifest::PackageManifest::default();
+        let manifest = bnpm_manifest::PackageManifest::default();
         let member = WorkspaceMember::new("test-pkg", "1.0.0", PathBuf::from("packages/test"), manifest);
         assert_eq!(member.name, "test-pkg");
         assert_eq!(member.version, "1.0.0");
@@ -436,7 +436,7 @@ mod tests {
 
     #[test]
     fn test_workspace_member_package_id() {
-        let manifest = dash_manifest::PackageManifest::default();
+        let manifest = bnpm_manifest::PackageManifest::default();
         let member = WorkspaceMember::new("my-pkg", "1.0.0", PathBuf::from("."), manifest);
         let pkg_id = member.package_id().unwrap();
         assert_eq!(pkg_id.name.as_str(), "my-pkg");
@@ -466,7 +466,7 @@ mod tests {
         let mut members = HashMap::new();
         members.insert(
             "a".to_string(),
-            WorkspaceMember::new("a", "1.0.0", PathBuf::from("packages/a"), dash_manifest::PackageManifest::default()),
+            WorkspaceMember::new("a", "1.0.0", PathBuf::from("packages/a"), bnpm_manifest::PackageManifest::default()),
         );
         let workspace = Workspace {
             root,

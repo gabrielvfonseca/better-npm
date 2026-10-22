@@ -66,7 +66,7 @@ impl WitnessSigner for Ed25519WitnessSigner {
 
 fn serialize_checkpoint(checkpoint: &Checkpoint) -> Vec<u8> {
     let s = format!(
-        "dash checkpoint\nroot: {}\nsize: {}\ntime: {}\n",
+        "bnpm checkpoint\nroot: {}\nsize: {}\ntime: {}\n",
         hex::encode(checkpoint.root_hash),
         checkpoint.tree_size,
         checkpoint.timestamp,
