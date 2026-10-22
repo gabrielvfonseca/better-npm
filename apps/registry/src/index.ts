@@ -1,14 +1,33 @@
+import { parseAuthHeader, verifyToken } from "@better-npm/auth"
+import { loadConfig } from "@better-npm/config"
 import { createLogger } from "@better-npm/logger"
 import { type PackageStorage, PackageStorageFactory } from "@better-npm/storage"
 import { publishPackageSchema, validate } from "@better-npm/validation"
-import { Hono } from "hono"
+import { type Context, Hono, type Next } from "hono"
 import { HTTPException } from "hono/http-exception"
 import { z } from "zod"
 
 const logger = createLogger("registry")
+const config = loadConfig()
 
 const app = new Hono()
 let packageStorage: PackageStorage = PackageStorageFactory.create()
+
+const PUBLISHER_ROLES = ["publisher", "admin"]
+
+const requirePublisher = async (c: Context, next: Next) => {
+  const header = parseAuthHeader(c.req.header("authorization") ?? "")
+  if (!header.ok) throw new HTTPException(401, { message: "Authentication required" })
+
+  const token = await verifyToken(header.value, config.auth.secret)
+  if (!token.ok) throw new HTTPException(401, { message: "Invalid or expired token" })
+
+  if (!token.value.roles.some((role) => PUBLISHER_ROLES.includes(role))) {
+    throw new HTTPException(403, { message: "Publisher role required" })
+  }
+
+  await next()
+}
 
 app.use("*", async (c, next) => {
   const start = performance.now()
@@ -57,7 +76,7 @@ app.get("/packages/:name/:version", async (c) => {
   }
 })
 
-app.put("/packages/:name", async (c) => {
+app.put("/packages/:name", requirePublisher, async (c) => {
   try {
     const name = c.req.param("name")
     if (!name) throw new HTTPException(400, { message: "Package name is required" })
@@ -84,7 +103,7 @@ app.put("/packages/:name", async (c) => {
   }
 })
 
-app.delete("/packages/:name/:version", async (c) => {
+app.delete("/packages/:name/:version", requirePublisher, async (c) => {
   try {
     const name = c.req.param("name")
     const version = c.req.param("version")
@@ -122,7 +141,7 @@ app.get("/search", async (c) => {
   }
 })
 
-app.post("/packages/:name/deprecate", async (c) => {
+app.post("/packages/:name/deprecate", requirePublisher, async (c) => {
   try {
     const name = c.req.param("name")
     const version = c.req.query("version")

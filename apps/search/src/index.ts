@@ -1,7 +1,8 @@
+import { parseAuthHeader, verifyToken } from "@better-npm/auth"
 import { loadConfig } from "@better-npm/config"
 import { createLogger } from "@better-npm/logger"
 import { type SearchClient, createSearchClient } from "@better-npm/search"
-import { Hono } from "hono"
+import { type Context, Hono, type Next } from "hono"
 import { HTTPException } from "hono/http-exception"
 import type { ContentfulStatusCode } from "hono/utils/http-status"
 
@@ -10,6 +11,22 @@ const config = loadConfig()
 
 const app = new Hono()
 let searchClient: SearchClient
+
+const INDEXER_ROLES = ["indexer", "admin"]
+
+const requireIndexer = async (c: Context, next: Next) => {
+  const header = parseAuthHeader(c.req.header("authorization") ?? "")
+  if (!header.ok) throw new HTTPException(401, { message: "Authentication required" })
+
+  const token = await verifyToken(header.value, config.auth.secret)
+  if (!token.ok) throw new HTTPException(401, { message: "Invalid or expired token" })
+
+  if (!token.value.roles.some((role) => INDEXER_ROLES.includes(role))) {
+    throw new HTTPException(403, { message: "Indexer role required" })
+  }
+
+  await next()
+}
 
 app.use("*", async (c, next) => {
   const start = performance.now()
@@ -65,7 +82,7 @@ app.get("/suggest", async (c) => {
   }
 })
 
-app.post("/index", async (c) => {
+app.post("/index", requireIndexer, async (c) => {
   try {
     const body = await c.req.json()
     const { name, data } = body
@@ -84,7 +101,7 @@ app.post("/index", async (c) => {
   }
 })
 
-app.delete("/index/:name", async (c) => {
+app.delete("/index/:name", requireIndexer, async (c) => {
   try {
     const name = c.req.param("name")
     if (!name) throw new HTTPException(400, { message: "Document name is required" })
