@@ -32,6 +32,7 @@ use bnpm::dpr::v1::{
 use tonic::{Request, Response, Status};
 
 #[derive(Error, Debug)]
+#[allow(clippy::result_large_err)]
 pub enum DprError {
     #[error("transport error: {0}")]
     Transport(#[from] tonic::transport::Error),
@@ -138,6 +139,7 @@ impl DprClient {
 }
 
 /// Run the DPR gRPC server with the given implementation
+#[allow(clippy::result_large_err)]
 pub async fn run_server<D>(addr: std::net::SocketAddr, service: D) -> Result<(), DprError>
 where
     D: bnpm::dpr::v1::dpr_service_server::DprService + Send + Sync + 'static,
@@ -176,6 +178,7 @@ impl bnpm::dpr::v1::dpr_service_server::DprService for DefaultDprServer {
 }
 
 /// Run the DPR gRPC server with the default implementation
+#[allow(clippy::result_large_err)]
 pub async fn run_default_server(addr: std::net::SocketAddr) -> Result<(), DprError> {
     let svc = bnpm::dpr::v1::dpr_service_server::DprServiceServer::new(DefaultDprServer);
     tonic::transport::Server::builder().add_service(svc).serve(addr).await?;

@@ -109,9 +109,9 @@ export default function (plop) {
   // Custom Action Types
   // ──────────────────────────────────────────────
 
-  plop.setActionType("runBunInstall", (_answers, _config, _plop) => {
-    execSync("bun install", { cwd: process.cwd(), stdio: "inherit" })
-    return "bun install completed"
+  plop.setActionType("runPnpmInstall", (_answers, _config, _plop) => {
+    execSync("pnpm install", { cwd: process.cwd(), stdio: "inherit" })
+    return "pnpm install completed"
   })
 
   plop.setActionType("runCargoCheck", (answers, _config, _plop) => {
@@ -124,7 +124,7 @@ export default function (plop) {
   })
 
   plop.setActionType("format", (_answers, _config, _plop) => {
-    execSync("bunx @biomejs/biome format --write .", {
+    execSync("pnpm @biomejs/biome format --write .", {
       cwd: process.cwd(),
       stdio: "inherit",
     })

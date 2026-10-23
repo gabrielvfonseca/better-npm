@@ -7,26 +7,29 @@ export interface AuthToken {
   jti: string
 }
 
-export type Result<T, E = Error> =
-  | { ok: true; value: T }
-  | { ok: false; error: E }
+export type Result<T, E = Error> = { ok: true; value: T } | { ok: false; error: E }
 
 function base64UrlEncode(data: string): string {
-  return btoa(data)
-    .replace(/=/g, "")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
+  return btoa(data).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_")
 }
 
 function base64UrlDecode(str: string): string {
-  str = str.replace(/-/g, "+").replace(/_/g, "/")
-  while (str.length % 4) str += "="
-  return atob(str)
+  let decoded = str.replace(/-/g, "+").replace(/_/g, "/")
+  while (decoded.length % 4) {
+    decoded += "="
+  }
+  return atob(decoded)
 }
 
 async function hmacSha256(secret: string, data: string): Promise<string> {
   const enc = new TextEncoder()
-  const key = await crypto.subtle.importKey("raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"])
+  const key = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  )
   const sig = await crypto.subtle.sign({ name: "HMAC", hash: "SHA-256" }, key, enc.encode(data))
   const bytes = Array.from(new Uint8Array(sig))
     .map((b) => String.fromCharCode(b))
@@ -48,7 +51,7 @@ export async function verifyToken(token: string, secret: string): Promise<Result
       return { ok: false, error: new Error("Invalid signature") }
     }
 
-    const decoded = JSON.parse(base64UrlDecode(payload!)) as AuthToken & { type?: string }
+    const decoded = JSON.parse(base64UrlDecode(payload ?? "")) as AuthToken & { type?: string }
 
     if (decoded.exp && decoded.exp * 1000 < Date.now()) {
       return { ok: false, error: new Error("Token expired") }
@@ -73,7 +76,7 @@ export async function verifyToken(token: string, secret: string): Promise<Result
 export async function createToken(
   payload: Partial<AuthToken>,
   secret: string,
-  expiresIn: string = "7d",
+  expiresIn = "7d",
 ): Promise<string> {
   const now = Math.floor(Date.now() / 1000)
   const expMap: Record<string, number> = {
@@ -138,7 +141,7 @@ export async function hashPassword(password: string): Promise<string> {
 
 export async function verifyPassword(password: string, stored: string): Promise<boolean> {
   const [salt, hash] = stored.split(":")
-  if (!salt || !hash) return false
+  if (!(salt && hash)) return false
 
   const enc = new TextEncoder()
   const key = await crypto.subtle.importKey(
@@ -183,5 +186,10 @@ export function parseAuthHeader(header: string): Result<string> {
     return { ok: false, error: new Error("Invalid authorization header format") }
   }
 
-  return { ok: true, value: parts[1]! }
+  const token = parts[1]
+  if (!token) {
+    return { ok: false, error: new Error("Invalid authorization header format") }
+  }
+
+  return { ok: true, value: token }
 }

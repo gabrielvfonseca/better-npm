@@ -25,7 +25,14 @@ export const listPackages = createContractRoute({
   input: {} as { page?: number; pageSize?: number; scope?: string },
   output: {} as {
     data: Array<{ name: string; version: string; description?: string }>
-    pagination: { page: number; pageSize: number; total: number; totalPages: number; hasNext: boolean; hasPrevious: boolean }
+    pagination: {
+      page: number
+      pageSize: number
+      total: number
+      totalPages: number
+      hasNext: boolean
+      hasPrevious: boolean
+    }
   },
 })
 
@@ -101,7 +108,14 @@ export const getProfile = createContractRoute({
   path: "/v1/auth/profile",
   method: "GET",
   input: {} as Record<string, never>,
-  output: {} as { id: string; username: string; email: string; avatarUrl?: string; createdAt: string; roles: string[] },
+  output: {} as {
+    id: string
+    username: string
+    email: string
+    avatarUrl?: string
+    createdAt: string
+    roles: string[]
+  },
 })
 
 export const updateProfile = createContractRoute({

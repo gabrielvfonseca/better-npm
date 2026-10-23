@@ -156,7 +156,7 @@ impl Sandbox {
             .prefix("bnpm-sandbox-")
             .tempdir()
             .map_err(|e| SandboxError::Setup(e.to_string()))?
-            .into_path();
+            .keep();
 
         Ok(Self {
             config,
@@ -225,7 +225,7 @@ impl Sandbox {
                 duration: self.config.timeout,
             })?;
 
-        let output = output.map_err(|e| SandboxError::Io(e))?;
+        let output = output.map_err(SandboxError::Io)?;
 
         let duration = start.elapsed();
 

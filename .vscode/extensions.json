@@ -26,8 +26,5 @@
     "christian-kohler.path-intellisense",
     "formulahendry.auto-rename-tag"
   ],
-  "unwantedRecommendations": [
-    "esbenp.prettier-vscode",
-    "dbaeumer.vscode-eslint"
-  ]
+  "unwantedRecommendations": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint"]
 }

@@ -1,4 +1,4 @@
-# Better-npm
+# Better-npm (experimental)
 
 A comprehensive package management platform — registry, CLI, SDK, and tooling for the modern ecosystem.
 
@@ -19,7 +19,7 @@ better-npm/
 
 ## Prerequisites
 
-- **Bun** >= 1.2.0
+- **Node.js** >= 22 and **pnpm** >= 10
 - **Rust** >= 1.84.0
 - **Docker** (for services)
 - **Buf** (for protobuf)
@@ -28,34 +28,34 @@ better-npm/
 
 ```bash
 # Install dependencies
-bun install
+pnpm install
 
 # Start development environment
-bun run dev
+pnpm dev
 
 # Build all packages and apps
-bun run build
+pnpm build
 
 # Run all tests
-bun run test
+pnpm test
 
 # Lint and typecheck
-bun run lint
-bun run typecheck
+pnpm lint
+pnpm typecheck
 ```
 
 ## Key Scripts
 
 | Command | Description |
 |---|---|
-| `bun run dev` | Start all services in dev mode |
-| `bun run build` | Build all packages and apps |
-| `bun run lint` | Lint all TS/JS code with Biome |
-| `bun run typecheck` | TypeScript type checking |
-| `bun run test` | Run all tests |
-| `bun run changeset` | Create a changeset for versioning |
-| `bun run db:migrate` | Run database migrations |
-| `bun run proto:gen` | Generate code from protobuf definitions |
+| `pnpm dev` | Start all services in dev mode |
+| `pnpm build` | Build all packages and apps |
+| `pnpm lint` | Lint all TS/JS code with Biome |
+| `pnpm typecheck` | TypeScript type checking |
+| `pnpm test` | Run all tests |
+| `pnpm changeset` | Create a changeset for versioning |
+| `pnpm db:migrate` | Run database migrations |
+| `pnpm proto:gen` | Generate code from protobuf definitions |
 | `cargo build` | Build all Rust crates |
 | `cargo test` | Test all Rust crates |
 

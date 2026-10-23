@@ -1,4 +1,11 @@
-export type ClassValue = string | number | boolean | null | undefined | ClassValue[] | Record<string, boolean | null | undefined>
+export type ClassValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | ClassValue[]
+  | Record<string, boolean | null | undefined>
 
 export function cn(...inputs: ClassValue[]): string {
   const classes: string[] = []
@@ -28,7 +35,7 @@ export function isServer(): boolean {
   return !isBrowser()
 }
 
-export function formatBytes(bytes: number, decimals: number = 2): string {
+export function formatBytes(bytes: number, decimals = 2): string {
   if (bytes === 0) return "0 Bytes"
 
   const k = 1024
@@ -38,9 +45,15 @@ export function formatBytes(bytes: number, decimals: number = 2): string {
   return `${Number.parseFloat((bytes / k ** i).toFixed(decimals))} ${sizes[i]}`
 }
 
-export function formatDate(date: Date | string | number, options?: Intl.DateTimeFormatOptions): string {
+export function formatDate(
+  date: Date | string | number,
+  options?: Intl.DateTimeFormatOptions,
+): string {
   const d = typeof date === "string" || typeof date === "number" ? new Date(date) : date
-  return d.toLocaleDateString("en-US", options ?? { year: "numeric", month: "short", day: "numeric" })
+  return d.toLocaleDateString(
+    "en-US",
+    options ?? { year: "numeric", month: "short", day: "numeric" },
+  )
 }
 
 export function formatRelativeTime(date: Date | string | number): string {
@@ -62,7 +75,7 @@ export function formatRelativeTime(date: Date | string | number): string {
   return "just now"
 }
 
-export function truncate(str: string, maxLength: number, suffix: string = "..."): string {
+export function truncate(str: string, maxLength: number, suffix = "..."): string {
   if (str.length <= maxLength) return str
   return str.slice(0, maxLength - suffix.length) + suffix
 }

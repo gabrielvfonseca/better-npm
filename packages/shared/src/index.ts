@@ -2,7 +2,7 @@ export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export function randomId(length: number = 16): string {
+export function randomId(length = 16): string {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
   let result = ""
   for (let i = 0; i < length; i++) {
@@ -35,10 +35,7 @@ export function pick<T extends Record<string, unknown>, K extends keyof T>(
   return result
 }
 
-export function deepMerge<T extends Record<string, unknown>>(
-  target: T,
-  source: Partial<T>,
-): T {
+export function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial<T>): T {
   const result = { ...target } as Record<string, unknown>
   for (const key of Object.keys(source as Record<string, unknown>)) {
     const val = (source as Record<string, unknown>)[key]
@@ -67,10 +64,7 @@ export interface RetryOptions {
   backoff?: boolean
 }
 
-export async function retry<T>(
-  fn: () => Promise<T>,
-  options: RetryOptions = {},
-): Promise<T> {
+export async function retry<T>(fn: () => Promise<T>, options: RetryOptions = {}): Promise<T> {
   const { retries: maxRetries = 3, delay: baseDelay = 1000, backoff = true } = options
   let lastError: unknown
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -150,7 +144,7 @@ export class EventEmitter {
     if (!this.events.has(event)) {
       this.events.set(event, new Set())
     }
-    this.events.get(event)!.add(handler)
+    this.events.get(event)?.add(handler)
   }
 
   off(event: string, handler: EventHandler): void {

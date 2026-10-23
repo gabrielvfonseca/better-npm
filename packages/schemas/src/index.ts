@@ -64,7 +64,11 @@ export const paginationParamsSchema = z.object({
 })
 
 export const createUserSchema = z.object({
-  username: z.string().min(2).max(32).regex(/^[a-z0-9_-]+$/),
+  username: z
+    .string()
+    .min(2)
+    .max(32)
+    .regex(/^[a-z0-9_-]+$/),
   email: z.string().email(),
   password: z.string().min(8).max(128),
 })
@@ -75,7 +79,12 @@ export const loginSchema = z.object({
 })
 
 export const updateUserSchema = z.object({
-  username: z.string().min(2).max(32).regex(/^[a-z0-9_-]+$/).optional(),
+  username: z
+    .string()
+    .min(2)
+    .max(32)
+    .regex(/^[a-z0-9_-]+$/)
+    .optional(),
   email: z.string().email().optional(),
   avatarUrl: z.string().url().optional(),
 })
@@ -110,7 +119,11 @@ export const workerPayloadSchema = z.object({
 export const workerResultSchema = z.discriminatedUnion("status", [
   z.object({ status: z.literal("success"), data: z.unknown().optional() }),
   z.object({ status: z.literal("failure"), error: z.string().optional() }),
-  z.object({ status: z.literal("retry"), data: z.unknown().optional(), error: z.string().optional() }),
+  z.object({
+    status: z.literal("retry"),
+    data: z.unknown().optional(),
+    error: z.string().optional(),
+  }),
 ])
 
 export type PublishPackageInput = z.infer<typeof publishPackageSchema>

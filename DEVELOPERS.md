@@ -58,10 +58,10 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 rustup update
 ```
 
-### Step 3: Install Bun
+### Step 3: Install pnpm
 
 ```bash
-curl -fsSL https://bun.sh/install | bash
+npm install -g pnpm@10
 ```
 
 ### Step 4: Clone and Install
@@ -69,13 +69,13 @@ curl -fsSL https://bun.sh/install | bash
 ```bash
 git clone https://github.com/bnpm-io/bnpm.git
 cd bnpm
-bun install
+pnpm install
 ```
 
 ### Step 5: Build Everything
 
 ```bash
-bun run build
+pnpm run build
 ```
 
 ## Running the Full Stack Locally
@@ -94,13 +94,13 @@ In separate terminals:
 
 ```bash
 # API server (port 3000)
-bun run dev --filter @better-npm/api
+pnpm dev --filter @better-npm/api
 
 # Web dashboard (port 3001)
-bun run dev --filter @better-npm/web
+pnpm dev --filter @better-npm/web
 
 # Docs site (port 3002)
-bun run dev --filter @better-npm/docs
+pnpm dev --filter @better-npm/docs
 ```
 
 ### CLI from Source
@@ -145,13 +145,13 @@ bnpm/
 
 | Command | Description |
 |---------|-------------|
-| `bun run build` | Build all TypeScript packages |
-| `bun run dev` | Run all apps in development mode |
-| `bun run test` | Run all TypeScript tests |
-| `bun run lint` | Lint TypeScript with Biome |
-| `bun run typecheck` | TypeScript type checking |
-| `bun run clean` | Clean all build artifacts |
-| `bun run gen` | Run code generators (Plop) |
+| `pnpm build` | Build all TypeScript packages |
+| `pnpm dev` | Run all apps in development mode |
+| `pnpm test` | Run all TypeScript tests |
+| `pnpm lint` | Lint TypeScript with Biome |
+| `pnpm typecheck` | TypeScript type checking |
+| `pnpm clean` | Clean all build artifacts |
+| `pnpm gen` | Run code generators (Plop) |
 | `cargo build --workspace` | Build all Rust crates |
 | `cargo test --workspace` | Run all Rust tests |
 | `cargo clippy --workspace` | Lint all Rust crates |
@@ -172,10 +172,10 @@ The SQLite database is created automatically at `~/.bnpm/bnpm.db`.
 docker compose -f docker/docker-compose.dev.yml up -d postgres
 
 # Run migrations
-bun run db:migrate --filter @better-npm/api
+pnpm db:migrate --filter @better-npm/api
 
 # Seed development data
-bun run db:seed --filter @better-npm/api
+pnpm db:seed --filter @better-npm/api
 ```
 
 ### Migration Files
@@ -185,10 +185,10 @@ Migrations are located in `apps/api/src/db/migrations/` and use
 
 ```bash
 # Generate a new migration
-bun run db:generate --filter @better-npm/api
+pnpm db:generate --filter @better-npm/api
 
 # Apply migrations
-bun run db:migrate --filter @better-npm/api
+pnpm db:migrate --filter @better-npm/api
 ```
 
 ## Working with Protobuf
@@ -205,13 +205,13 @@ brew install buf
 ### Generate Code
 
 ```bash
-bun run gen:proto
+pnpm gen:proto
 ```
 
 ### Adding a New Protobuf Definition
 
 1. Create the `.proto` file in `proto/`.
-2. Run `bun run gen:proto` to generate Rust and TS types.
+2. Run `pnpm gen:proto` to generate Rust and TS types.
 3. Import and use the generated types.
 
 ### Linting Protobuf
@@ -264,39 +264,39 @@ cargo fmt --check
 
 ```bash
 # Build all packages
-bun run build
+pnpm build
 
 # Build a specific package
-bun run build --filter @better-npm/cli
+pnpm build --filter @better-npm/cli
 
 # Build in watch mode
-bun run build --watch
+pnpm build --watch
 ```
 
 ### Test
 
 ```bash
 # Run all tests
-bun run test
+pnpm test
 
 # Run tests in a specific package
-bun run test --filter @better-npm/cli
+pnpm test --filter @better-npm/cli
 
 # Run tests with coverage
-bun run test --coverage
+pnpm test --coverage
 
 # Run tests in watch mode
-bun run test --watch
+pnpm test --watch
 ```
 
 ### Lint
 
 ```bash
 # Check linting
-bun run lint
+pnpm lint
 
 # Auto-fix
-bun run lint --fix
+pnpm lint --fix
 ```
 
 ## Debugging Tips
@@ -305,11 +305,11 @@ bun run lint --fix
 
 1. Set `DEBUG=1` environment variable for verbose logging:
    ```bash
-   DEBUG=1 bun run dev --filter @better-npm/api
+   DEBUG=1 pnpm dev --filter @better-npm/api
    ```
 2. Use Chrome DevTools for Node.js debugging:
    ```bash
-   bun --inspect-brk run dev --filter @better-npm/api
+   pnpm --inspect-brk run dev --filter @better-npm/api
    ```
 3. VS Code launch configurations are in `.vscode/launch.json`.
 
@@ -329,7 +329,7 @@ bun run lint --fix
 ### Common Issues
 
 - **Port already in use**: Kill the existing process or change the port in `.env`.
-- **Protobuf codegen stale**: Run `bun run gen:proto` after updating `.proto` files.
+- **Protobuf codegen stale**: Run `pnpm gen:proto` after updating `.proto` files.
 - **Rust compilation slow**: Use `cargo check` instead of `cargo build` for faster
   feedback cycles.
 
@@ -342,7 +342,7 @@ bun run lint --fix
 node --cpu-prof --heap-prof node_modules/.bin/tsx apps/api/src/index.ts
 
 # Memory usage
-bun run test --coverage --max-old-space-size=4096
+pnpm test --coverage --max-old-space-size=4096
 ```
 
 ### Rust Profiling

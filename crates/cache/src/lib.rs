@@ -23,6 +23,7 @@ pub enum CacheError {
 ///
 /// Uses `Vec<u8>` and `serde_json::Value` to avoid generic type parameters
 /// which would prevent `dyn` usage.
+#[allow(clippy::double_must_use)]
 #[async_trait::async_trait]
 pub trait CacheBackend: Send + Sync {
     /// Get a value from the cache by key. Returns serialized JSON bytes.
@@ -153,7 +154,7 @@ impl CacheBackend for RedisCache {
         let prefixed = self.prefixed_key(key);
         let ttl = ttl.unwrap_or(self.default_ttl);
 
-        redis::Cmd::set_ex(&prefixed, value, ttl.as_secs() as u64)
+        redis::Cmd::set_ex(&prefixed, value, ttl.as_secs())
             .query_async::<()>(&mut self.client.clone())
             .await
             .map_err(|e| CacheError::Backend(e.to_string()))?;

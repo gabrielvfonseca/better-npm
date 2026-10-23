@@ -57,7 +57,7 @@ export class Logger {
 
     const output = globalConfig.format === "json" ? JSON.stringify(entry) : this.formatText(entry)
     const stream = globalConfig.destination === "stderr" ? process.stderr : process.stdout
-    stream.write(output + "\n")
+    stream.write(`${output}\n`)
   }
 
   private formatText(entry: LogEntry): string {

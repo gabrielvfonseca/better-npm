@@ -9,7 +9,7 @@ echo "==> Setting up Bnpm development environment..."
 # Check prerequisites
 echo "==> Checking prerequisites..."
 MISSING=0
-for cmd in docker node bun git; do
+for cmd in docker node pnpm git; do
     if ! command -v "$cmd" &> /dev/null; then
         echo "  ERROR: $cmd is required but not installed."
         MISSING=1
@@ -21,7 +21,7 @@ fi
 
 echo "  docker: $(docker --version 2>/dev/null)"
 echo "  node:   $(node --version 2>/dev/null)"
-echo "  bun:    $(bun --version 2>/dev/null)"
+echo "  pnpm:   $(pnpm --version 2>/dev/null)"
 echo "  git:    $(git --version 2>/dev/null)"
 
 # Copy env file if it doesn't exist
@@ -37,7 +37,7 @@ fi
 
 # Install dependencies
 echo "==> Installing dependencies..."
-bun install
+pnpm install
 
 # Build Rust crates
 if command -v cargo &> /dev/null; then
@@ -62,7 +62,7 @@ echo "==> Installing git hooks..."
 if command -v lefthook &> /dev/null; then
     lefthook install
 else
-    bunx lefthook install 2>/dev/null || echo "  (lefthook not found, skipping)"
+    npx lefthook install 2>/dev/null || echo "  (lefthook not found, skipping)"
 fi
 
 # Pull Docker images
@@ -71,14 +71,14 @@ docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml pul
 
 # Run typecheck
 echo "==> Checking TypeScript..."
-bun run typecheck 2>/dev/null || echo "  (typecheck script not found, skipping)"
+pnpm typecheck 2>/dev/null || echo "  (typecheck script not found, skipping)"
 
 echo ""
 echo "==> Setup complete!"
 echo ""
 echo "Quick start:"
 echo "  tools/scripts/dev.sh               Start full dev environment"
-echo "  bun run dev                         Start all turborepo dev servers"
-echo "  bun run dev --filter=@better-npm/api      Start API only"
-echo "  bun run db:migrate                  Run database migrations"
-echo "  bun run db:seed                     Seed database"
+echo "  pnpm dev                         Start all turborepo dev servers"
+echo "  pnpm dev --filter=@better-npm/api      Start API only"
+echo "  pnpm db:migrate                  Run database migrations"
+echo "  pnpm db:seed                     Seed database"

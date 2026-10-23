@@ -125,7 +125,6 @@ fn create_tar(source: &Path, gzip: bool) -> Result<Vec<u8>, ArchiveError> {
                 .map_err(|e| ArchiveError::Archive(e.to_string()))?;
 
             if entry.file_type().is_dir() {
-                    let header = tar::Header::new_gnu();
                     builder
                         .append_dir(relative.to_string_lossy().as_ref(), path)
                         .map_err(|e| ArchiveError::Archive(e.to_string()))?;

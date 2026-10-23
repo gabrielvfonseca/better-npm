@@ -110,8 +110,8 @@ impl TempDir {
         let dir = tempfile::Builder::new()
             .prefix("bnpm-")
             .tempdir()
-            .map_err(|e| FsError::Io(e))?;
-        let path = dir.into_path();
+            .map_err(FsError::Io)?;
+        let path = dir.keep();
         Ok(Self {
             path,
             released: Arc::new(AtomicBool::new(false)),
@@ -123,8 +123,8 @@ impl TempDir {
         let dir = tempfile::Builder::new()
             .prefix(prefix)
             .tempdir()
-            .map_err(|e| FsError::Io(e))?;
-        let path = dir.into_path();
+            .map_err(FsError::Io)?;
+        let path = dir.keep();
         Ok(Self {
             path,
             released: Arc::new(AtomicBool::new(false)),
@@ -137,7 +137,7 @@ impl TempDir {
     }
 
     /// Release the temporary directory (prevent cleanup on drop).
-    pub fn release(mut self) -> PathBuf {
+    pub fn release(self) -> PathBuf {
         self.released.store(true, Ordering::SeqCst);
         self.path.clone()
     }

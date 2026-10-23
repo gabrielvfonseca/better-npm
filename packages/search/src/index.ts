@@ -67,7 +67,7 @@ export class SearchClient {
     }
 
     const data = (await response.json()) as {
-      hits: Array<Record<string, unknown>>
+      hits: Record<string, unknown>[]
       total: number
       page: number
       hitsPerPage: number
@@ -75,11 +75,11 @@ export class SearchClient {
 
     return {
       hits: data.hits.map((hit) => ({
-        id: String(hit["id"] ?? ""),
-        title: String(hit["title"] ?? hit["name"] ?? ""),
-        description: hit["description"] as string | undefined,
-        score: Number(hit["_score"] ?? 1),
-        url: String(hit["url"] ?? `/package/${hit["name"]}`),
+        id: String(hit.id ?? ""),
+        title: String(hit.title ?? hit.name ?? ""),
+        description: hit.description as string | undefined,
+        score: Number(hit._score ?? 1),
+        url: String(hit.url ?? `/package/${hit.name}`),
       })),
       total: data.total,
       page: data.page,
@@ -105,12 +105,12 @@ export class SearchClient {
     }
 
     const data = (await response.json()) as {
-      hits: Array<Record<string, unknown>>
+      hits: Record<string, unknown>[]
     }
 
     return data.hits.map((hit) => ({
-      text: String(hit["name"] ?? hit["title"] ?? ""),
-      score: Number(hit["_score"] ?? 1),
+      text: String(hit.name ?? hit.title ?? ""),
+      score: Number(hit._score ?? 1),
     }))
   }
 

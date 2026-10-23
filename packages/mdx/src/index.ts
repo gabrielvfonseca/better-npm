@@ -38,9 +38,12 @@ export async function compileMdx(source: string): Promise<string> {
   const cleaned = source.replace(FRONTMATTER_RE, "").trim()
 
   let jsx = cleaned
-    .replace(/^### (.+)$/gm, 'export const meta = { /* heading: "$1" */ }\n<Heading level={3}>$1</Heading>')
-    .replace(/^## (.+)$/gm, '<Heading level={2}>$1</Heading>')
-    .replace(/^# (.+)$/gm, '<Heading level={1}>$1</Heading>')
+    .replace(
+      /^### (.+)$/gm,
+      'export const meta = { /* heading: "$1" */ }\n<Heading level={3}>$1</Heading>',
+    )
+    .replace(/^## (.+)$/gm, "<Heading level={2}>$1</Heading>")
+    .replace(/^# (.+)$/gm, "<Heading level={1}>$1</Heading>")
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/`([^`]+)`/g, "<code>$1</code>")
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
@@ -55,7 +58,7 @@ export function extractFrontmatter(source: string): Record<string, unknown> {
   if (!match) return {}
 
   const frontmatter: Record<string, unknown> = {}
-  const lines = match[1]!.split("\n")
+  const lines = match[1]?.split("\n") ?? []
 
   for (const line of lines) {
     const colonIdx = line.indexOf(":")
@@ -74,13 +77,14 @@ export function extractFrontmatter(source: string): Record<string, unknown> {
 
 export function extractToc(source: string): TocEntry[] {
   const entries: TocEntry[] = []
-  let match: RegExpExecArray | null
-
   const re = new RegExp(HEADING_RE)
-  while ((match = re.exec(source)) !== null) {
-    const level = match[1]!.length
-    const text = match[2]!.trim()
+
+  let match: RegExpExecArray | null = re.exec(source)
+  while (match !== null) {
+    const level = match[1]?.length
+    const text = match[2]?.trim()
     entries.push({ level, text, id: slugify(text) })
+    match = re.exec(source)
   }
 
   return entries

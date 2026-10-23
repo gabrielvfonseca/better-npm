@@ -13,6 +13,31 @@ build/
 out/
 .cache/
 target/
+**/src/**/*.d.ts
+**/src/**/*.d.ts.map
+**/src/**/*.js.map
+**/src/**/*.jsx
+**/src/**/*.jsx.map
+**/src/**/*.js
+**/*.test.d.ts.map
+**/*.test.js
+**/*.test.js.map
+**/app/**/*.d.ts
+**/app/**/*.d.ts.map
+**/app/**/*.jsx
+**/app/**/*.jsx.map
+**/next-env.d.ts
+conformance/**/*.d.ts.map
+conformance/**/*.js
+conformance/**/*.js.map
+**/*.config.d.ts
+**/*.config.d.ts.map
+**/*.config.js
+**/*.config.js.map
+**/app/**/*.d.ts
+**/app/**/*.d.ts.map
+**/app/**/*.jsx
+**/app/**/*.jsx.map
 
 # Environment
 .env

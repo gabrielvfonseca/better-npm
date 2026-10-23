@@ -24,7 +24,7 @@ fi
 
 # Run full CI check
 echo "==> Running CI checks..."
-bun run ci:check 2>/dev/null || {
+pnpm ci:check 2>/dev/null || {
     echo "ERROR: CI checks failed."
     exit 1
 }

@@ -1,12 +1,14 @@
 <script lang="ts">
-  let pkg: { name: string; description: string; version: string } | null = $state(null);
+let _pkg: { name: string; description: string; version: string } | null = $state(null)
 
-  $effect(() => {
-    fetch('/api/v1/packages/vite')
-      .then((res) => res.json())
-      .then((data) => (pkg = data))
-      .catch(() => {});
-  });
+$effect(() => {
+  fetch("/api/v1/packages/vite")
+    .then((res) => res.json())
+    .then((data) => {
+      _pkg = data
+    })
+    .catch(() => {})
+})
 </script>
 
 <div>

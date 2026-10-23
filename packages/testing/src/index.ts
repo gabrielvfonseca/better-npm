@@ -1,4 +1,5 @@
 import { mkdtempSync, rmSync } from "node:fs"
+import http from "node:http"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import type { BnpmConfig } from "@better-npm/config"
@@ -53,31 +54,39 @@ function deepMerge<T extends object>(target: T, source: Partial<T>): T {
 
 export type MockHandler = (req: Request) => Response | Promise<Response>
 
-export function createMockServer(handlers: Record<string, MockHandler>): {
+export async function createMockServer(handlers: Record<string, MockHandler>): Promise<{
   url: string
   close: () => void
-} {
+}> {
   const routes = new Map<string, MockHandler>()
   for (const [path, handler] of Object.entries(handlers)) {
     routes.set(path, handler)
   }
 
-  const server = Bun.serve({
-    port: 0,
-    async fetch(req) {
-      const url = new URL(req.url)
-      const handler = routes.get(url.pathname) ?? routes.get("*")
-      if (handler) {
-        return handler(req)
-      }
-      return new Response("Not found", { status: 404 })
-    },
+  const server = http.createServer(async (req, res) => {
+    const url = new URL(req.url ?? "http://localhost/")
+    const handler = routes.get(url.pathname) ?? routes.get("*")
+    if (handler) {
+      const response = await handler(req as unknown as Request)
+      res.writeHead(response.status, Object.fromEntries(response.headers.entries()))
+      const body = await response.arrayBuffer()
+      res.end(Buffer.from(body))
+    } else {
+      res.writeHead(404, { "Content-Type": "text/plain" })
+      res.end("Not found")
+    }
   })
 
-  return {
-    url: `http://localhost:${server.port}`,
-    close: () => server.stop(),
-  }
+  return new Promise((resolve) => {
+    server.listen(0, "127.0.0.1", () => {
+      const addr = server.address()
+      const port = typeof addr === "object" && addr ? addr.port : 0
+      resolve({
+        url: `http://127.0.0.1:${port}`,
+        close: () => server.close(),
+      })
+    })
+  })
 }
 
 export function sleep(ms: number): Promise<void> {

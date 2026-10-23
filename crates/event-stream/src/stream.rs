@@ -125,12 +125,14 @@ impl EventStream {
         self.event_tx.subscribe()
     }
 
+    #[allow(clippy::result_large_err)]
     pub async fn publish(&self, event: Event) -> Result<usize, StreamError> {
         let sent = self.event_tx.send(event.clone())?;
         debug!("Published event {} to {} subscribers", event.id, sent);
         Ok(sent)
     }
 
+    #[allow(clippy::result_large_err)]
     pub async fn create_subscription(
         &self,
         client_id: String,
@@ -157,6 +159,7 @@ impl EventStream {
         Ok(subscription)
     }
 
+    #[allow(clippy::result_large_err)]
     pub async fn remove_subscription(&self, subscription_id: Uuid) -> Result<(), StreamError> {
         let mut subs = self.subscriptions.write().await;
         let mut client_subs = self.client_subscriptions.write().await;
@@ -206,6 +209,7 @@ pub struct StreamStats {
 }
 
 #[derive(Debug, thiserror::Error)]
+#[allow(clippy::large_enum_variant)]
 pub enum StreamError {
     #[error("broadcast send error: {0}")]
     BroadcastSend(#[from] broadcast::error::SendError<Event>),

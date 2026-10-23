@@ -15,14 +15,14 @@ mkdir -p examples/react/src examples/vue/src examples/svelte/src examples/node/s
 mkdir -p docs benchmarks
 
 # Install dependencies
-if command -v bun &> /dev/null; then
-    echo "==> Installing dependencies with bun..."
-    bun install
+if command -v pnpm &> /dev/null; then
+    echo "==> Installing dependencies with pnpm..."
+    pnpm install
 elif command -v npm &> /dev/null; then
     echo "==> Installing dependencies with npm..."
     npm install
 else
-    echo "WARNING: No package manager found. Install bun or npm."
+    echo "WARNING: No package manager found. Install pnpm or npm."
 fi
 
 # Build Rust crates
@@ -62,4 +62,4 @@ echo "==> Done! Bnpm monorepo initialized."
 echo ""
 echo "Next steps:"
 echo "  tools/scripts/dev.sh    Start development environment"
-echo "  bun run dev             Start turborepo dev servers"
+echo "  pnpm run dev             Start turborepo dev servers"

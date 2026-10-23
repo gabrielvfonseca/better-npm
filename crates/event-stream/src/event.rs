@@ -34,21 +34,25 @@ impl EventType {
             EventType::ScanCompleted => "scan-completed",
         }
     }
+}
 
-    pub fn from_str(s: &str) -> Option<Self> {
+impl std::str::FromStr for EventType {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "package-published" => Some(EventType::PackagePublished),
-            "package-yanked" => Some(EventType::PackageYanked),
-            "tag-moved" => Some(EventType::TagMoved),
-            "vulnerability-reported" => Some(EventType::VulnerabilityReported),
-            "policy-violation" => Some(EventType::PolicyViolation),
-            "member-added" => Some(EventType::MemberAdded),
-            "member-removed" => Some(EventType::MemberRemoved),
-            "version-added" => Some(EventType::VersionAdded),
-            "reputation-changed" => Some(EventType::ReputationChanged),
-            "build-completed" => Some(EventType::BuildCompleted),
-            "scan-completed" => Some(EventType::ScanCompleted),
-            _ => None,
+            "package-published" => Ok(EventType::PackagePublished),
+            "package-yanked" => Ok(EventType::PackageYanked),
+            "tag-moved" => Ok(EventType::TagMoved),
+            "vulnerability-reported" => Ok(EventType::VulnerabilityReported),
+            "policy-violation" => Ok(EventType::PolicyViolation),
+            "member-added" => Ok(EventType::MemberAdded),
+            "member-removed" => Ok(EventType::MemberRemoved),
+            "version-added" => Ok(EventType::VersionAdded),
+            "reputation-changed" => Ok(EventType::ReputationChanged),
+            "build-completed" => Ok(EventType::BuildCompleted),
+            "scan-completed" => Ok(EventType::ScanCompleted),
+            _ => Err(()),
         }
     }
 }
@@ -230,8 +234,8 @@ mod tests {
     #[test]
     fn test_event_type_string_conversion() {
         assert_eq!(EventType::PackagePublished.as_str(), "package-published");
-        assert_eq!(EventType::from_str("package-published"), Some(EventType::PackagePublished));
-        assert_eq!(EventType::from_str("unknown"), None);
+        assert_eq!("package-published".parse::<EventType>(), Ok(EventType::PackagePublished));
+        assert!("unknown".parse::<EventType>().is_err());
     }
 
     #[test]

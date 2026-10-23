@@ -99,6 +99,7 @@ impl AuthSession {
 }
 
 /// Token storage backend.
+#[allow(clippy::double_must_use)]
 #[async_trait::async_trait]
 pub trait TokenStore: Send + Sync {
     /// Store a token for a user.
@@ -123,6 +124,12 @@ impl MemoryTokenStore {
     }
 }
 
+impl Default for MemoryTokenStore {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[async_trait::async_trait]
 impl TokenStore for MemoryTokenStore {
     async fn store_token(&self, user: &str, token: &str, expires_at: SystemTime) -> Result<(), AuthError> {
@@ -144,6 +151,7 @@ impl TokenStore for MemoryTokenStore {
 pub struct Authenticator {
     provider: AuthProvider,
     jwt_secret: Option<String>,
+    #[allow(dead_code)]
     store: Arc<dyn TokenStore>,
     allowed_permissions: HashSet<String>,
 }
@@ -210,8 +218,8 @@ impl Authenticator {
                     Err(AuthError::AuthenticationFailed("no JWT secret configured".to_string()))
                 }
             }
-            AuthProvider::Basic => Ok(token.len() > 0),
-            AuthProvider::OAuth2 => Ok(token.len() > 0),
+            AuthProvider::Basic => Ok(!token.is_empty()),
+            AuthProvider::OAuth2 => Ok(!token.is_empty()),
         }
     }
 

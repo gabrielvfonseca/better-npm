@@ -33,11 +33,10 @@ elif command -v nvm &> /dev/null; then
     nvm use "${NODE_VERSION:-22}"
 fi
 
-# Install bun if not available
-if ! command -v bun &> /dev/null; then
-    echo "==> Installing bun..."
-    curl -fsSL https://bun.sh/install | bash
-    export PATH="$HOME/.bun/bin:$PATH"
+# Install pnpm if not available
+if ! command -v pnpm &> /dev/null; then
+    echo "==> Installing pnpm..."
+    npm install -g pnpm
 fi
 
 # Install turbo globally if not available
@@ -48,7 +47,7 @@ fi
 
 # Install dependencies
 echo "==> Installing dependencies..."
-bun install --frozen-lockfile 2>/dev/null || npm ci
+pnpm install --frozen-lockfile 2>/dev/null || npm ci
 
 # Fetch Rust dependencies
 if command -v cargo &> /dev/null; then
@@ -66,7 +65,7 @@ fi
 echo "==> Verifying toolchain..."
 echo "  node:   $(node --version 2>/dev/null || echo 'N/A')"
 echo "  npm:    $(npm --version 2>/dev/null || echo 'N/A')"
-echo "  bun:    $(bun --version 2>/dev/null || echo 'N/A')"
+echo "  pnpm:   $(pnpm --version 2>/dev/null || echo 'N/A')"
 echo "  turbo:  $(turbo --version 2>/dev/null || echo 'N/A')"
 echo "  cargo:  $(cargo --version 2>/dev/null || echo 'N/A')"
 echo "  rustc:  $(rustc --version 2>/dev/null || echo 'N/A')"

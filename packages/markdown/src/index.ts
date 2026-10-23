@@ -50,13 +50,14 @@ export function renderMarkdownSafe(content: string): string {
 
 export function extractHeadings(content: string): Heading[] {
   const headings: Heading[] = []
-  let match: RegExpExecArray | null
-
   const re = new RegExp(HEADING_RE)
-  while ((match = re.exec(content)) !== null) {
-    const level = match[1]!.length
-    const text = match[2]!.trim()
+
+  let match: RegExpExecArray | null = re.exec(content)
+  while (match !== null) {
+    const level = match[1]?.length
+    const text = match[2]?.trim()
     headings.push({ level, text, id: slugify(text) })
+    match = re.exec(content)
   }
 
   return headings
@@ -78,7 +79,10 @@ export function extractMetadata(content: string): Record<string, string> {
     if (inFrontMatter) {
       const match = METADATA_LINE_RE.exec(trimmed)
       if (match) {
-        metadata[match[1]!] = match[2]!.trim()
+        const key = match[1]
+        if (key) {
+          metadata[key] = match[2]?.trim() ?? ""
+        }
       }
     } else if (!trimmed) {
       break

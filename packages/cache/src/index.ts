@@ -81,7 +81,12 @@ export class MemoryCache implements CacheBackend {
 }
 
 export class RedisCache implements CacheBackend {
-  private client: { get: (key: string) => Promise<string | null>; set: (key: string, value: string, ttl?: number) => Promise<unknown>; del: (key: string) => Promise<unknown>; exists: (key: string) => Promise<number> }
+  private client: {
+    get: (key: string) => Promise<string | null>
+    set: (key: string, value: string, ttl?: number) => Promise<unknown>
+    del: (key: string) => Promise<unknown>
+    exists: (key: string) => Promise<number>
+  }
 
   constructor(client: {
     get: (key: string) => Promise<string | null>
@@ -146,11 +151,7 @@ export function createCache(config: CacheConfig): CacheBackend {
 
 const memoCache = new MemoryCache(null)
 
-export async function memoize<T>(
-  fn: () => Promise<T>,
-  key: string,
-  ttl?: number,
-): Promise<T> {
+export async function memoize<T>(fn: () => Promise<T>, key: string, ttl?: number): Promise<T> {
   const cached = await memoCache.get<T>(key)
   if (cached !== undefined) return cached
 

@@ -29,8 +29,8 @@ done
 
 # Run database migrations
 echo "==> Running migrations..."
-if command -v bun &> /dev/null; then
-    bun run db:migrate
+if command -v pnpm &> /dev/null; then
+    pnpm db:migrate
 elif command -v npx &> /dev/null; then
     npx turbo db:migrate
 else
@@ -45,15 +45,15 @@ fi
 
 # Start dev servers
 echo "==> Starting development servers..."
-if command -v bun &> /dev/null; then
-    bun run dev
+if command -v pnpm &> /dev/null; then
+    pnpm dev
 elif command -v npx &> /dev/null && command -v turbo &> /dev/null; then
     npx turbo dev --parallel
 else
     echo "WARNING: turbo not found. Run individual apps manually."
-    echo "  bun run dev --filter=@better-npm/api"
-    echo "  bun run dev --filter=@better-npm/registry"
-    echo "  bun run dev --filter=@better-npm/website"
+    echo "  pnpm dev --filter=@better-npm/api"
+    echo "  pnpm dev --filter=@better-npm/registry"
+    echo "  pnpm dev --filter=@better-npm/website"
 fi
 
 echo "==> Development environment ready."

@@ -28,6 +28,7 @@ pub enum StoreError {
 }
 
 /// A generic backend for content-addressable storage.
+#[allow(clippy::double_must_use)]
 #[async_trait::async_trait]
 pub trait StoreBackend: Send + Sync {
     /// Retrieve data by its content hash.
@@ -263,8 +264,6 @@ impl StoreBackend for ObjectStoreBackend {
         Ok(keys)
     }
 }
-
-use futures::StreamExt;
 
 /// A content-addressable store with pluggable backend.
 pub struct Store {

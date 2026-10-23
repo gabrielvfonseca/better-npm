@@ -18,7 +18,7 @@ case "$MODE" in
 
         if [ ! -f "$TARGET" ]; then
             echo "ERROR: Target not found: $TARGET"
-            echo "Build the project first: bun run build --filter=@better-npm/api"
+            echo "Build the project first: pnpm build --filter=@better-npm/api"
             exit 1
         fi
 
@@ -63,7 +63,7 @@ case "$MODE" in
 
         if ! command -v 0x &> /dev/null; then
             echo "  Installing 0x..."
-            npm install -g 0x 2>/dev/null || bun install -g 0x 2>/dev/null || {
+            npm install -g 0x 2>/dev/null || pnpm add -g 0x 2>/dev/null || {
                 echo "ERROR: Could not install 0x. Install manually: npm install -g 0x"
                 exit 1
             }

@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { onMounted, ref } from "vue"
 
 interface Package {
-  name: string;
-  description: string;
-  version: string;
+  name: string
+  description: string
+  version: string
 }
 
-const title = 'Bnpm + Vue';
-const pkg = ref<Package | null>(null);
+const _title = "Bnpm + Vue"
+const pkg = ref<Package | null>(null)
 
 onMounted(async () => {
   try {
-    const res = await fetch('/api/v1/packages/express');
-    pkg.value = await res.json();
+    const res = await fetch("/api/v1/packages/express")
+    pkg.value = await res.json()
   } catch {
     // ignore
   }
-});
+})
 </script>
 
 <template>

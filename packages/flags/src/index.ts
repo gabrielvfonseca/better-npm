@@ -25,15 +25,35 @@ function evaluateRule(rule: FlagRule, context: Record<string, unknown>): boolean
     case "nin":
       return Array.isArray(rule.value) && !(rule.value as unknown[]).includes(contextValue)
     case "gt":
-      return typeof contextValue === "number" && typeof rule.value === "number" && contextValue > rule.value
+      return (
+        typeof contextValue === "number" &&
+        typeof rule.value === "number" &&
+        contextValue > rule.value
+      )
     case "gte":
-      return typeof contextValue === "number" && typeof rule.value === "number" && contextValue >= rule.value
+      return (
+        typeof contextValue === "number" &&
+        typeof rule.value === "number" &&
+        contextValue >= rule.value
+      )
     case "lt":
-      return typeof contextValue === "number" && typeof rule.value === "number" && contextValue < rule.value
+      return (
+        typeof contextValue === "number" &&
+        typeof rule.value === "number" &&
+        contextValue < rule.value
+      )
     case "lte":
-      return typeof contextValue === "number" && typeof rule.value === "number" && contextValue <= rule.value
+      return (
+        typeof contextValue === "number" &&
+        typeof rule.value === "number" &&
+        contextValue <= rule.value
+      )
     case "contains":
-      return typeof contextValue === "string" && typeof rule.value === "string" && contextValue.includes(rule.value)
+      return (
+        typeof contextValue === "string" &&
+        typeof rule.value === "string" &&
+        contextValue.includes(rule.value)
+      )
     default:
       return false
   }

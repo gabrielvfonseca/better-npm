@@ -7,7 +7,7 @@ instructions will help you install Bnpm on your system.
 
 Before installing Bnpm, ensure you have the following prerequisites:
 
-- **Bun** 1.1+ — [Install Bun](https://bun.sh)
+- **Node.js** 22+ and **pnpm** 10+ — [Install pnpm](https://pnpm.io)
 - **Rust** 1.80+ (edition 2024) — [Install Rust](https://rustup.rs)
 - **Docker** (optional, for local infrastructure) — [Install Docker](https://docker.com)
 - **Buf CLI** (optional, for protobuf codegen) — `brew install buf`
@@ -43,14 +43,12 @@ scoop bucket add bnpm https://github.com/bnpm-io/scoop-bucket.git
 scoop install bnpm
 ```
 
-### npm / pnpm / bun (global)
+### npm / pnpm (global)
 
 ```bash
 npm install -g @better-npm/cli
 # or
 pnpm add -g @better-npm/cli
-# or
-bun install -g @better-npm/cli
 ```
 
 ### Cargo (from source)
@@ -71,13 +69,13 @@ cd bnpm
 ### Install Dependencies
 
 ```bash
-bun install
+pnpm install
 ```
 
 ### Build All Packages
 
 ```bash
-bun run build
+pnpm build
 ```
 
 ### Build the CLI Only
@@ -177,7 +175,7 @@ brew link bnpm
 If you encounter build errors when building from source:
 
 1. Ensure Rust is up to date: `rustup update`
-2. Ensure Bun is up to date: `bun upgrade`
-3. Clean and rebuild: `cargo clean && bun run build`
+2. Ensure pnpm is up to date: `pnpm upgrade`
+3. Clean and rebuild: `cargo clean && pnpm build`
 
 For further help, see [SUPPORT.md](SUPPORT.md).

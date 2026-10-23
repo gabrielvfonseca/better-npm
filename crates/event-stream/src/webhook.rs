@@ -206,7 +206,7 @@ impl WebhookRegistry {
             id: Uuid::new_v4(),
             webhook_id: webhook.id.clone(),
             event_id: event.id,
-            event_type: event.event_type.clone(),
+            event_type: event.event_type,
             attempt: 1,
             status: DeliveryStatus::Pending,
             response_code: None,
@@ -247,7 +247,7 @@ impl WebhookRegistry {
                 Ok(Ok(response)) => {
                     let status = response.status().as_u16();
                     let body = response.text().await.unwrap_or_default();
-                    if status >= 200 && status < 300 {
+                    if (200..300).contains(&status) {
                         let mut d = delivery.clone();
                         d.status = DeliveryStatus::Delivered;
                         d.response_code = Some(status);
@@ -302,7 +302,7 @@ impl WebhookRegistry {
 
     pub async fn list_deliveries(&self, limit: usize) -> Vec<WebhookDelivery> {
         let mut deliveries: Vec<_> = self.deliveries.read().await.values().cloned().collect();
-        deliveries.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+        deliveries.sort_by_key(|a| std::cmp::Reverse(a.timestamp));
         deliveries.into_iter().take(limit).collect()
     }
 }

@@ -31,7 +31,7 @@ include a changeset describing the change and its semver impact.
 Each pull request that introduces a user-facing change must include a changeset:
 
 ```bash
-bun changeset
+pnpm changeset
 ```
 
 Follow the prompts to:
@@ -47,7 +47,7 @@ Changesets accumulate on the `main` branch. When ready to release:
 
 1. Create a "Version Packages" PR:
    ```bash
-   bun changeset version
+   pnpm changeset version
    ```
 
    This will:
@@ -114,13 +114,13 @@ For critical bugs that cannot wait for the regular release cycle:
    ```
 2. Apply the fix and bump the patch version:
    ```bash
-   bun changeset
+   pnpm changeset
    # Select patch bump
    ```
 3. Open a PR targeting the `main` branch with the `hotfix` label.
 4. Skip the Version Packages PR process — use the manual release command:
    ```bash
-   bun changeset version --snapshot hotfix
+   pnpm changeset version --snapshot hotfix
    ```
 5. Merge and publish as usual.
 
@@ -143,7 +143,7 @@ For critical bugs that cannot wait for the regular release cycle:
 For experimental features that are not yet stable:
 
 ```bash
-bun changeset version --snapshot alpha
+pnpm changeset version --snapshot alpha
 ```
 
 Published with the `alpha` dist-tag on npm.
@@ -153,7 +153,7 @@ Published with the `alpha` dist-tag on npm.
 For release candidates before a major or minor release:
 
 ```bash
-bun changeset version --snapshot beta
+pnpm changeset version --snapshot beta
 ```
 
 Published with the `beta` dist-tag on npm.
@@ -163,7 +163,7 @@ Published with the `beta` dist-tag on npm.
 For every PR merge (automated by CI):
 
 ```bash
-bun changeset version --snapshot next
+pnpm changeset version --snapshot next
 ```
 
 Published with the `next` dist-tag on npm.
@@ -185,17 +185,17 @@ In case CI is down, releases can be performed manually:
 git checkout main && git pull
 
 # 2. Version the packages
-bun changeset version
+pnpm changeset version
 
 # 3. Commit the version bump
 git add .
 git commit -m "chore: version packages"
 
 # 4. Build all packages
-bun run build
+pnpm build
 
 # 5. Publish to npm
-bun changeset publish
+pnpm changeset publish
 
 # 6. Tag and push
 git push --follow-tags

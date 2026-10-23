@@ -87,13 +87,11 @@ pub fn init(config: &LogConfig) -> Result<(), LogError> {
     match &config.output {
         LogOutput::Stdout => fmt.init(),
         LogOutput::File(path) => {
-            let file = std::fs::File::create(path)
-                .map_err(|e| LogError::Io(e))?;
+            let file = std::fs::File::create(path).map_err(LogError::Io)?;
             fmt.with_writer(std::sync::Mutex::new(file)).init();
         }
         LogOutput::Tcp(addr) => {
-            let stream = std::net::TcpStream::connect(addr)
-                .map_err(|e| LogError::Io(e))?;
+            let stream = std::net::TcpStream::connect(addr).map_err(LogError::Io)?;
             fmt.with_writer(std::sync::Mutex::new(stream)).init();
         }
     }

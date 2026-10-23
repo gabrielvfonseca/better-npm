@@ -29,7 +29,7 @@ Before submitting a bug report:
 3. Collect relevant information:
    - Bnpm version
    - Operating system and version
-   - Bun version (`bun --version`)
+   - Node.js and pnpm version (`pnpm --version`)
    - Steps to reproduce
    - Expected vs. actual behavior
    - Logs or error messages

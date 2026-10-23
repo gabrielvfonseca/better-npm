@@ -1,10 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": [
-    "**/.env.*local",
-    "tsconfig.json",
-    "biome.json"
-  ],
+  "globalDependencies": ["**/.env.*local", "tsconfig.json", "biome.json"],
   "globalEnv": [
     "NODE_ENV",
     "LOG_LEVEL",
@@ -43,6 +39,9 @@
     "MEILI_HTTP_ADDR",
     "MEILI_MASTER_KEY"
   ],
+  "futureFlags": {
+    "experimentalCargoWorkspaces": true
+  },
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -108,14 +107,6 @@
       "inputs": ["**/*.rs"]
     },
     "format": {
-      "cache": false
-    },
-    "//#format": {},
-    "//#lint:fix": {},
-    "//#outdated": {
-      "cache": false
-    },
-    "//#update": {
       "cache": false
     }
   }

@@ -3,6 +3,9 @@ resolver = "3"
 members = ["crates/*"]
 exclude = ["crates/sbom", "crates/capability", "crates/policy", "crates/agent", "crates/npm-bridge"]
 
+[workspace.metadata]
+name = "bnpm"
+
 [workspace.package]
 version = "0.0.0"
 edition = "2024"
