@@ -31,6 +31,7 @@ pub type VersionReq = String;
 
 /// A dependency entry in a manifest.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(from = "DependencyRepr")]
 pub struct DependencyEntry {
     /// Version requirement string.
     pub version: VersionReq,
@@ -454,7 +455,7 @@ serde = "1.0"
 
     #[test]
     fn test_manifest_get_raw() {
-        let content = r#"{"name": "pkg", "scripts": {"build": "tsc"}}"#;
+        let content = r#"{"name": "pkg", "version": "1.0.0", "scripts": {"build": "tsc"}}"#;
         let manifest = Manifest::parse(content).unwrap();
         assert_eq!(
             manifest.get_raw("scripts.build").and_then(|v| v.as_str()),
@@ -471,5 +472,46 @@ serde = "1.0"
 
         let deps: Vec<_> = manifest.all_dependencies().collect();
         assert_eq!(deps.len(), 2);
+    }
+}
+
+#[derive(Debug, Clone, serde::Deserialize)]
+#[serde(untagged)]
+enum DependencyRepr {
+    Shorthand(VersionReq),
+    Full(DependencyFields),
+}
+
+#[derive(Debug, Clone, serde::Deserialize)]
+struct DependencyFields {
+    version: VersionReq,
+    #[serde(default)]
+    optional: bool,
+    #[serde(default)]
+    dev: bool,
+    #[serde(default)]
+    registry: Option<String>,
+    #[serde(default)]
+    imports: Option<BTreeMap<String, String>>,
+}
+
+impl From<DependencyRepr> for DependencyEntry {
+    fn from(repr: DependencyRepr) -> Self {
+        match repr {
+            DependencyRepr::Shorthand(version) => DependencyEntry {
+                version,
+                optional: false,
+                dev: false,
+                registry: None,
+                imports: None,
+            },
+            DependencyRepr::Full(fields) => DependencyEntry {
+                version: fields.version,
+                optional: fields.optional,
+                dev: fields.dev,
+                registry: fields.registry,
+                imports: fields.imports,
+            },
+        }
     }
 }

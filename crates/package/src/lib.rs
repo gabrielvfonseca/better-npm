@@ -318,7 +318,7 @@ mod tests {
     #[test]
     fn test_package_name_invalid() {
         assert!(PackageName::new("").is_err());
-        assert!(PackageName::new("white space").is_ok()); // doesn't have invalid chars per our rule
+        assert!(PackageName::new("white space").is_err());
         let _ = PackageName::new("normal-name").unwrap();
     }
 

@@ -55,7 +55,8 @@ pub fn url_join(base: &str, path: &str) -> Result<String, NetworkError> {
     let mut url = Url::parse(base)?;
     url.path_segments_mut()
         .map_err(|_| NetworkError::UrlParse(url::ParseError::RelativeUrlWithoutBase))?
-        .push(path.trim_start_matches('/'));
+        .pop_if_empty()
+        .extend(path.trim_start_matches('/').split('/').filter(|s| !s.is_empty()));
     Ok(url.to_string())
 }
 

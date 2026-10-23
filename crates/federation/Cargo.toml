@@ -10,7 +10,6 @@ bnpm-capsule = { path = "../capsule" }
 bnpm-cid = { path = "../cid" }
 bnpm-governance = { path = "../governance" }
 bnpm-manifest = { path = "../manifest" }
-bnpm-policy = { path = "../policy" }
 bnpm-proto = { path = "../proto" }
 bnpm-provenance = { path = "../provenance" }
 bnpm-registry = { path = "../registry" }

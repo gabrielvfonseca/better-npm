@@ -21,3 +21,6 @@ bnpm-filesystem = { path = "../filesystem" }
 bnpm-compression = { path = "../compression" }
 bnpm-hashing = { path = "../hashing" }
 tracing = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

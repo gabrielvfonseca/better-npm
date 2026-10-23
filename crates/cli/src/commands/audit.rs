@@ -8,63 +8,11 @@ use bnpm_governance::{
 };
 use bnpm_lockfile::Lockfile;
 use bnpm_reputation::compute_full_score;
-use bnpm_sbom::{SbomFormat, generate_sbom};
 
 pub async fn run(args: &AuditArgs, config: &CliConfig) -> Result<ExitCode> {
     let cwd = std::env::current_dir().context("failed to get current directory")?;
     let lockfile_path = bnpm_lockfile::find_lockfile(&cwd).unwrap_or_else(|| cwd.join("bnpm.lock"));
     let lockfile = Lockfile::load(&lockfile_path).context("failed to load lockfile")?;
-
-    if let Some(ref sbom_fmt) = args.sbom {
-        let format = match sbom_fmt.to_lowercase().as_str() {
-            "spdx" => SbomFormat::Spdx,
-            "cyclonedx" => SbomFormat::CycloneDx,
-            _ => {
-                print_error("Invalid SBOM format. Use 'spdx' or 'cyclonedx'");
-                return Ok(ExitCode::Error);
-            },
-        };
-        let sbom = generate_sbom(&lockfile, format);
-        println!("{sbom}");
-        return Ok(ExitCode::Success);
-    }
-
-    if args.policy {
-        let policy_path = cwd.join("bnpm.policy.toml");
-        if !policy_path.exists() {
-            print_error(
-                "No bnpm.policy.toml found. Run 'bnpm policy check <path>' with explicit path.",
-            );
-            return Ok(ExitCode::Error);
-        }
-        let content =
-            std::fs::read_to_string(&policy_path).context("failed to read bnpm.policy.toml")?;
-        let policy = bnpm_policy::Policy::from_toml_str(&content)
-            .context("failed to parse bnpm.policy.toml")?;
-        let graph = bnpm_resolver::Resolver::from_lockfile(&lockfile)
-            .context("failed to load lockfile into graph")?;
-        let result = policy.evaluate(&graph);
-
-        if config.json_output || args.json {
-            print_json(&serde_json::json!({
-                "passed": result.passed,
-                "violations": result.violations,
-            }));
-        } else {
-            if result.passed {
-                print_success("Policy check passed");
-            } else {
-                print_error(&format!(
-                    "Policy check failed ({} violations)",
-                    result.violations.len()
-                ));
-                for v in &result.violations {
-                    print_warning(&format!("[{}] {}: {}", v.rule, v.package, v.message));
-                }
-            }
-        }
-        return if result.passed { Ok(ExitCode::Success) } else { Ok(ExitCode::Error) };
-    }
 
     if args.reputation {
         return show_reputation(&lockfile, args, config).await;
@@ -75,9 +23,6 @@ pub async fn run(args: &AuditArgs, config: &CliConfig) -> Result<ExitCode> {
     }
 
     print_info(&format!("Audit: {} packages in lockfile", lockfile.len()));
-    let total_deps = lockfile.graph.values().map(|d| d.len()).sum::<usize>();
-    print_kv("Dependencies", &total_deps.to_string());
-    print_kv("Lock digest", &lockfile.lock_digest);
 
     Ok(ExitCode::Success)
 }
@@ -89,11 +34,11 @@ async fn show_reputation(
 ) -> Result<ExitCode> {
     let mut scores = Vec::new();
 
-    for entry in lockfile.iter() {
+    for (name, _entry) in lockfile.iter() {
         let score = compute_full_score(
-            &entry.name,
-            entry.provenance.is_some(),
-            entry.provenance.as_ref().map_or(0, |p| p.slsa_level),
+            name,
+            false,
+            0,
             10,
             6.0,
             0,
@@ -167,13 +112,13 @@ async fn show_governance(
     ));
 
     let mut results = Vec::new();
-    for entry in lockfile.iter() {
+    for (name, entry) in lockfile.iter() {
         let allowed = store.get_acl().entries.iter().any(|e| {
             e.permissions.contains(&Permission::Read)
-                && e.scope.matches(&Scope::Package(entry.name.clone()))
+                && e.scope.matches(&Scope::Package(name.to_string()))
         });
         results.push(serde_json::json!({
-            "package": entry.name,
+            "package": name,
             "version": entry.version,
             "allowed": allowed,
         }));

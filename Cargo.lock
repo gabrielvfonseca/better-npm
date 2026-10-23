@@ -363,25 +363,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bnpm-agent"
-version = "0.0.0"
-dependencies = [
- "bnpm-cid",
- "bnpm-manifest",
- "bnpm-package",
- "hex",
- "regex",
- "schemars 0.8.22",
- "semver",
- "serde",
- "serde_json",
- "sha2",
- "tempfile",
- "thiserror",
- "tracing",
-]
-
-[[package]]
 name = "bnpm-archive"
 version = "0.0.0"
 dependencies = [
@@ -393,6 +374,7 @@ dependencies = [
  "flate2",
  "serde",
  "tar",
+ "tempfile",
  "thiserror",
  "tokio",
  "tracing",
@@ -463,16 +445,6 @@ dependencies = [
  "tokio",
  "tracing",
  "uuid",
-]
-
-[[package]]
-name = "bnpm-capability"
-version = "0.0.0"
-dependencies = [
- "bnpm-lockfile",
- "serde",
- "serde_json",
- "thiserror",
 ]
 
 [[package]]
@@ -661,6 +633,7 @@ dependencies = [
  "futures",
  "futures-util",
  "reqwest",
+ "semver",
  "thiserror",
  "tokio",
  "tracing",
@@ -698,7 +671,6 @@ dependencies = [
  "bnpm-cid",
  "bnpm-governance",
  "bnpm-manifest",
- "bnpm-policy",
  "bnpm-proto",
  "bnpm-provenance",
  "bnpm-registry",
@@ -807,7 +779,9 @@ dependencies = [
  "bnpm-signatures",
  "bnpm-store",
  "futures",
+ "semver",
  "serde",
+ "tempfile",
  "thiserror",
  "tokio",
  "tracing",
@@ -843,6 +817,7 @@ dependencies = [
  "bnpm-hashing",
  "bnpm-package",
  "bnpm-store",
+ "semver",
  "serde",
  "serde_json",
  "thiserror",
@@ -925,28 +900,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bnpm-npm-bridge"
-version = "0.0.0"
-dependencies = [
- "bnpm-capsule",
- "bnpm-cid",
- "bnpm-manifest",
- "bnpm-resolver",
- "ciborium",
- "flate2",
- "reqwest",
- "semver",
- "serde",
- "serde_json",
- "tar",
- "tempfile",
- "thiserror",
- "tokio",
- "tracing",
- "zstd",
-]
-
-[[package]]
 name = "bnpm-package"
 version = "0.0.0"
 dependencies = [
@@ -998,7 +951,6 @@ dependencies = [
  "bnpm-capsule",
  "bnpm-cid",
  "bnpm-manifest",
- "bnpm-policy",
  "bnpm-proto",
  "bnpm-sandbox",
  "chrono",
@@ -1014,22 +966,6 @@ dependencies = [
  "tokio",
  "tracing",
  "walkdir",
-]
-
-[[package]]
-name = "bnpm-policy"
-version = "0.0.0"
-dependencies = [
- "bnpm-cid",
- "bnpm-lockfile",
- "bnpm-manifest",
- "bnpm-package",
- "bnpm-resolver",
- "semver",
- "serde",
- "serde_json",
- "thiserror",
- "toml",
 ]
 
 [[package]]
@@ -1135,6 +1071,7 @@ dependencies = [
  "chrono",
  "futures",
  "reqwest",
+ "semver",
  "serde",
  "serde_json",
  "tempfile",
@@ -1264,17 +1201,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bnpm-sbom"
-version = "0.0.0"
-dependencies = [
- "bnpm-lockfile",
- "chrono",
- "serde",
- "serde_json",
- "thiserror",
-]
-
-[[package]]
 name = "bnpm-signatures"
 version = "0.0.0"
 dependencies = [
@@ -1294,6 +1220,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "sha3",
+ "tempfile",
  "thiserror",
  "tokio",
 ]
@@ -1322,6 +1249,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlx",
+ "tempfile",
  "thiserror",
  "tokio",
  "tracing",
@@ -1427,6 +1355,7 @@ dependencies = [
  "semver",
  "serde",
  "serde_json",
+ "tempfile",
  "thiserror",
  "toml",
  "tracing",
@@ -2172,6 +2101,7 @@ checksum = "70e796c081cee67dc755e1a36a0a172b897fab85fc3f6bc48307991f64e4eca9"
 dependencies = [
  "curve25519-dalek",
  "ed25519",
+ "rand_core 0.6.4",
  "serde",
  "sha2",
  "subtle",

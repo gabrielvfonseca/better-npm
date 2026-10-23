@@ -198,7 +198,7 @@ mod tests {
     fn test_build_tokio_runtime() {
         let config = RuntimeConfig::default();
         let runtime = build_tokio_runtime(&config).unwrap();
-        assert!(runtime.handle().try_current().is_ok());
+        runtime.block_on(async { assert!(tokio::runtime::Handle::try_current().is_ok()) });
     }
 
     #[test]
@@ -248,9 +248,9 @@ mod tests {
     #[test]
     fn test_block_on_fn() {
         let config = RuntimeConfig::default();
-        let _handle = RuntimeHandle::init(&config).unwrap();
+        let runtime = build_tokio_runtime(&config).unwrap();
+        let _guard = runtime.enter();
         let result = block_on(async { true });
-        // This might fail if not in a tokio context, which is fine
         assert!(result);
     }
 

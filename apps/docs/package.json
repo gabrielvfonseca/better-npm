@@ -23,6 +23,7 @@
     "@better-npm/design-system": "workspace:*"
   },
   "devDependencies": {
+    "jsdom": "^25.0.1",
     "typescript": "^5.7.0",
     "@types/react": "^19.0.0",
     "@types/node": "^22.0.0",

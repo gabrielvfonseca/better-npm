@@ -9,7 +9,6 @@ authors = ["Bnpm Team"]
 bnpm-capsule = { path = "../capsule" }
 bnpm-cid = { path = "../cid" }
 bnpm-manifest = { path = "../manifest" }
-bnpm-policy = { path = "../policy" }
 bnpm-proto = { path = "../proto" }
 bnpm-sandbox = { path = "../sandbox" }
 semver = { workspace = true }

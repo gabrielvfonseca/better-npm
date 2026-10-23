@@ -24,3 +24,6 @@ walkdir = { workspace = true }
 regex = { workspace = true }
 bnpm-concurrency = { path = "../concurrency" }
 semver = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

@@ -24,3 +24,6 @@ bnpm-hashing = { path = "../hashing" }
 bnpm-filesystem = { path = "../filesystem" }
 bnpm-config = { path = "../config" }
 bnpm-telemetry = { path = "../telemetry" }
+
+[dev-dependencies]
+semver = { workspace = true }

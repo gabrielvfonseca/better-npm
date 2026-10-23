@@ -407,11 +407,11 @@ mod tests {
         assert_eq!(keys.len(), 2);
     }
 
-    #[test]
-    fn test_create_local_store() {
+    #[tokio::test]
+    async fn test_create_local_store() {
         let dir = tempfile::tempdir().unwrap();
         let store = create_local_store(dir.path().to_path_buf());
-        assert!(store.list().is_ok());
+        assert!(store.list().await.is_ok());
     }
 
     #[tokio::test]

@@ -9,7 +9,6 @@ pub mod help;
 pub mod init;
 pub mod install;
 pub mod pack;
-pub mod policy_check;
 pub mod publish;
 pub mod remove;
 pub mod run;
@@ -32,7 +31,6 @@ pub enum Command {
     Publish(PublishArgs),
     Unpack(UnpackArgs),
     Audit(AuditArgs),
-    PolicyCheck(PolicyCheckArgs),
     Verify(VerifyArgs),
     Doctor(DoctorArgs),
     Completions { shell: clap_complete::Shell },
@@ -127,16 +125,9 @@ pub struct PublishArgs {
 
 #[derive(Debug, Clone)]
 pub struct AuditArgs {
-    pub sbom: Option<String>,
-    pub policy: bool,
     pub json: bool,
     pub reputation: bool,
     pub governance: bool,
-}
-
-#[derive(Debug, Clone)]
-pub struct PolicyCheckArgs {
-    pub policy_path: std::path::PathBuf,
 }
 
 #[derive(Debug, Clone)]

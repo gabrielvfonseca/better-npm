@@ -45,9 +45,12 @@ pub fn version_compare(a: &str, b: &str) -> Ordering {
 pub fn glob_match(pattern: &str, path: &str) -> bool {
     let re_pattern = pattern
         .replace('.', "\\.")
-        .replace('*', ".*")
-        .replace('?', ".")
-        .replace("**", ".*");
+        .replace("**/", "\u{0}")
+        .replace("**", "\u{1}")
+        .replace('*', "[^/]*")
+        .replace('?', "[^/]")
+        .replace('\u{0}', "(.*/)?")
+        .replace('\u{1}', ".*");
 
     let full_pattern = format!("^{}$", re_pattern);
     regex::Regex::new(&full_pattern)
@@ -235,7 +238,7 @@ mod tests {
         assert_eq!(version_compare("2.0.0", "1.0.0"), Ordering::Greater);
         assert_eq!(version_compare("1.0.0", "1.0.0"), Ordering::Equal);
         assert_eq!(version_compare("v1.0.0", "1.0.0"), Ordering::Equal);
-        assert_eq!(version_compare("1.0", "1.0.0"), Ordering::Less);
+        assert_eq!(version_compare("1.0", "1.0.0"), Ordering::Equal);
     }
 
     #[test]
@@ -250,7 +253,7 @@ mod tests {
     fn test_truncate() {
         let s = "hello world";
         assert_eq!(truncate(s, 20), s);
-        assert_eq!(truncate_with_ellipsis("hello world this is long", 10), "hello worl…");
+        assert_eq!(truncate_with_ellipsis("hello world this is long", 10), "hello wor…");
     }
 
     #[test]

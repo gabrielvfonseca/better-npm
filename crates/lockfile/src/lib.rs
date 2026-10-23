@@ -33,10 +33,13 @@ pub struct LockfileEntry {
     /// Integrity hash (SRI format).
     pub integrity: Option<String>,
     /// Dependencies of this entry (name → version).
+    #[serde(default)]
     pub dependencies: BTreeMap<String, String>,
     /// Dev dependencies of this entry.
+    #[serde(default)]
     pub dev_dependencies: BTreeMap<String, String>,
     /// Optional dependencies of this entry.
+    #[serde(default)]
     pub optional_dependencies: BTreeMap<String, String>,
     /// Whether this package is a dev dependency of the root.
     #[serde(default)]

@@ -7,7 +7,6 @@ use bnpm_capsule::Capsule;
 use bnpm_cid::Cid;
 use bnpm_governance::{CapabilityAcl, Scope};
 use bnpm_manifest::Manifest as SchemaManifest;
-use bnpm_policy::Policy;
 use bnpm_proto::dpr_v1::{Binding, FetchResponse, MerkleProof, Range, VersionRange as ProtoVersionRange, version_range::Range as ProtoRange};
 use bnpm_registry::{ContentService, NameService, VersionRange as LocalVersionRange};
 use reqwest::Client;
@@ -16,7 +15,6 @@ use tokio::sync::RwLock;
 use tracing::{debug, warn};
 
 use crate::namespace_policy::NamespacePolicy;
-use crate::policy_boundary::{PolicyBoundary, PolicyBoundaryConfig, PolicyViolation, PolicyViolationType, ViolationSeverity, ScopeWrapper};
 use crate::transparency_log::{FederatedLogEntry, LogSource, TransparencyLog, TransparencyLogConfig, TransparencyLogError};
 use crate::upstream::{UpstreamClient, UpstreamConfig, UpstreamError};
 
@@ -27,7 +25,6 @@ use hex;
 pub struct FederatedRegistryConfig {
     pub upstreams: Vec<UpstreamConfig>,
     pub namespaces: Vec<NamespacePolicy>,
-    pub local_policy: Option<Policy>,
     pub local_acl: Option<CapabilityAcl>,
     pub log_config: TransparencyLogConfig,
     pub fetch_timeout: Option<StdDuration>,
@@ -39,7 +36,6 @@ impl Default for FederatedRegistryConfig {
         Self {
             upstreams: Vec::new(),
             namespaces: Vec::new(),
-            local_policy: None,
             local_acl: None,
             log_config: TransparencyLogConfig::default(),
             fetch_timeout: Some(StdDuration::from_secs(30)),
@@ -61,8 +57,6 @@ pub enum FederatedError {
     NoUpstream(String),
     #[error("all upstreams failed: {0}")]
     AllUpstreamsFailed(String),
-    #[error("policy violation: {0}")]
-    PolicyViolation(PolicyViolation),
     #[error("namespace not allowed: {0}")]
     NamespaceNotAllowed(String),
     #[error("upstream error: {0}")]
@@ -85,17 +79,10 @@ impl From<UpstreamError> for FederatedError {
     }
 }
 
-impl From<PolicyViolation> for FederatedError {
-    fn from(v: PolicyViolation) -> Self {
-        FederatedError::PolicyViolation(v)
-    }
-}
-
 pub struct FederatedRegistry {
     config: FederatedRegistryConfig,
     upstreams: Vec<UpstreamClient>,
     namespaces: Vec<NamespacePolicy>,
-    local_policy: Option<Policy>,
     local_acl: Option<CapabilityAcl>,
     local_name_service: Arc<NameService>,
     local_content_service: Arc<ContentService>,
@@ -126,7 +113,6 @@ impl FederatedRegistry {
         let _fetch_timeout = config.fetch_timeout.unwrap_or(StdDuration::from_secs(30));
         let resolve_timeout = config.resolve_timeout.unwrap_or(StdDuration::from_secs(10));
 
-        let local_policy = config.local_policy.clone();
         let local_acl = config.local_acl.clone();
         let namespaces = config.namespaces.clone();
 
@@ -134,7 +120,6 @@ impl FederatedRegistry {
             config,
             upstreams,
             namespaces,
-            local_policy,
             local_acl,
             local_name_service,
             local_content_service,
@@ -197,10 +182,6 @@ impl FederatedRegistry {
                         continue;
                     }
 
-                    let filtered = self.enforce_policy_boundary(&bindings, name).await?;
-                    if filtered.is_empty() {
-                        continue;
-                    }
 
                     let log_source = LogSource::Upstream {
                         upstream_name: upstream.config.name.clone(),
@@ -209,7 +190,7 @@ impl FederatedRegistry {
 
                     let entry = FederatedLogEntry {
                         name: name.to_string(),
-                        bindings: filtered.clone(),
+                        bindings: bindings.clone(),
                         source: log_source.clone(),
                         timestamp: chrono::Utc::now(),
                         log_index: self.transparency_log.read().await.next_index(),
@@ -217,7 +198,7 @@ impl FederatedRegistry {
                     self.transparency_log.write().await.append(entry).await?;
 
                     return Ok(ResolveResult {
-                        bindings: filtered,
+                        bindings,
                         source: log_source,
                         upstream_name: Some(upstream.config.name.clone()),
                     });
@@ -310,28 +291,6 @@ impl FederatedRegistry {
         capsule_bytes: &[u8],
         _identity: &str,
     ) -> Result<bnpm_proto::dpr_v1::PublishResponse, FederatedError> {
-        if let Some(policy) = &self.local_policy {
-            if let Some(capsule) = Capsule::from_bytes(capsule_bytes).ok() {
-                let manifest_cbor = capsule.manifest_cbor();
-                if let Ok(manifest_json) = std::str::from_utf8(manifest_cbor) {
-                    if let Ok(manifest) = SchemaManifest::parse(manifest_json) {
-                        let pkg_name = &manifest.parsed.name;
-                        if policy.banned_packages.iter().any(|b| pkg_name == b) {
-                            return Err(FederatedError::PolicyViolation(
-                                PolicyViolation {
-                                    violation_type: PolicyViolationType::BannedPackage,
-                                    package: pkg_name.clone(),
-                                    version: version.to_string(),
-                                    message: format!("Package '{}' is banned by policy", pkg_name),
-                                    severity: ViolationSeverity::Critical,
-                                }
-                            ));
-                        }
-                    }
-                }
-            }
-        }
-
         let capsule = Capsule::from_bytes(capsule_bytes)
             .map_err(|e| FederatedError::Internal(format!("invalid capsule: {e}")))?;
         let cid = capsule.cid().to_string();
@@ -388,36 +347,6 @@ impl FederatedRegistry {
         self.namespaces.iter().find(|p| p.matches(namespace))
     }
 
-    async fn enforce_policy_boundary(
-        &self,
-        bindings: &[Binding],
-        package_name: &str,
-    ) -> Result<Vec<Binding>, FederatedError> {
-        if self.local_policy.is_none() && self.local_acl.is_none() {
-            return Ok(bindings.to_vec());
-        }
-
-        let policy_boundary = PolicyBoundary::new(
-            PolicyBoundaryConfig::default(),
-            self.local_policy.clone(),
-            self.local_acl.clone(),
-        );
-
-        let mut allowed = Vec::new();
-        for binding in bindings {
-            let scope = ScopeWrapper(Scope::Package(package_name.to_string()));
-            let identity = "upstream";
-
-            match policy_boundary.evaluate_with_wrapper(binding, identity, &scope) {
-                Ok(()) => allowed.push(binding.clone()),
-                Err(violation) => {
-                    warn!("Policy violation for {}@{}: {:?}", package_name, binding.version, violation);
-                }
-            }
-        }
-
-        Ok(allowed)
-    }
 }
 
 #[cfg(test)]
@@ -436,7 +365,6 @@ mod tests {
         let config = FederatedRegistryConfig {
             upstreams: vec![],
             namespaces: vec![],
-            local_policy: None,
             local_acl: None,
             log_config: Default::default(),
             fetch_timeout: Some(StdDuration::from_secs(30)),

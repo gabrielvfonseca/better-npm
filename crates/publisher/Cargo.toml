@@ -30,3 +30,6 @@ bnpm-filesystem = { path = "../filesystem" }
 bnpm-telemetry = { path = "../telemetry" }
 bnpm-progress = { path = "../progress" }
 futures = { workspace = true }
+
+[dev-dependencies]
+semver = { workspace = true }
