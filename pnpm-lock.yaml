@@ -837,9 +837,6 @@ importers:
 
   packages/testing:
     devDependencies:
-      '@types/bun':
-        specifier: ^1.2.0
-        version: 1.4.4
       typescript:
         specifier: ^5.7.0
         version: 5.9.3
