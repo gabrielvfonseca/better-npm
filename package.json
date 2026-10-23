@@ -5,6 +5,10 @@
   "packageManager": "pnpm@10.0.0",
   "scripts": {
     "dev": "pnpm turbo dev",
+    "build": "pnpm turbo build",
+    "test": "pnpm turbo test",
+    "lint": "pnpm turbo lint",
+    "typecheck": "pnpm turbo typecheck",
     "format": "pnpm exec biome format --write .",
     "lint:fix": "pnpm exec biome check --write .",
     "cargo:build": "cargo build --workspace",
@@ -46,7 +50,6 @@
     "@vitejs/plugin-react": "^4.7.0",
     "lefthook": "^1.10.0",
     "@types/node": "^22.0.0",
-    "@types/bun": "^1.2.0",
     "tsx": "^4.19.0",
     "tsup": "^8.3.0",
     "husky": "^9.1.0"
